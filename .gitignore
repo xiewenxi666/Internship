@@ -1,5 +1,5 @@
 # Docker images exported for offline deployment (large binary archives)
-/docker-images/
+**/docker-images/
 # Java / Maven build output
 **/target/
 *.class
