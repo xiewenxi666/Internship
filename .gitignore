@@ -1,0 +1,45 @@
+# Docker images exported for offline deployment (large binary archives)
+/docker-images/
+# Java / Maven build output
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.log
+*.xml.versionsBackup
+.flattened-pom.xml
+# Keep Maven wrapper binaries if they are added later
+!**/.mvn/wrapper/maven-wrapper.jar
+# Node.js dependencies and package-manager caches/logs
+**/node_modules/
+.pnpm-store/
+.npm/
+.yarn/cache/
+.yarn/unplugged/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Frontend build output
+/Web/dist/
+/Web/dist-*/
+/Web/coverage/
+/MallFrontend/unpackage/
+# Tool caches and generated type declarations
+**/.cache/
+**/.vite/
+/Web/auto-*.d.ts
+# IDE and editor-local files
+/.idea/
+**/.vscode/
+**/.history/
+*.iml
+*.iws
+*.ipr
+*.swp
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
