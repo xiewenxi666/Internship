@@ -319,6 +319,11 @@ export default {
   // 编辑器
   imageUploadFailed: '图片上传失败',
   videoUploadFailed: '视频上传失败',
+  // 弹窗按钮
+  dialog: {
+    confirm: '确定',
+    cancel: '取消'
+  },
   // 路由标题
   router: {
     home: '首页',
@@ -368,6 +373,7 @@ export default {
     crmContractDetail: '合同详情',
     crmReceivablePlanDetail: '回款计划详情',
     crmReceivableDetail: '回款详情',
+    crmOrderDetail: '订单详情',
     crmContactDetail: '联系人详情',
     crmProductDetail: '产品详情',
     // AI 模块

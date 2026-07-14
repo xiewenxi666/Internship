@@ -19,6 +19,23 @@ public interface BpmProcessInstanceApi {
      */
     String createProcessInstance(Long userId, @Valid BpmProcessInstanceCreateReqDTO reqDTO);
 
+    /**
+     * 校验用户是否有该业务的活跃审批任务
+     *
+     * @param processDefinitionKey 流程定义标识
+     * @param businessKey 业务编号
+     * @param userId 用户编号
+     * @return 是否有活跃的审批任务
+     */
+    boolean hasActiveTask(String processDefinitionKey, String businessKey, Long userId);
 
+    /**
+     * 通过流程实例 ID 校验用户是否有活跃的审批任务
+     *
+     * @param processInstanceId 流程实例编号
+     * @param userId 用户编号
+     * @return 是否有活跃的审批任务
+     */
+    boolean hasActiveTaskByProcessInstanceId(String processInstanceId, Long userId);
 
 }

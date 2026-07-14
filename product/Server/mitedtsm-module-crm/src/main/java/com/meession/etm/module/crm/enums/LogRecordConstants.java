@@ -150,6 +150,24 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_SUBMIT_SUB_TYPE = "提交回款审批";
     String CRM_RECEIVABLE_SUBMIT_SUCCESS = "提交编号为【{{#receivableNo}}】的回款审批成功";
 
+    // ======================= CRM_ORDER 订单 =======================
+
+    String CRM_ORDER_TYPE = "CRM 订单";
+    String CRM_ORDER_CREATE_SUB_TYPE = "创建订单";
+    String CRM_ORDER_CREATE_SUCCESS = "创建了订单{{#order.name}}";
+    String CRM_ORDER_UPDATE_SUB_TYPE = "更新订单";
+    String CRM_ORDER_UPDATE_SUCCESS = "更新了订单【{{#orderName}}】: {_DIFF{#updateReqVO}}";
+    String CRM_ORDER_DELETE_SUB_TYPE = "删除订单";
+    String CRM_ORDER_DELETE_SUCCESS = "删除了订单【{{#orderName}}】";
+    String CRM_ORDER_TRANSFER_SUB_TYPE = "转移订单";
+    String CRM_ORDER_TRANSFER_SUCCESS = "将订单【{{#order.name}}】的负责人从【{getAdminUserById{#order.ownerUserId}}】变更为了【{getAdminUserById{#reqVO.newOwnerUserId}}】";
+    String CRM_ORDER_SUBMIT_SUB_TYPE = "提交订单审批";
+    String CRM_ORDER_SUBMIT_SUCCESS = "提交订单【{{#orderName}}】审批成功";
+    String CRM_ORDER_UPDATE_STATUS_SUB_TYPE = "更新订单状态";
+    String CRM_ORDER_UPDATE_STATUS_SUCCESS = "更新了订单【{{#orderName}}】的状态为【{{#newStatusName}}】";
+    String CRM_ORDER_FOLLOW_UP_SUB_TYPE = "订单跟进";
+    String CRM_ORDER_FOLLOW_UP_SUCCESS = "订单跟进【{{#orderName}}】";
+
     // ======================= CRM_RECEIVABLE_PLAN 回款计划 =======================
 
     String CRM_RECEIVABLE_PLAN_TYPE = "CRM 回款计划";

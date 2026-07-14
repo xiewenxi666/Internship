@@ -16,6 +16,7 @@ import com.meession.etm.module.crm.service.clue.CrmClueService;
 import com.meession.etm.module.crm.service.contact.CrmContactService;
 import com.meession.etm.module.crm.service.contract.CrmContractService;
 import com.meession.etm.module.crm.service.customer.CrmCustomerService;
+import com.meession.etm.module.crm.service.order.CrmOrderService;
 import com.meession.etm.module.crm.service.followup.bo.CrmFollowUpCreateReqBO;
 import com.meession.etm.module.crm.service.permission.CrmPermissionService;
 import jakarta.annotation.Resource;
@@ -60,6 +61,9 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
     @Resource
     @Lazy
     private CrmCustomerService customerService;
+    @Resource
+    @Lazy
+    private CrmOrderService orderService;
 
     @Override
     @CrmPermission(bizTypeValue = "#createReqVO.bizType", bizId = "#createReqVO.bizId", level = CrmPermissionLevelEnum.WRITE)
@@ -83,6 +87,9 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
         }
         if (ObjUtil.equal(CrmBizTypeEnum.CRM_CONTRACT.getType(), record.getBizType())) { // 更新合同跟进信息
             contractService.updateContractFollowUp(record.getBizId(), record.getNextTime(), record.getContent());
+        }
+        if (ObjUtil.equal(CrmBizTypeEnum.CRM_ORDER.getType(), record.getBizType())) { // 更新订单跟进信息
+            orderService.updateOrderFollowUp(record.getBizId(), record.getNextTime());
         }
 
         // 3.1 更新 contactIds 对应的记录，只更新 nextTime
