@@ -55,6 +55,44 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-form-item :label="t('customer.source')" prop="source">
+            <el-select v-model="queryParams.source" class="!w-240px" clearable>
+              <el-option
+                v-for="dict in getIntDictOptions(DICT_TYPE.CRM_CUSTOMER_SOURCE)"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="t('customer.level')" prop="level">
+            <el-select v-model="queryParams.level" class="!w-240px" clearable>
+              <el-option
+                v-for="dict in getIntDictOptions(DICT_TYPE.CRM_CUSTOMER_LEVEL)"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="t('customer.industryId')" prop="industryId">
+            <el-select v-model="queryParams.industryId" class="!w-240px" clearable>
+              <el-option
+                v-for="dict in getIntDictOptions(DICT_TYPE.CRM_CUSTOMER_INDUSTRY)"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col :span="24">
           <el-form-item>
@@ -62,6 +100,14 @@
             <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button>
             <el-button type="primary" @click="openForm('create')" v-hasPermi="['crm:clue:create']">
               <Icon icon="ep:plus" class="mr-5px" /> {{ t('action.add') }}
+            </el-button>
+            <el-button
+              type="success"
+              plain
+              @click="openImport"
+              v-hasPermi="['crm:clue:import']"
+            >
+              <Icon icon="ep:upload" class="mr-5px" /> {{ t('common.import') }}
             </el-button>
             <el-button
               type="success"
@@ -177,14 +223,16 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <ClueForm ref="formRef" @success="getList" />
+  <ClueImportForm ref="importFormRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
-import { DICT_TYPE } from '@/utils/dict'
+import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as ClueApi from '@/api/crm/clue'
 import ClueForm from './ClueForm.vue'
+import ClueImportForm from './ClueImportForm.vue'
 import { TabsPaneContext } from 'element-plus'
 
 defineOptions({ name: 'CrmClue' })
@@ -201,7 +249,10 @@ const queryParams = reactive({
   name: null,
   telephone: null,
   mobile: null,
-  transformStatus: false
+  transformStatus: false,
+  source: null,
+  level: null,
+  industryId: null
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -245,6 +296,7 @@ const openDetail = (id: number) => {
 
 /** 添加/修改操作 */
 const formRef = ref()
+const importFormRef = ref()
 const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
 }
@@ -263,6 +315,11 @@ const handleDelete = async (id: number) => {
 }
 
 /** 导出按钮操作 */
+/** 打开导入弹窗 */
+const openImport = () => {
+  importFormRef.value?.open()
+}
+/** 导出操作 */
 const handleExport = async () => {
   try {
     // 导出的二次确认

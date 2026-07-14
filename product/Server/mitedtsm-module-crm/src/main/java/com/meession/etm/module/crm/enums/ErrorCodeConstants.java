@@ -105,4 +105,17 @@ public interface ErrorCodeConstants {
 
     // ========== 数据统计 1_020_014_000 ==========
 
+    // ========== 营销活动 1_020_015_000 ==========
+    ErrorCode CAMPAIGN_NOT_EXISTS = new ErrorCode(1_020_015_000, "营销活动不存在");
+
+    // ========== 群发管理 1_020_016_000 ==========
+    ErrorCode BULK_SEND_NOT_EXISTS = new ErrorCode(1_020_016_000, "群发不存在");
+    ErrorCode BULK_SEND_SUBMIT_FAIL_NOT_DRAFT = new ErrorCode(1_020_016_001, "群发提交审核失败，原因：群发不是草稿状态");
+
+    // ========== 客户关怀 1_020_017_000 ==========
+    ErrorCode CUSTOMER_CARE_CONFIG_NOT_EXISTS = new ErrorCode(1_020_017_000, "客户关怀配置不存在");
+
+    // ========== 发送分析 1_020_018_000 ==========
+    ErrorCode MARKETING_ANALYSIS_FAILED = new ErrorCode(1_020_018_000, "发送分析失败");
+
 }

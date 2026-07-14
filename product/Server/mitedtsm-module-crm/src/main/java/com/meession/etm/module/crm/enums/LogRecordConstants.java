@@ -150,6 +150,28 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_SUBMIT_SUB_TYPE = "提交回款审批";
     String CRM_RECEIVABLE_SUBMIT_SUCCESS = "提交编号为【{{#receivableNo}}】的回款审批成功";
 
+    // ======================= CRM_CAMPAIGN 营销活动 =======================
+
+    String CRM_CAMPAIGN_TYPE = "CRM 营销活动";
+    String CRM_CAMPAIGN_CREATE_SUB_TYPE = "创建营销活动";
+    String CRM_CAMPAIGN_CREATE_SUCCESS = "创建了营销活动{{#campaign.title}}";
+    String CRM_CAMPAIGN_UPDATE_SUB_TYPE = "更新营销活动";
+    String CRM_CAMPAIGN_UPDATE_SUCCESS = "更新了营销活动【{{#campaignName}}】: {_DIFF{#updateReqVO}}";
+    String CRM_CAMPAIGN_DELETE_SUB_TYPE = "删除营销活动";
+    String CRM_CAMPAIGN_DELETE_SUCCESS = "删除了营销活动【{{#campaignName}}】";
+
+    // ======================= CRM_BULK_SEND 群发管理 =======================
+
+    String CRM_BULK_SEND_TYPE = "CRM 群发管理";
+    String CRM_BULK_SEND_CREATE_SUB_TYPE = "创建群发";
+    String CRM_BULK_SEND_CREATE_SUCCESS = "创建了群发{{#bulkSend.title}}";
+    String CRM_BULK_SEND_UPDATE_SUB_TYPE = "更新群发";
+    String CRM_BULK_SEND_UPDATE_SUCCESS = "更新了群发【{{#bulkSendName}}】: {_DIFF{#updateReqVO}}";
+    String CRM_BULK_SEND_DELETE_SUB_TYPE = "删除群发";
+    String CRM_BULK_SEND_DELETE_SUCCESS = "删除了群发【{{#bulkSendName}}】";
+    String CRM_BULK_SEND_SUBMIT_SUB_TYPE = "提交群发审核";
+    String CRM_BULK_SEND_SUBMIT_SUCCESS = "提交群发【{{#bulkSendName}}】审核成功";
+
     // ======================= CRM_RECEIVABLE_PLAN 回款计划 =======================
 
     String CRM_RECEIVABLE_PLAN_TYPE = "CRM 回款计划";
