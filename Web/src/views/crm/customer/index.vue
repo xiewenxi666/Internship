@@ -202,20 +202,18 @@
         min-width="180"
       />
       <el-table-column align="center" :label="t('common.creator')" prop="creatorName" min-width="100" />
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="150">
+      <el-table-column align="center" :label="t('common.action')" min-width="280">
         <template #default="scope">
-          <el-button
-            v-hasPermi="['crm:customer:update']"
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-          >
+          <el-button type="primary" size="small" @click="openForm('update', scope.row.id)">
             {{ t('common.edit') }}
+          </el-button>
+          <el-button type="primary" size="small" @click="handleTransfer(scope.row)">
+            {{ t('transfer') }}
           </el-button>
           <el-button
             v-hasPermi="['crm:customer:delete']"
-            link
             type="danger"
+            size="small"
             @click="handleDelete(scope.row.id)"
           >
             {{ t('common.delete') }}
@@ -233,6 +231,7 @@
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
+  <CrmTransferForm ref="transferFormRef" :biz-type="BizTypeEnum.CRM_CUSTOMER" @success="getList" />
   <CustomerForm ref="formRef" @success="getList" />
   <CustomerImportForm ref="importFormRef" @success="getList" />
 </template>
@@ -244,6 +243,8 @@ import download from '@/utils/download'
 import * as CustomerApi from '@/api/crm/customer'
 import CustomerForm from './CustomerForm.vue'
 import CustomerImportForm from './CustomerImportForm.vue'
+import CrmTransferForm from '@/views/crm/permission/components/TransferForm.vue'
+import { BizTypeEnum } from '@/api/crm/permission'
 import { TabsPaneContext } from 'element-plus'
 
 defineOptions({ name: 'CrmCustomer' })
@@ -324,6 +325,12 @@ const handleDelete = async (id: number) => {
 }
 
 /** 导入按钮操作 */
+const transferFormRef = ref<InstanceType<typeof CrmTransferForm>>()
+/** 转移按钮操作 */
+const handleTransfer = (row: any) => {
+  transferFormRef.value?.open(row.id)
+}
+
 const importFormRef = ref<InstanceType<typeof CustomerImportForm>>()
 const handleImport = () => {
   importFormRef.value?.open()

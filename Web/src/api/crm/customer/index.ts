@@ -130,3 +130,8 @@ export const distributeCustomer = async (ids: any[], ownerUserId: number) => {
 export const putCustomerPool = async (id: number) => {
   return await request.put({ url: `/crm/customer/put-pool?id=${id}` })
 }
+
+// 检查客户名称/手机号是否重复
+export const checkDuplicate = async (name: string, mobile?: string, id?: number) => {
+  return await request.get({ url: '/crm/customer/check-duplicate', params: { name, mobile, id } })
+}
