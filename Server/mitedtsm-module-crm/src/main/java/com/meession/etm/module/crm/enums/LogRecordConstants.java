@@ -182,4 +182,22 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_PLAN_DELETE_SUB_TYPE = "删除回款计划";
     String CRM_RECEIVABLE_PLAN_DELETE_SUCCESS = "删除了合同【{getContractById{#receivablePlan.contractId}}】的第【{{#receivablePlan.period}}】期回款计划";
 
+    // ======================= CRM_QUOTATION 报价 =======================
+
+    String CRM_QUOTATION_TYPE = "CRM 报价";
+    String CRM_QUOTATION_CREATE_SUB_TYPE = "创建报价";
+    String CRM_QUOTATION_CREATE_SUCCESS = "创建了报价【{{#quotation.quotationNo}}】";
+    String CRM_QUOTATION_UPDATE_SUB_TYPE = "更新报价";
+    String CRM_QUOTATION_UPDATE_SUCCESS = "更新了报价【{{#updateReqVO.id}}】: {_DIFF{#updateReqVO}}";
+    String CRM_QUOTATION_DELETE_SUB_TYPE = "删除报价";
+    String CRM_QUOTATION_DELETE_SUCCESS = "删除了报价【{{#id}}】";
+    String CRM_QUOTATION_SUBMIT_SUB_TYPE = "提交报价审批";
+    String CRM_QUOTATION_SUBMIT_SUCCESS = "提交报价【{{#id}}】审批成功";
+    String CRM_QUOTATION_CONFIRM_SUB_TYPE = "确认报价";
+    String CRM_QUOTATION_CONFIRM_SUCCESS = "确认报价【{{#id}}】通过";
+    String CRM_QUOTATION_REJECT_SUB_TYPE = "拒绝报价";
+    String CRM_QUOTATION_REJECT_SUCCESS = "拒绝报价【{{#id}}】";
+    String CRM_QUOTATION_VOID_SUB_TYPE = "作废报价";
+    String CRM_QUOTATION_VOID_SUCCESS = "作废了报价【{{#id}}】";
+
 }
