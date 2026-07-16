@@ -143,26 +143,28 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
         if (!Objects.equals(bulkSend.getStatus(), 2)) {
             throw exception(new ErrorCode(1_020_016_002, "只能审批待审核的群发"));
         }
-        // 3. 尝试真实发送（失败不影响审批流程）
+        // 3. 发送（按选中客户数决定发送次数，实际发给负责人作演示）
+        int count = (bulkSend.getTargetCount() != null && bulkSend.getTargetCount() > 0) ? bulkSend.getTargetCount() : 1;
         int success = 0, fail = 0;
-        try {
-            if (Objects.equals(bulkSend.getType(), 1)) {
-                SmsSendSingleToUserReqDTO smsReq = new SmsSendSingleToUserReqDTO();
-                smsReq.setUserId(bulkSend.getOwnerUserId());
-                smsReq.setTemplateCode("PROMOTION");
-                smsReq.setTemplateParams(new HashMap<>());
-                smsSendApi.sendSingleSmsToAdmin(smsReq);
-            } else {
-                MailSendSingleToUserReqDTO mailReq = new MailSendSingleToUserReqDTO();
-                mailReq.setUserId(bulkSend.getOwnerUserId());
-                mailReq.setTemplateCode("PROMOTION");
-                mailReq.setTemplateParams(new HashMap<>());
-                mailSendApi.sendSingleMailToAdmin(mailReq);
+        for (int i = 0; i < count; i++) {
+            try {
+                if (Objects.equals(bulkSend.getType(), 1)) {
+                    SmsSendSingleToUserReqDTO smsReq = new SmsSendSingleToUserReqDTO();
+                    smsReq.setUserId(bulkSend.getOwnerUserId());
+                    smsReq.setTemplateCode("PROMOTION");
+                    smsReq.setTemplateParams(new HashMap<>());
+                    smsSendApi.sendSingleSmsToAdmin(smsReq);
+                } else {
+                    MailSendSingleToUserReqDTO mailReq = new MailSendSingleToUserReqDTO();
+                    mailReq.setUserId(bulkSend.getOwnerUserId());
+                    mailReq.setTemplateCode("PROMOTION");
+                    mailReq.setTemplateParams(new HashMap<>());
+                    mailSendApi.sendSingleMailToAdmin(mailReq);
+                }
+                success++;
+            } catch (Exception e) {
+                fail++;
             }
-            success = 1;
-        } catch (Exception e) {
-            log.warn("[approve][群发({})真实发送失败，降级为模拟成功]", id);
-            success = 1; // 演示模式：发送失败时仍标记成功，保证功能闭环
         }
         // 4. 更新状态
         CrmBulkSendDO updateObj = new CrmBulkSendDO();

@@ -43,6 +43,17 @@
             </el-select>
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row v-if="formData.targetType === 2">
+        <el-col :span="24">
+          <el-form-item label="选择客户">
+            <el-select v-model="selectedCustomerIds" multiple filterable placeholder="搜索并选择客户" class="w-1/1" @change="onCustomerChange">
+              <el-option v-for="c in customerOptions" :key="c.id" :label="c.name + ' (' + (c.mobile || '无手机') + ')'" :value="c.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="12">
           <el-form-item label="负责人员" prop="ownerUserId">
             <el-select v-model="formData.ownerUserId" class="w-1/1">
@@ -62,6 +73,7 @@
 <script lang="ts" setup>
 import * as BulkSendApi from '@/api/crm/bulksend'
 import * as CampaignApi from '@/api/crm/campaign'
+import * as CustomerApi from '@/api/crm/customer'
 import * as UserApi from '@/api/system/user'
 
 defineOptions({ name: 'CrmBulkSendForm' })
@@ -73,8 +85,15 @@ const formLoading = ref(false)
 const formType = ref('')
 const userOptions = ref<UserApi.UserVO[]>([])
 const campaignOptions = ref<CampaignApi.CampaignVO[]>([])
+const customerOptions = ref<any[]>([])
+const selectedCustomerIds = ref<number[]>([])
 const formRef = ref()
 const formData = ref({ id: undefined, title: undefined, campaignId: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 })
+
+const onCustomerChange = (ids: number[]) => {
+  formData.value.targetIds = ids.join(',')
+  formData.value.targetCount = ids.length
+}
 const formRules = reactive({
   title: [{ required: true, message: '不能为空', trigger: 'blur' }],
   type: [{ required: true, message: '请选择', trigger: 'change' }],
@@ -91,6 +110,8 @@ const open = async (type: string, id?: number) => {
   userOptions.value = await UserApi.getSimpleUserList()
   const campaignData = await CampaignApi.getCampaignPage({ pageNo: 1, pageSize: 100 })
   campaignOptions.value = campaignData?.list || []
+  const cdata = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 100 })
+  customerOptions.value = cdata?.list || []
   if (id) { formLoading.value = true; try { const d = await BulkSendApi.getBulkSend(id); formData.value = { ...d } } finally { formLoading.value = false } }
   else resetForm()
 }
@@ -107,5 +128,5 @@ const submitForm = async () => {
 }
 
 const emits = defineEmits(['success'])
-const resetForm = () => { formData.value = { id: undefined, title: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 } }
+const resetForm = () => { formData.value = { id: undefined, title: undefined, campaignId: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 }; selectedCustomerIds.value = [] }
 </script>

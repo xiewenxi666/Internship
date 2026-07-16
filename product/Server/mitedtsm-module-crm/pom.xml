@@ -72,5 +72,10 @@
             <groupId>com.meession.etm</groupId>
             <artifactId>mitedtsm-spring-boot-starter-test</artifactId>
         </dependency>
+        <!-- 邮件发送依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 </project>
