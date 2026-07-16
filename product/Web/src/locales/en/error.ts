@@ -1,6 +1,0 @@
-export default {
-  noPermission: "Sorry, you don't have permission to access this page.",
-  pageError: 'Sorry, the page you visited does not exist.',
-  networkError: 'Sorry, the server reported an error.',
-  returnToHome: 'Return to home'
-}
