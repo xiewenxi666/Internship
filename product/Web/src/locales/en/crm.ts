@@ -525,6 +525,7 @@ export default {
     someProductsDisabled: 'Some business products are disabled, auto-filtered',
     updateStatus: 'Update Status',
     updateStatusSuccess: 'Status updated successfully',
+    report: 'Order Report',
   },
   receivablePlan: {
     title: 'Receivable Plan',

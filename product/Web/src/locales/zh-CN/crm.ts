@@ -526,6 +526,7 @@ export default {
     updateStatus: '更新状态',
     updateStatusSuccess: '更新状态成功',
     updateStatusHint: '请选择目标状态：',
+    report: '订单报表',
   },
   receivablePlan: {
     title: '回款计划',
