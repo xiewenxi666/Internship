@@ -160,4 +160,21 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_PLAN_DELETE_SUB_TYPE = "删除回款计划";
     String CRM_RECEIVABLE_PLAN_DELETE_SUCCESS = "删除了合同【{getContractById{#receivablePlan.contractId}}】的第【{{#receivablePlan.period}}】期回款计划";
 
+    // ========== 工单管理 ==========
+    interface WORK_ORDER {
+        String type = "CRM-工单管理";
+        String CREATE_SUB_TYPE = "创建工单";
+        String CREATE_SUCCESS = "创建了工单【{{#title}}】";
+        String UPDATE_SUB_TYPE = "修改工单";
+        String UPDATE_SUCCESS = "修改了工单【{{#title}}】";
+        String DELETE_SUB_TYPE = "删除工单";
+        String DELETE_SUCCESS = "删除了工单【{{#title}}】";
+        String PROCESS_SUB_TYPE = "处理工单";
+        String PROCESS_SUCCESS = "开始处理工单【{{#title}}】";
+        String COMPLETE_SUB_TYPE = "完结工单";
+        String COMPLETE_SUCCESS = "完结了工单【{{#title}}】，解决方案：{{#solution}}";
+        String RETURN_SUB_TYPE = "退回工单";
+        String RETURN_SUCCESS = "退回了工单【{{#title}}】";
+    }
+
 }

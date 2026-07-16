@@ -105,4 +105,8 @@ public interface ErrorCodeConstants {
 
     // ========== 数据统计 1_020_014_000 ==========
 
+    // ========== 工单管理 1_010_000_000 ==========
+    ErrorCode WORK_ORDER_NOT_EXISTS = new ErrorCode(1_010_000_000, "工单不存在");
+    ErrorCode WORK_ORDER_CONTRACT_NOT_EXISTS = new ErrorCode(1_010_000_001, "合同不存在");
+
 }

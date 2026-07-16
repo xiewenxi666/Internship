@@ -19,16 +19,6 @@ import java.time.LocalDateTime;
 @Repository
 public class CrmNoRedisDAO {
 
-    /**
-     * 合同 {@link com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO}
-     */
-    public static final String CONTRACT_NO_PREFIX = "HT";
-
-    /**
-     * 回款 {@link com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO}
-     */
-    public static final String RECEIVABLE_PREFIX = "HK";
-
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

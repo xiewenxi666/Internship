@@ -211,6 +211,9 @@ export enum DICT_TYPE {
   CRM_PERMISSION_LEVEL = 'crm_permission_level', // CRM 数据权限的级别
   CRM_PRODUCT_UNIT = 'crm_product_unit', // CRM 产品单位
   CRM_FOLLOW_UP_TYPE = 'crm_follow_up_type', // CRM 跟进方式
+  CRM_WORK_ORDER_TYPE = 'crm_work_order_type', // CRM 工单类型
+  CRM_WORK_ORDER_PRIORITY = 'crm_work_order_priority', // CRM 工单优先级
+  CRM_WORK_ORDER_STATUS = 'crm_work_order_status', // CRM 工单状态
 
   // ========== ERP - 企业资源计划模块  ==========
   ERP_AUDIT_STATUS = 'erp_audit_status', // ERP 审批状态

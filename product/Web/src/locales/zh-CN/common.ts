@@ -367,6 +367,7 @@ export default {
     crmBusinessDetail: '商机详情',
     crmContractDetail: '合同详情',
     crmReceivablePlanDetail: '回款计划详情',
+    crmWorkOrderDetail: '工单详情',
     crmReceivableDetail: '回款详情',
     crmContactDetail: '联系人详情',
     crmProductDetail: '产品详情',
