@@ -38,4 +38,12 @@ public interface BpmProcessInstanceApi {
      */
     boolean hasActiveTaskByProcessInstanceId(String processInstanceId, Long userId);
 
+    /**
+     * 判断流程实例是否正在运行（是否有活跃任务，不分用户）
+     *
+     * @param processInstanceId 流程实例编号
+     * @return 是否在运行中
+     */
+    boolean isProcessRunning(String processInstanceId);
+
 }

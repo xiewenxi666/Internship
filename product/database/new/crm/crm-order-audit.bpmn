@@ -2,11 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://flowable.org/bpmn">
   <process id="crm-order-audit" name="CRM订单审批" isExecutable="true">
     <startEvent id="start" name="开始" />
-    <userTask id="initiatorTask" name="发起人" flowable:candidateStrategy="36">
-      <extensionElements>
-        <flowable:taskListener event="complete" class="com.meession.etm.module.bpm.framework.flowable.core.listener.BpmTaskInitiatorCompleteListener" />
-      </extensionElements>
-    </userTask>
+    <userTask id="initiatorTask" name="发起人" flowable:candidateStrategy="36" />
     <userTask id="approveTask" name="审批" flowable:candidateStrategy="37" flowable:candidateParam="1" />
     <endEvent id="end" name="结束" />
     <sequenceFlow id="flow1" sourceRef="start" targetRef="initiatorTask" />

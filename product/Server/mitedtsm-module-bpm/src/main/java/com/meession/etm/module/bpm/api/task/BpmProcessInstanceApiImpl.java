@@ -5,6 +5,7 @@ import com.meession.etm.module.bpm.api.task.dto.BpmProcessInstanceCreateReqDTO;
 import com.meession.etm.module.bpm.service.task.BpmProcessInstanceService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class BpmProcessInstanceApiImpl implements BpmProcessInstanceApi {
 
     @Resource
     private TaskService taskService;
+
+    @Resource
+    private RuntimeService runtimeService;
 
     @Override
     public String createProcessInstance(Long userId, @Valid BpmProcessInstanceCreateReqDTO reqDTO) {
@@ -52,6 +56,13 @@ public class BpmProcessInstanceApiImpl implements BpmProcessInstanceApi {
                 .active()
                 .list();
         return CollUtil.isNotEmpty(tasks);
+    }
+
+    @Override
+    public boolean isProcessRunning(String processInstanceId) {
+        return runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult() != null;
     }
 
 }

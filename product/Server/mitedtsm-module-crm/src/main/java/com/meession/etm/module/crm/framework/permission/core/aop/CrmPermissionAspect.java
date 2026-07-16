@@ -124,8 +124,8 @@ public class CrmPermissionAspect {
 
         // 3.5 检查是否有活跃的 BPM 审批任务（仅 READ 权限）
         if (CrmPermissionLevelEnum.isRead(permissionLevel) && bizId != null) {
-            // 优先通过 processInstanceId 查询（更准确）
             String processInstanceId = getProcessInstanceId(bizType, bizId);
+            // 优先通过 processInstanceId 查询（更准确）
             if (processInstanceId != null
                     && bpmProcessInstanceApi.hasActiveTaskByProcessInstanceId(processInstanceId, userId)) {
                 return;
@@ -134,6 +134,11 @@ public class CrmPermissionAspect {
             String processKey = BIZ_TYPE_PROCESS_KEY_MAP.get(bizType);
             if (processKey != null
                     && bpmProcessInstanceApi.hasActiveTask(processKey, String.valueOf(bizId), userId)) {
+                return;
+            }
+            // 3.6 流程运行中放行 READ（审批中人无需额外 CRM 权限）
+            if (processInstanceId != null
+                    && bpmProcessInstanceApi.isProcessRunning(processInstanceId)) {
                 return;
             }
         }
