@@ -32,6 +32,8 @@ public interface CrmBizNoPrefix {
     String VISIT = "BF";
     /** 任务 */
     String TASK = "RW";
+    /** 订单 */
+    String ORDER = "DD";
     /** 工作报告 */
     String REPORT = "BG";
 }

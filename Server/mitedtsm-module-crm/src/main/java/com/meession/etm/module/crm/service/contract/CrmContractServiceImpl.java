@@ -97,6 +97,13 @@ public class CrmContractServiceImpl implements CrmContractService {
     @Resource
     private BpmProcessInstanceApi bpmProcessInstanceApi;
 
+    /**
+     * 创建合同
+     *
+     * @param createReqVO 创建请求
+     * @param userId 用户编号
+     * @return 合同编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_CREATE_SUB_TYPE, bizNo = "{{#contract.id}}",
@@ -132,6 +139,11 @@ public class CrmContractServiceImpl implements CrmContractService {
         return contract.getId();
     }
 
+    /**
+     * 更新合同
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -165,6 +177,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         LogRecordContext.putVariable("contractName", oldContract.getName());
     }
 
+    /**
+     * 差量更新合同关联商品
+     *
+     * @param id 合同编号
+     * @param newList 新商品列表
+     */
     private void updateContractProduct(Long id, List<CrmContractProductDO> newList) {
         List<CrmContractProductDO> oldList = contractProductMapper.selectListByContractId(id);
         List<List<CrmContractProductDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
@@ -208,6 +226,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         }
     }
 
+    /**
+     * 校验合同商品列表有效性，并转换为 DO 列表
+     *
+     * @param list 商品列表
+     * @return 合同商品 DO 列表
+     */
     private List<CrmContractProductDO> validateContractProducts(List<CrmContractSaveReqVO.Product> list) {
         // 1. 校验产品存在
         productService.validProductList(convertSet(list, CrmContractSaveReqVO.Product::getProductId));
@@ -216,12 +240,23 @@ public class CrmContractServiceImpl implements CrmContractService {
                 item -> item.setTotalPrice(MoneyUtils.priceMultiply(item.getContractPrice(), item.getCount()))));
     }
 
+    /**
+     * 计算合同总价（含折扣）
+     *
+     * @param contract 合同
+     * @param contractProducts 合同商品列表
+     */
     private void calculateTotalPrice(CrmContractDO contract, List<CrmContractProductDO> contractProducts) {
         contract.setTotalProductPrice(getSumValue(contractProducts, CrmContractProductDO::getTotalPrice, BigDecimal::add, BigDecimal.ZERO));
         BigDecimal discountPrice = MoneyUtils.priceMultiplyPercent(contract.getTotalProductPrice(), contract.getDiscountPercent());
         contract.setTotalPrice(contract.getTotalProductPrice().subtract(discountPrice));
     }
 
+    /**
+     * 删除合同
+     *
+     * @param id 合同编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -244,6 +279,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         LogRecordContext.putVariable("contractName", contract.getName());
     }
 
+    /**
+     * 校验合同是否存在
+     *
+     * @param id 合同编号
+     * @return 合同
+     */
     private CrmContractDO validateContractExists(Long id) {
         CrmContractDO contract = contractMapper.selectById(id);
         if (contract == null) {
@@ -252,6 +293,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         return contract;
     }
 
+    /**
+     * 转移合同负责人
+     *
+     * @param reqVO 转移请求
+     * @param userId 当前用户编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
@@ -271,6 +318,13 @@ public class CrmContractServiceImpl implements CrmContractService {
         LogRecordContext.putVariable("contract", contract);
     }
 
+    /**
+     * 更新合同跟进信息
+     *
+     * @param id 合同编号
+     * @param contactNextTime 下次联系时间
+     * @param contactLastContent 最后跟进内容
+     */
     @Override
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_FOLLOW_UP_SUB_TYPE, bizNo = "{{#id}}",
             success = CRM_CONTRACT_FOLLOW_UP_SUCCESS)
@@ -286,6 +340,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         LogRecordContext.putVariable("contractName", contract.getName());
     }
 
+    /**
+     * 提交合同审批
+     *
+     * @param id 合同编号
+     * @param userId 用户编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_SUBMIT_SUB_TYPE, bizNo = "{{#id}}",
@@ -309,6 +369,12 @@ public class CrmContractServiceImpl implements CrmContractService {
         LogRecordContext.putVariable("contractName", contract.getName());
     }
 
+    /**
+     * 更新合同审批状态
+     *
+     * @param id 合同编号
+     * @param bpmResult BPM 审批结果
+     */
     @Override
     public void updateContractAuditStatus(Long id, Integer bpmResult) {
         // 1.1 校验合同是否存在
@@ -327,17 +393,35 @@ public class CrmContractServiceImpl implements CrmContractService {
 
     // ======================= 查询相关 =======================
 
+    /**
+     * 查询合同详情
+     *
+     * @param id 合同编号
+     * @return 合同
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTRACT, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmContractDO getContract(Long id) {
         return contractMapper.selectById(id);
     }
 
+    /**
+     * 校验合同是否存在
+     *
+     * @param id 合同编号
+     * @return 合同
+     */
     @Override
     public CrmContractDO validateContract(Long id) {
         return validateContractExists(id);
     }
 
+    /**
+     * 查询合同列表
+     *
+     * @param ids 合同编号集合
+     * @return 合同列表
+     */
     @Override
     public List<CrmContractDO> getContractList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -346,6 +430,13 @@ public class CrmContractServiceImpl implements CrmContractService {
         return contractMapper.selectByIds(ids);
     }
 
+    /**
+     * 分页查询合同（支持到期提醒筛选）
+     *
+     * @param pageReqVO 分页请求
+     * @param userId 用户编号
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmContractDO> getContractPage(CrmContractPageReqVO pageReqVO, Long userId) {
         // 1. 即将到期，需要查询合同配置
@@ -363,43 +454,91 @@ public class CrmContractServiceImpl implements CrmContractService {
         return contractMapper.selectPage(pageReqVO, userId, config);
     }
 
+    /**
+     * 根据客户编号分页查询合同
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageReqVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmContractDO> getContractPageByCustomerId(CrmContractPageReqVO pageReqVO) {
         return contractMapper.selectPageByCustomerId(pageReqVO);
     }
 
+    /**
+     * 根据商机编号分页查询合同
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#pageReqVO.businessId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmContractDO> getContractPageByBusinessId(CrmContractPageReqVO pageReqVO) {
         return contractMapper.selectPageByBusinessId(pageReqVO);
     }
 
+    /**
+     * 根据联系人编号统计合同数量
+     *
+     * @param contactId 联系人编号
+     * @return 合同数量
+     */
     @Override
     public Long getContractCountByContactId(Long contactId) {
         return contractMapper.selectCountByContactId(contactId);
     }
 
+    /**
+     * 根据客户编号统计合同数量
+     *
+     * @param customerId 客户编号
+     * @return 合同数量
+     */
     @Override
     public Long getContractCountByCustomerId(Long customerId) {
         return contractMapper.selectCount(CrmContractDO::getCustomerId, customerId);
     }
 
+    /**
+     * 根据商机编号统计合同数量
+     *
+     * @param businessId 商机编号
+     * @return 合同数量
+     */
     @Override
     public Long getContractCountByBusinessId(Long businessId) {
         return contractMapper.selectCountByBusinessId(businessId);
     }
 
+    /**
+     * 根据合同编号查询关联商品列表
+     *
+     * @param contactId 合同编号
+     * @return 商品列表
+     */
     @Override
     public List<CrmContractProductDO> getContractProductListByContractId(Long contactId) {
         return contractProductMapper.selectListByContractId(contactId);
     }
 
+    /**
+     * 获取待审核合同数量
+     *
+     * @param userId 用户编号
+     * @return 待审核数量
+     */
     @Override
     public Long getAuditContractCount(Long userId) {
         return contractMapper.selectCountByAudit(userId);
     }
 
+    /**
+     * 获取待提醒合同数量
+     *
+     * @param userId 用户编号
+     * @return 待提醒数量
+     */
     @Override
     public Long getRemindContractCount(Long userId) {
         CrmContractConfigDO config = contractConfigService.getContractConfig();
@@ -409,6 +548,13 @@ public class CrmContractServiceImpl implements CrmContractService {
         return contractMapper.selectCountByRemind(userId, config);
     }
 
+    /**
+     * 根据客户编号和负责人编号查询合同列表
+     *
+     * @param customerId 客户编号
+     * @param ownerUserId 负责人编号
+     * @return 合同列表
+     */
     @Override
     public List<CrmContractDO> getContractListByCustomerIdOwnerUserId(Long customerId, Long ownerUserId) {
         return contractMapper.selectListByCustomerIdOwnerUserId(customerId, ownerUserId);
