@@ -68,7 +68,7 @@ public class CrmOrderServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testCreateOrder_success() {
         // 准备 mock: 编号生成
-        when(noRedisDAO.generate(eq(CrmNoRedisDAO.ORDER_NO_PREFIX))).thenReturn("DD20260714000001");
+        when(noRedisDAO.generate(eq(CrmBizNoPrefix.ORDER))).thenReturn("DD20260714000001");
         // 准备参数
         CrmOrderSaveReqVO reqVO = randomPojo(CrmOrderSaveReqVO.class, o -> {
             o.setId(null);
@@ -96,7 +96,7 @@ public class CrmOrderServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testCreateOrder_noDuplicate() {
         // mock 编号生成
-        when(noRedisDAO.generate(eq(CrmNoRedisDAO.ORDER_NO_PREFIX)))
+        when(noRedisDAO.generate(eq(CrmBizNoPrefix.ORDER)))
                 .thenReturn("DD20260714000001")
                 .thenReturn("DD20260714000002");
 

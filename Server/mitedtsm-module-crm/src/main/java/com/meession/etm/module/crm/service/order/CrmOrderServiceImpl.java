@@ -20,6 +20,7 @@ import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderItemDO;
 import com.meession.etm.module.crm.dal.mysql.order.CrmOrderItemMapper;
 import com.meession.etm.module.crm.dal.mysql.order.CrmOrderMapper;
+import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.order.CrmOrderStatusEnum;
@@ -100,7 +101,7 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         List<CrmOrderItemDO> orderItems = validateOrderProducts(createReqVO.getProducts());
         validateRelationDataExists(createReqVO);
 
-        String no = noRedisDAO.generate(CrmNoRedisDAO.ORDER_NO_PREFIX);
+        String no = noRedisDAO.generate(CrmBizNoPrefix.ORDER);
         if (orderMapper.selectByNo(no) != null) {
             throw exception(ORDER_NO_EXISTS);
         }
