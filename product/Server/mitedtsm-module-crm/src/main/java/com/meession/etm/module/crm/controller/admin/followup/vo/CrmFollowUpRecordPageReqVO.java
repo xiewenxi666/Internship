@@ -6,15 +6,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/**
+ * 管理后台 - 跟进记录分页 Request VO
+ */
 @Schema(description = "管理后台 - 跟进记录分页 Request VO")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CrmFollowUpRecordPageReqVO extends PageParam {
 
+    /** 数据类型 */
     @Schema(description = "数据类型", example = "2")
     private Integer bizType;
 
+    /** 数据编号 */
     @Schema(description = "数据编号", example = "5564")
     private Long bizId;
 

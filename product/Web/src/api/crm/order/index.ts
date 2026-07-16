@@ -85,6 +85,10 @@ export const submitOrder = async (id: number) => {
   return await request.put({ url: `/crm/order/submit?id=${id}` })
 }
 
+export const withdrawOrder = async (id: number) => {
+  return await request.put({ url: `/crm/order/withdraw?id=${id}` })
+}
+
 export const transferOrder = async (data: TransferReqVO) => {
   return await request.put({ url: '/crm/order/transfer', data })
 }

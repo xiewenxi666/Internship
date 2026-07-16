@@ -43,6 +43,12 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
     @Lazy // 延迟加载，避免循环依赖
     private CrmBusinessService businessService;
 
+    /**
+     * 创建商机状态类型及状态列表
+     *
+     * @param createReqVO 创建请求
+     * @return 商机状态类型编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createBusinessStatus(CrmBusinessStatusSaveReqVO createReqVO) {
@@ -64,6 +70,11 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         return statusType.getId();
     }
 
+    /**
+     * 更新商机状态类型及状态列表
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateBusinessStatus(CrmBusinessStatusSaveReqVO updateReqVO) {
@@ -88,6 +99,12 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         updateBusinessStatus(updateReqVO.getId(), BeanUtils.toBean(updateReqVO.getStatuses(), CrmBusinessStatusDO.class));
     }
 
+    /**
+     * 更新商机状态列表（差量更新）
+     *
+     * @param id 商机状态类型编号
+     * @param newList 新状态列表
+     */
     private void updateBusinessStatus(Long id, List<CrmBusinessStatusDO> newList) {
         List<CrmBusinessStatusDO> oldList = businessStatusMapper.selectListByTypeId(id);
         List<List<CrmBusinessStatusDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
@@ -104,12 +121,23 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         }
     }
 
+    /**
+     * 校验商机状态类型是否存在
+     *
+     * @param id 商机状态类型编号
+     */
     private void validateBusinessStatusTypeExists(Long id) {
         if (businessStatusTypeMapper.selectById(id) == null) {
             throw exception(BUSINESS_STATUS_TYPE_NOT_EXISTS);
         }
     }
 
+    /**
+     * 校验商机状态类型名称是否唯一
+     *
+     * @param name 名称
+     * @param id 排除的编号（更新时使用）
+     */
     private void validateBusinessStatusTypeNameUnique(String name, Long id) {
         CrmBusinessStatusTypeDO statusType = businessStatusTypeMapper.selectByName(name);
         if (statusType == null
@@ -119,6 +147,11 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         throw exception(BUSINESS_STATUS_TYPE_NAME_EXISTS);
     }
 
+    /**
+     * 删除商机状态类型及关联的状态列表
+     *
+     * @param id 商机状态类型编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteBusinessStatusType(Long id) {
@@ -135,26 +168,54 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         businessStatusMapper.deleteByTypeId(id);
     }
 
+    /**
+     * 查询商机状态类型详情
+     *
+     * @param id 商机状态类型编号
+     * @return 商机状态类型
+     */
     @Override
     public CrmBusinessStatusTypeDO getBusinessStatusType(Long id) {
         return businessStatusTypeMapper.selectById(id);
     }
 
+    /**
+     * 校验商机状态类型是否存在
+     *
+     * @param id 商机状态类型编号
+     */
     @Override
     public void validateBusinessStatusType(Long id) {
         validateBusinessStatusTypeExists(id);
     }
 
+    /**
+     * 查询所有商机状态类型列表
+     *
+     * @return 商机状态类型列表
+     */
     @Override
     public List<CrmBusinessStatusTypeDO> getBusinessStatusTypeList() {
         return businessStatusTypeMapper.selectList();
     }
 
+    /**
+     * 分页查询商机状态类型
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmBusinessStatusTypeDO> getBusinessStatusTypePage(PageParam pageReqVO) {
         return businessStatusTypeMapper.selectPage(pageReqVO);
     }
 
+    /**
+     * 根据编号集合查询商机状态类型列表
+     *
+     * @param ids 商机状态类型编号集合
+     * @return 商机状态类型列表
+     */
     @Override
     public List<CrmBusinessStatusTypeDO> getBusinessStatusTypeList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -163,6 +224,12 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         return businessStatusTypeMapper.selectByIds(ids);
     }
 
+    /**
+     * 根据类型编号查询商机状态列表（按排序升序）
+     *
+     * @param typeId 类型编号
+     * @return 商机状态列表
+     */
     @Override
     public List<CrmBusinessStatusDO> getBusinessStatusListByTypeId(Long typeId) {
         List<CrmBusinessStatusDO> list = businessStatusMapper.selectListByTypeId(typeId);
@@ -170,6 +237,12 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         return list;
     }
 
+    /**
+     * 根据编号集合查询商机状态列表
+     *
+     * @param ids 商机状态编号集合
+     * @return 商机状态列表
+     */
     @Override
     public List<CrmBusinessStatusDO> getBusinessStatusList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -178,11 +251,24 @@ public class CrmBusinessStatusServiceImpl implements CrmBusinessStatusService {
         return businessStatusMapper.selectByIds(ids);
     }
 
+    /**
+     * 查询商机状态详情
+     *
+     * @param id 商机状态编号
+     * @return 商机状态
+     */
     @Override
     public CrmBusinessStatusDO getBusinessStatus(Long id) {
         return businessStatusMapper.selectById(id);
     }
 
+    /**
+     * 校验商机状态是否存在
+     *
+     * @param statusTypeId 商机状态类型编号
+     * @param statusId 商机状态编号
+     * @return 商机状态
+     */
     @Override
     public CrmBusinessStatusDO validateBusinessStatus(Long statusTypeId, Long statusId) {
         CrmBusinessStatusDO status = businessStatusMapper.selectByTypeIdAndId(statusTypeId, statusId);

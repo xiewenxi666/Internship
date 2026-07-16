@@ -11,46 +11,58 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 管理后台 - CRM 回款新增/修改 Request VO
+ */
 @Schema(description = "管理后台 - CRM 回款新增/修改 Request VO")
 @Data
 public class CrmReceivableSaveReqVO {
 
+    /** 编号 */
     @Schema(description = "编号", example = "25787")
     private Long id;
 
+    /** 负责人编号 */
     @Schema(description = "负责人编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @DiffLogField(name = "负责人", function = SysAdminUserParseFunction.NAME)
     @NotNull(message = "负责人编号不能为空")
     private Long ownerUserId;
 
+    /** 客户编号 */
     @Schema(description = "客户编号", example = "2")
     @DiffLogField(name = "客户", function = CrmCustomerParseFunction.NAME)
     private Long customerId; // 该字段不通过前端传递，而是 contractId 查询出来设置进去
 
+    /** 合同编号 */
     @Schema(description = "合同编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @DiffLogField(name = "合同", function = CrmContractParseFunction.NAME)
     @NotNull(message = "合同编号不能为空")
     private Long contractId;
 
+    /** 回款计划编号 */
     @Schema(description = "回款计划编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @DiffLogField(name = "合同", function = CrmReceivablePlanParseFunction.NAME)
     private Long planId;
 
+    /** 回款方式 */
     @Schema(description = "回款方式", example = "2")
     @DiffLogField(name = "回款方式", function = CrmReceivableReturnTypeParseFunction.NAME)
     @InEnum(CrmReceivableReturnTypeEnum.class)
     private Integer returnType;
 
+    /** 回款金额 */
     @Schema(description = "回款金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "9000")
     @DiffLogField(name = "回款金额")
     @NotNull(message = "回款金额不能为空")
     private BigDecimal price;
 
+    /** 回款日期 */
     @Schema(description = "回款日期", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024-02-02")
     @NotNull(message = "回款日期不能为空")
     @DiffLogField(name = "回款日期")
     private LocalDateTime returnTime;
 
+    /** 备注 */
     @Schema(description = "备注", example = "备注")
     @DiffLogField(name = "备注")
     private String remark;

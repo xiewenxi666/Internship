@@ -1,3 +1,9 @@
+/**
+ * 合同分页查询 Request VO
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 package com.meession.etm.module.crm.controller.admin.contract.vo.contract;
 
 import com.meession.etm.framework.common.pojo.PageParam;
@@ -24,27 +30,34 @@ public class CrmContractPageReqVO extends PageParam {
      */
     public static  final Integer EXPIRY_TYPE_EXPIRED = 2;
 
+    /** 合同编号 */
     @Schema(description = "合同编号", example = "XYZ008")
     private String no;
 
+    /** 合同名称 */
     @Schema(description = "合同名称", example = "王五")
     private String name;
 
+    /** 客户编号 */
     @Schema(description = "客户编号", example = "18336")
     private Long customerId;
 
+    /** 商机编号 */
     @Schema(description = "商机编号", example = "10864")
     private Long businessId;
 
+    /** 场景类型 */
     @Schema(description = "场景类型", example = "1")
     @InEnum(CrmSceneTypeEnum.class)
-    private Integer sceneType; // 场景类型，为 null 时则表示全部
+    private Integer sceneType;
 
+    /** 审批状态 */
     @Schema(description = "审批状态", example = "20")
     @InEnum(CrmAuditStatusEnum.class)
     private Integer auditStatus;
 
+    /** 过期类型 */
     @Schema(description = "过期类型", example = "1")
-    private Integer expiryType; // 过期类型，为 null 时则表示全部
+    private Integer expiryType;
 
 }

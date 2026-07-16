@@ -65,4 +65,9 @@ public class BpmProcessInstanceApiImpl implements BpmProcessInstanceApi {
                 .singleResult() != null;
     }
 
+    @Override
+    public void deleteProcessInstance(String processInstanceId, String reason) {
+        runtimeService.deleteProcessInstance(processInstanceId, reason);
+    }
+
 }

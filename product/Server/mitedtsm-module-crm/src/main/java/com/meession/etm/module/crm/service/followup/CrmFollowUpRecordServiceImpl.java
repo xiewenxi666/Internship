@@ -65,6 +65,12 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
     @Lazy
     private CrmOrderService orderService;
 
+    /**
+     * 创建跟进记录，并更新对应业务实体的跟进信息
+     *
+     * @param createReqVO 创建请求
+     * @return 跟进记录编号
+     */
     @Override
     @CrmPermission(bizTypeValue = "#createReqVO.bizType", bizId = "#createReqVO.bizId", level = CrmPermissionLevelEnum.WRITE)
     public Long createFollowUpRecord(CrmFollowUpRecordSaveReqVO createReqVO) {
@@ -103,6 +109,11 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
         return record.getId();
     }
 
+    /**
+     * 批量创建跟进记录
+     *
+     * @param list 跟进记录列表
+     */
     @Override
     public void createFollowUpRecordBatch(List<CrmFollowUpCreateReqBO> list) {
         if (CollUtil.isEmpty(list)) {
@@ -111,6 +122,12 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
         crmFollowUpRecordMapper.insertBatch(BeanUtils.toBean(list, CrmFollowUpRecordDO.class));
     }
 
+    /**
+     * 删除跟进记录
+     *
+     * @param id 跟进记录编号
+     * @param userId 用户编号
+     */
     @Override
     public void deleteFollowUpRecord(Long id, Long userId) {
         // 校验存在
@@ -124,11 +141,23 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
         crmFollowUpRecordMapper.deleteById(id);
     }
 
+    /**
+     * 根据业务类型和业务编号删除跟进记录
+     *
+     * @param bizType 业务类型
+     * @param bizId 业务编号
+     */
     @Override
     public void deleteFollowUpRecordByBiz(Integer bizType, Long bizId) {
         crmFollowUpRecordMapper.deleteByBiz(bizType, bizId);
     }
 
+    /**
+     * 校验跟进记录是否存在
+     *
+     * @param id 跟进记录编号
+     * @return 跟进记录
+     */
     private CrmFollowUpRecordDO validateFollowUpRecordExists(Long id) {
         CrmFollowUpRecordDO followUpRecord = crmFollowUpRecordMapper.selectById(id);
         if (followUpRecord == null) {
@@ -137,17 +166,36 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
         return followUpRecord;
     }
 
+    /**
+     * 查询跟进记录详情
+     *
+     * @param id 跟进记录编号
+     * @return 跟进记录
+     */
     @Override
     public CrmFollowUpRecordDO getFollowUpRecord(Long id) {
         return crmFollowUpRecordMapper.selectById(id);
     }
 
+    /**
+     * 分页查询跟进记录
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizTypeValue = "#pageReqVO.bizType", bizId = "#pageReqVO.bizId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmFollowUpRecordDO> getFollowUpRecordPage(CrmFollowUpRecordPageReqVO pageReqVO) {
         return crmFollowUpRecordMapper.selectPage(pageReqVO);
     }
 
+    /**
+     * 根据业务类型和业务编号集合查询跟进记录列表
+     *
+     * @param bizType 业务类型
+     * @param bizIds 业务编号集合
+     * @return 跟进记录列表
+     */
     @Override
     public List<CrmFollowUpRecordDO> getFollowUpRecordByBiz(Integer bizType, Collection<Long> bizIds) {
         return crmFollowUpRecordMapper.selectListByBiz(bizType, bizIds);

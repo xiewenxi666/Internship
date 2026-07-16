@@ -15,10 +15,12 @@ import lombok.Data;
 @Data
 public class CrmOrderUpdateStatusReqVO {
 
+    /** 订单编号 */
     @Schema(description = "订单编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     @NotNull(message = "订单编号不能为空")
     private Long id;
 
+    /** 订单状态 */
     @Schema(description = "订单状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "40")
     @NotNull(message = "订单状态不能为空")
     @InEnum(value = CrmOrderStatusEnum.class)

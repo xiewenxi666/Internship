@@ -1,3 +1,9 @@
+/**
+ * 商机转移 Request VO
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 package com.meession.etm.module.crm.controller.admin.business.vo.business;
 
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
@@ -13,13 +19,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CrmBusinessTransferReqVO {
 
+    /** 商机编号 */
     @Schema(description = "商机编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     @NotNull(message = "商机编号不能为空")
     private Long id;
 
-    /**
-     * 新负责人的用户编号
-     */
+    /** 新负责人的用户编号 */
     @Schema(description = "新负责人的用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     @NotNull(message = "新负责人的用户编号不能为空")
     private Long newOwnerUserId;

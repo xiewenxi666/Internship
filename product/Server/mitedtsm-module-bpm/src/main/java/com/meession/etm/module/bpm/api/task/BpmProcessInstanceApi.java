@@ -46,4 +46,12 @@ public interface BpmProcessInstanceApi {
      */
     boolean isProcessRunning(String processInstanceId);
 
+    /**
+     * 删除流程实例（撤回/取消）
+     *
+     * @param processInstanceId 流程实例编号
+     * @param reason 删除原因
+     */
+    void deleteProcessInstance(String processInstanceId, String reason);
+
 }

@@ -74,6 +74,11 @@ public class CrmOrderController {
     @Resource
     private DeptApi deptApi;
 
+    // ==================== 订单 CRUD ====================
+
+    /**
+     * 创建订单
+     */
     @PostMapping("/create")
     @Operation(summary = "创建订单")
     @PreAuthorize("@ss.hasPermission('crm:order:create')")
@@ -81,6 +86,9 @@ public class CrmOrderController {
         return success(orderService.createOrder(createReqVO, getLoginUserId()));
     }
 
+    /**
+     * 更新订单
+     */
     @PutMapping("/update")
     @Operation(summary = "更新订单")
     @PreAuthorize("@ss.hasPermission('crm:order:update')")
@@ -89,6 +97,9 @@ public class CrmOrderController {
         return success(true);
     }
 
+    /**
+     * 删除订单
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除订单")
     @Parameter(name = "id", description = "编号", required = true)
@@ -98,6 +109,9 @@ public class CrmOrderController {
         return success(true);
     }
 
+    /**
+     * 获得订单详情
+     */
     @GetMapping("/get")
     @Operation(summary = "获得订单")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -115,6 +129,9 @@ public class CrmOrderController {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    /**
+     * 获得订单分页
+     */
     @GetMapping("/page")
     @Operation(summary = "获得订单分页")
     @PreAuthorize("@ss.hasPermission('crm:order:query')")
@@ -123,6 +140,9 @@ public class CrmOrderController {
         return success(BeanUtils.toBean(pageResult, CrmOrderRespVO.class).setList(buildOrderDetailList(pageResult.getList())));
     }
 
+    /**
+     * 获得订单分页，基于指定客户
+     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得订单分页，基于指定客户")
     public CommonResult<PageResult<CrmOrderRespVO>> getOrderPageByCustomer(@Valid CrmOrderPageReqVO pageVO) {
@@ -130,6 +150,9 @@ public class CrmOrderController {
         return success(BeanUtils.toBean(pageResult, CrmOrderRespVO.class).setList(buildOrderDetailList(pageResult.getList())));
     }
 
+    /**
+     * 获得订单分页，基于指定商机
+     */
     @GetMapping("/page-by-business")
     @Operation(summary = "获得订单分页，基于指定商机")
     public CommonResult<PageResult<CrmOrderRespVO>> getOrderPageByBusiness(@Valid CrmOrderPageReqVO pageVO) {
@@ -137,6 +160,9 @@ public class CrmOrderController {
         return success(BeanUtils.toBean(pageResult, CrmOrderRespVO.class).setList(buildOrderDetailList(pageResult.getList())));
     }
 
+    /**
+     * 导出订单 Excel
+     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出订单 Excel")
     @PreAuthorize("@ss.hasPermission('crm:order:export')")
@@ -148,6 +174,9 @@ public class CrmOrderController {
                 BeanUtils.toBean(pageResult.getList(), CrmOrderRespVO.class));
     }
 
+    /**
+     * 获得订单精简列表（用于下拉选项）
+     */
     @GetMapping("/simple-list")
     @Operation(summary = "获得订单精简列表", description = "主要用于前端的下拉选项")
     @Parameter(name = "customerId", description = "客户编号", required = true)
@@ -164,6 +193,9 @@ public class CrmOrderController {
                 .setStatus(order.getStatus()).setTotalPrice(order.getTotalPrice())));
     }
 
+    /**
+     * 获得待审核订单数量
+     */
     @GetMapping("/audit-count")
     @Operation(summary = "获得待审核订单数量")
     @PreAuthorize("@ss.hasPermission('crm:order:query')")
@@ -171,6 +203,11 @@ public class CrmOrderController {
         return success(orderService.getAuditOrderCount(getLoginUserId()));
     }
 
+    // ==================== 订单操作 ====================
+
+    /**
+     * 提交订单审批
+     */
     @PutMapping("/submit")
     @Operation(summary = "提交订单审批")
     @PreAuthorize("@ss.hasPermission('crm:order:update')")
@@ -179,6 +216,20 @@ public class CrmOrderController {
         return success(true);
     }
 
+    /**
+     * 撤回订单审批
+     */
+    @PutMapping("/withdraw")
+    @Operation(summary = "撤回订单审批")
+    @PreAuthorize("@ss.hasPermission('crm:order:update')")
+    public CommonResult<Boolean> withdrawOrder(@RequestParam("id") Long id) {
+        orderService.withdrawOrder(id, getLoginUserId());
+        return success(true);
+    }
+
+    /**
+     * 转移订单
+     */
     @PutMapping("/transfer")
     @Operation(summary = "转移订单")
     @PreAuthorize("@ss.hasPermission('crm:order:update')")
@@ -187,6 +238,9 @@ public class CrmOrderController {
         return success(true);
     }
 
+    /**
+     * 更新订单状态
+     */
     @PutMapping("/update-status")
     @Operation(summary = "更新订单状态")
     @PreAuthorize("@ss.hasPermission('crm:order:update')")

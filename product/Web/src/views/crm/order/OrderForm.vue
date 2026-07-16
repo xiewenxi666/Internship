@@ -122,7 +122,15 @@
     </el-form>
     <template #footer>
       <el-button :disabled="formLoading" type="primary" @click="submitForm">{{ t('common.save') }}</el-button>
-      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button
+        v-if="formType === 'update'"
+        :disabled="formLoading"
+        type="danger"
+        @click="handleDelete"
+      >
+        {{ t('common.del') }}
+      </el-button>
+      <el-button type="info" @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -132,6 +140,7 @@ import * as OrderApi from '@/api/crm/order'
 import * as UserApi from '@/api/system/user'
 import * as BusinessApi from '@/api/crm/business'
 import * as ProductApi from '@/api/crm/product'
+import { ElMessageBox } from 'element-plus'
 import { erpPriceMultiply, erpPriceInputFormatter } from '@/utils'
 import { useUserStore } from '@/store/modules/user'
 import OrderProductForm from '@/views/crm/order/components/OrderProductForm.vue'
@@ -229,6 +238,23 @@ const submitForm = async () => {
   } finally {
     formLoading.value = false
   }
+}
+
+const handleDelete = async () => {
+  try {
+    await ElMessageBox.confirm(t('common.delConfirm'), t('common.tips'), {
+      type: 'warning'
+    })
+    formLoading.value = true
+    try {
+      await OrderApi.deleteOrder(formData.value.id)
+      message.success(t('common.delSuccess'))
+      dialogVisible.value = false
+      emit('success')
+    } finally {
+      formLoading.value = false
+    }
+  } catch {}
 }
 
 const resetForm = () => {

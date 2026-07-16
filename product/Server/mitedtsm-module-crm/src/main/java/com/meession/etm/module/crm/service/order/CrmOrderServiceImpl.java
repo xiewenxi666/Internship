@@ -85,6 +85,13 @@ public class CrmOrderServiceImpl implements CrmOrderService {
     @Resource
     private BpmProcessInstanceApi bpmProcessInstanceApi;
 
+    /**
+     * 创建订单
+     *
+     * @param createReqVO 创建请求
+     * @param userId 用户编号
+     * @return 订单编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_CREATE_SUB_TYPE, bizNo = "{{#order.no}}",
@@ -118,6 +125,11 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         return order.getId();
     }
 
+    /**
+     * 更新订单
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -145,6 +157,11 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         LogRecordContext.putVariable("orderName", oldOrder.getName());
     }
 
+    /**
+     * 删除订单（逻辑删除）
+     *
+     * @param id 订单编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -162,17 +179,35 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         LogRecordContext.putVariable("orderName", order.getName());
     }
 
+    /**
+     * 查询订单详情
+     *
+     * @param id 订单编号
+     * @return 订单
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_ORDER, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmOrderDO getOrder(Long id) {
         return orderMapper.selectById(id);
     }
 
+    /**
+     * 校验订单是否存在
+     *
+     * @param id 订单编号
+     * @return 订单
+     */
     @Override
     public CrmOrderDO validateOrder(Long id) {
         return validateOrderExists(id);
     }
 
+    /**
+     * 查询订单列表
+     *
+     * @param ids 订单编号集合
+     * @return 订单列表
+     */
     @Override
     public List<CrmOrderDO> getOrderList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -181,28 +216,59 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         return orderMapper.selectByIds(ids);
     }
 
+    /**
+     * 分页查询订单
+     *
+     * @param pageReqVO 分页请求
+     * @param userId 用户编号
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmOrderDO> getOrderPage(CrmOrderPageReqVO pageReqVO, Long userId) {
         return orderMapper.selectPage(pageReqVO, userId);
     }
 
+    /**
+     * 根据客户编号分页查询订单
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageReqVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmOrderDO> getOrderPageByCustomerId(CrmOrderPageReqVO pageReqVO) {
         return orderMapper.selectPageByCustomerId(pageReqVO);
     }
 
+    /**
+     * 根据商机编号分页查询订单
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#pageReqVO.businessId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmOrderDO> getOrderPageByBusinessId(CrmOrderPageReqVO pageReqVO) {
         return orderMapper.selectPageByBusinessId(pageReqVO);
     }
 
+    /**
+     * 获取待审核订单数量
+     *
+     * @param userId 用户编号
+     * @return 待审核数量
+     */
     @Override
     public Long getAuditOrderCount(Long userId) {
         return orderMapper.selectCountByAudit(userId);
     }
 
+    /**
+     * 根据订单编号查询订单商品列表
+     *
+     * @param orderId 订单编号
+     * @return 订单商品列表
+     */
     @Override
     public List<CrmOrderItemDO> getOrderProductListByOrderId(Long orderId) {
         return orderItemMapper.selectListByOrderId(orderId);
@@ -210,6 +276,36 @@ public class CrmOrderServiceImpl implements CrmOrderService {
 
     // ======================== 额外功能 ========================
 
+    /**
+     * 撤回订单审批
+     *
+     * @param id 订单编号
+     * @param userId 用户编号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_WITHDRAW_SUB_TYPE, bizNo = "{{#id}}",
+            success = CRM_ORDER_WITHDRAW_SUCCESS)
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_ORDER, bizId = "#id", level = CrmPermissionLevelEnum.WRITE)
+    public void withdrawOrder(Long id, Long userId) {
+        CrmOrderDO order = validateOrderExists(id);
+        if (ObjUtil.notEqual(order.getStatus(), CrmOrderStatusEnum.APPROVING.getStatus())) {
+            throw exception(ORDER_WITHDRAW_FAIL_NOT_APPROVING);
+        }
+        bpmProcessInstanceApi.deleteProcessInstance(order.getProcessInstanceId(), "发起人撤回审批");
+        orderMapper.update(new CrmOrderDO().setStatus(CrmOrderStatusEnum.DRAFT.getStatus()),
+                new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<CrmOrderDO>()
+                        .eq(CrmOrderDO::getId, id)
+                        .set(CrmOrderDO::getProcessInstanceId, (String) null));
+        LogRecordContext.putVariable("orderName", order.getName());
+    }
+
+    /**
+     * 提交订单审批
+     *
+     * @param id 订单编号
+     * @param userId 用户编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_SUBMIT_SUB_TYPE, bizNo = "{{#id}}",
@@ -231,6 +327,12 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         LogRecordContext.putVariable("orderName", order.getName());
     }
 
+    /**
+     * 更新订单审批状态
+     *
+     * @param id 订单编号
+     * @param bpmResult BPM 审批结果
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateOrderAuditStatus(Long id, Integer bpmResult) {
@@ -253,6 +355,12 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         orderMapper.updateById(new CrmOrderDO().setId(id).setStatus(newStatus));
     }
 
+    /**
+     * 转移订单负责人
+     *
+     * @param reqVO 转移请求
+     * @param userId 当前用户编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
@@ -274,6 +382,11 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         LogRecordContext.putVariable("order", order);
     }
 
+    /**
+     * 更新订单状态
+     *
+     * @param reqVO 状态更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_UPDATE_STATUS_SUB_TYPE, bizNo = "{{#reqVO.id}}",
@@ -319,6 +432,12 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         return false;
     }
 
+    /**
+     * 更新订单跟进信息
+     *
+     * @param id 订单编号
+     * @param contactNextTime 下次联系时间
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_ORDER_TYPE, subType = CRM_ORDER_FOLLOW_UP_SUB_TYPE, bizNo = "{{#id}}",
@@ -332,11 +451,23 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         LogRecordContext.putVariable("orderName", order.getName());
     }
 
+    /**
+     * 根据客户编号统计订单数量
+     *
+     * @param customerId 客户编号
+     * @return 订单数量
+     */
     @Override
     public Long getOrderCountByCustomerId(Long customerId) {
         return orderMapper.selectCount(CrmOrderDO::getCustomerId, customerId);
     }
 
+    /**
+     * 根据商机编号统计订单数量
+     *
+     * @param businessId 商机编号
+     * @return 订单数量
+     */
     @Override
     public Long getOrderCountByBusinessId(Long businessId) {
         return orderMapper.selectCount(CrmOrderDO::getBusinessId, businessId);
@@ -344,6 +475,7 @@ public class CrmOrderServiceImpl implements CrmOrderService {
 
     // ======================= 私有方法 =======================
 
+    /** 校验关联数据（客户、负责人）是否存在 */
     private void validateRelationDataExists(CrmOrderSaveReqVO reqVO) {
         if (reqVO.getCustomerId() != null) {
             customerService.validateCustomer(reqVO.getCustomerId());
@@ -353,6 +485,7 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         }
     }
 
+    /** 校验并转换产品列表，计算产品小计 */
     private List<CrmOrderItemDO> validateOrderProducts(List<CrmOrderSaveReqVO.Product> products) {
         if (CollUtil.isEmpty(products)) {
             return ListUtil.empty();
@@ -362,6 +495,7 @@ public class CrmOrderServiceImpl implements CrmOrderService {
                 item -> item.setTotalPrice(MoneyUtils.priceMultiply(item.getOrderPrice(), item.getCount()))));
     }
 
+    /** 计算订单总金额（产品总金额 - 折扣金额） */
     private void calculateTotalPrice(CrmOrderDO order, List<CrmOrderItemDO> orderItems) {
         if (CollUtil.isEmpty(orderItems)) {
             order.setTotalProductPrice(BigDecimal.ZERO);
@@ -373,6 +507,7 @@ public class CrmOrderServiceImpl implements CrmOrderService {
         order.setTotalPrice(order.getTotalProductPrice().subtract(discountPrice));
     }
 
+    /** 增量更新产品行（差量计算：新增/修改/删除） */
     private void updateOrderItem(Long orderId, List<CrmOrderItemDO> newList) {
         List<CrmOrderItemDO> oldList = orderItemMapper.selectListByOrderId(orderId);
         List<List<CrmOrderItemDO>> diffList = diffList(oldList, newList,

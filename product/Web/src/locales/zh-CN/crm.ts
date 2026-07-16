@@ -506,6 +506,9 @@ export default {
     ownerUserRequired: '负责人不能为空',
     createOrder: '创建订单',
     submitAudit: '提交审核',
+    withdrawAudit: '撤回审批',
+    withdrawAuditConfirm: '您确定撤回【{name}】的审批吗？撤回后订单将回到草稿状态',
+    withdrawAuditSuccess: '撤回审批成功！',
     viewApproval: '查看审批',
     submitAuditConfirm: '您确定提交【{name}】审核吗？',
     submitAuditSuccess: '提交审核成功！',
@@ -522,6 +525,7 @@ export default {
     someProductsDisabled: '部分商机产品已被禁用，已自动过滤',
     updateStatus: '更新状态',
     updateStatusSuccess: '更新状态成功',
+    updateStatusHint: '请选择目标状态：',
   },
   receivablePlan: {
     title: '回款计划',

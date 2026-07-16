@@ -9,8 +9,8 @@ import java.util.Arrays;
 /**
  * CRM 订单状态枚举
  *
- * 七种状态流转：
- * DRAFT → SUBMITTED → APPROVING → APPROVED → PROCESSING → COMPLETED
+ * 六种状态流转：
+ * DRAFT → SUBMITTED → APPROVING → APPROVED → COMPLETED
  *                ↓                      ↓
  *           DRAFT(回)               REJECTED → DRAFT(回)
  *                                              ↓
@@ -27,7 +27,6 @@ public enum CrmOrderStatusEnum implements ArrayValuable<Integer> {
     APPROVING(15, "审批中"),
     APPROVED(20, "已通过"),
     REJECTED(30, "已拒绝"),
-    PROCESSING(40, "处理中"),
     COMPLETED(60, "已完成"),
     CANCELLED(70, "已取消");
 
@@ -68,10 +67,6 @@ public enum CrmOrderStatusEnum implements ArrayValuable<Integer> {
 
     public static boolean isRejected(Integer status) {
         return REJECTED.status.equals(status);
-    }
-
-    public static boolean isProcessing(Integer status) {
-        return PROCESSING.status.equals(status);
     }
 
     public static boolean isCompleted(Integer status) {

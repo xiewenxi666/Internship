@@ -32,7 +32,10 @@ import com.meession.etm.module.system.api.user.AdminUserApi;
 import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.annotation.LogRecord;
+import com.meession.etm.module.crm.enums.business.CrmBusinessEndStatusEnum;
+import com.meession.etm.module.crm.event.CrmBusinessWonEvent;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +85,16 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
 
     @Resource
     private AdminUserApi adminUserApi;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
+    /**
+     * 创建商机
+     *
+     * @param createReqVO 创建请求
+     * @param userId 用户编号
+     * @return 商机编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_CREATE_SUB_TYPE, bizNo = "{{#business.id}}",
@@ -120,6 +132,11 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         return business.getId();
     }
 
+    /**
+     * 更新商机
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -147,6 +164,13 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         LogRecordContext.putVariable("businessName", oldBusiness.getName());
     }
 
+    /**
+     * 更新商机跟进信息
+     *
+     * @param id 商机编号
+     * @param contactNextTime 下次联系时间
+     * @param contactLastContent 最后跟进内容
+     */
     @Override
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_FOLLOW_UP_SUB_TYPE, bizNo = "{{#id}}",
             success = CRM_BUSINESS_FOLLOW_UP_SUCCESS)
@@ -163,12 +187,24 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         LogRecordContext.putVariable("businessName", business.getName());
     }
 
+    /**
+     * 批量更新商机的下次联系时间
+     *
+     * @param ids 商机编号集合
+     * @param contactNextTime 下次联系时间
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#ids", level = CrmPermissionLevelEnum.WRITE)
     public void updateBusinessContactNextTime(Collection<Long> ids, LocalDateTime contactNextTime) {
         businessMapper.updateBatch(convertList(ids, id -> new CrmBusinessDO().setId(id).setContactNextTime(contactNextTime)));
     }
 
+    /**
+     * 差量更新商机关联商品
+     *
+     * @param id 商机编号
+     * @param newList 新商品列表
+     */
     private void updateBusinessProduct(Long id, List<CrmBusinessProductDO> newList) {
         List<CrmBusinessProductDO> oldList = businessProductMapper.selectListByBusinessId(id);
         List<List<CrmBusinessProductDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
@@ -185,6 +221,11 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         }
     }
 
+    /**
+     * 校验关联数据是否存在
+     *
+     * @param saveReqVO 请求
+     */
     private void validateRelationDataExists(CrmBusinessSaveReqVO saveReqVO) {
         // 校验商机状态
         if (saveReqVO.getStatusTypeId() != null) {
@@ -204,6 +245,12 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         }
     }
 
+    /**
+     * 校验商机商品列表有效性，并转换为 DO 列表
+     *
+     * @param list 商品列表
+     * @return 商机商品 DO 列表
+     */
     private List<CrmBusinessProductDO> validateBusinessProducts(List<CrmBusinessSaveReqVO.BusinessProduct> list) {
         // 1. 校验产品存在
         productService.validProductList(convertSet(list, CrmBusinessSaveReqVO.BusinessProduct::getProductId));
@@ -212,12 +259,23 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
                 item -> item.setTotalPrice(MoneyUtils.priceMultiply(item.getBusinessPrice(), item.getCount()))));
     }
 
+    /**
+     * 计算商机总价（含折扣）
+     *
+     * @param business 商机
+     * @param businessProducts 商机商品列表
+     */
     private void calculateTotalPrice(CrmBusinessDO business, List<CrmBusinessProductDO> businessProducts) {
         business.setTotalProductPrice(getSumValue(businessProducts, CrmBusinessProductDO::getTotalPrice, BigDecimal::add, BigDecimal.ZERO));
         BigDecimal discountPrice = MoneyUtils.priceMultiplyPercent(business.getTotalProductPrice(), business.getDiscountPercent());
         business.setTotalPrice(business.getTotalProductPrice().subtract(discountPrice));
     }
 
+    /**
+     * 更新商机状态
+     *
+     * @param reqVO 状态更新请求
+     */
     @Override
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_UPDATE_STATUS_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_BUSINESS_UPDATE_STATUS_SUCCESS)
@@ -244,6 +302,11 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         businessMapper.updateById(new CrmBusinessDO().setId(reqVO.getId()).setStatusId(reqVO.getStatusId())
                 .setEndStatus(reqVO.getEndStatus()));
 
+        // 2.1 商机成交时发布事件，自动创建订单
+        if (CrmBusinessEndStatusEnum.WIN.getStatus().equals(reqVO.getEndStatus())) {
+            eventPublisher.publishEvent(new CrmBusinessWonEvent(this, reqVO.getId()));
+        }
+
         // 3. 记录操作日志上下文
         LogRecordContext.putVariable("businessName", business.getName());
         LogRecordContext.putVariable("oldStatusName", getBusinessStatusName(business.getEndStatus(),
@@ -251,6 +314,11 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         LogRecordContext.putVariable("newStatusName", getBusinessStatusName(reqVO.getEndStatus(), status));
     }
 
+    /**
+     * 删除商机
+     *
+     * @param id 商机编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -283,6 +351,12 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         }
     }
 
+    /**
+     * 校验商机是否存在
+     *
+     * @param id 商机编号
+     * @return 商机
+     */
     private CrmBusinessDO validateBusinessExists(Long id) {
         CrmBusinessDO crmBusiness = businessMapper.selectById(id);
         if (crmBusiness == null) {
@@ -292,6 +366,12 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
     }
 
 
+    /**
+     * 转移商机负责人
+     *
+     * @param reqVO 转移请求
+     * @param userId 当前用户编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
@@ -313,17 +393,35 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
 
     //======================= 查询相关 =======================
 
+    /**
+     * 查询商机详情
+     *
+     * @param id 商机编号
+     * @return 商机
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmBusinessDO getBusiness(Long id) {
         return businessMapper.selectById(id);
     }
 
+    /**
+     * 校验商机是否存在
+     *
+     * @param id 商机编号
+     * @return 商机
+     */
     @Override
     public CrmBusinessDO validateBusiness(Long id) {
         return validateBusinessExists(id);
     }
 
+    /**
+     * 查询商机列表
+     *
+     * @param ids 商机编号集合
+     * @return 商机列表
+     */
     @Override
     public List<CrmBusinessDO> getBusinessList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -332,22 +430,47 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         return businessMapper.selectByIds(ids);
     }
 
+    /**
+     * 根据商机编号查询关联商品列表
+     *
+     * @param businessId 商机编号
+     * @return 商品列表
+     */
     @Override
     public List<CrmBusinessProductDO> getBusinessProductListByBusinessId(Long businessId) {
         return businessProductMapper.selectListByBusinessId(businessId);
     }
 
+    /**
+     * 分页查询商机
+     *
+     * @param pageReqVO 分页请求
+     * @param userId 用户编号
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmBusinessDO> getBusinessPage(CrmBusinessPageReqVO pageReqVO, Long userId) {
         return businessMapper.selectPage(pageReqVO, userId);
     }
 
+    /**
+     * 根据客户编号分页查询商机
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageReqVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmBusinessDO> getBusinessPageByCustomerId(CrmBusinessPageReqVO pageReqVO) {
         return businessMapper.selectPageByCustomerId(pageReqVO);
     }
 
+    /**
+     * 根据联系人编号分页查询商机
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#pageReqVO.contactId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmBusinessDO> getBusinessPageByContact(CrmBusinessPageReqVO pageReqVO) {
@@ -362,21 +485,46 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
                 convertSet(contactBusinessList, CrmContactBusinessDO::getBusinessId));
     }
 
+    /**
+     * 根据客户编号统计商机数量
+     *
+     * @param customerId 客户编号
+     * @return 商机数量
+     */
     @Override
     public Long getBusinessCountByCustomerId(Long customerId) {
         return businessMapper.selectCount(CrmBusinessDO::getCustomerId, customerId);
     }
 
+    /**
+     * 根据状态类型编号统计商机数量
+     *
+     * @param statusTypeId 状态类型编号
+     * @return 商机数量
+     */
     @Override
     public Long getBusinessCountByStatusTypeId(Long statusTypeId) {
         return businessMapper.selectCountByStatusTypeId(statusTypeId);
     }
 
+    /**
+     * 根据客户编号和负责人编号查询商机列表
+     *
+     * @param customerId 客户编号
+     * @param ownerUserId 负责人编号
+     * @return 商机列表
+     */
     @Override
     public List<CrmBusinessDO> getBusinessListByCustomerIdOwnerUserId(Long customerId, Long ownerUserId) {
         return businessMapper.selectListByCustomerIdOwnerUserId(customerId, ownerUserId);
     }
 
+    /**
+     * 根据日期范围分页查询商机（漏斗统计用）
+     *
+     * @param pageVO 统计请求
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmBusinessDO> getBusinessPageByDate(CrmStatisticsFunnelReqVO pageVO) {
         return businessMapper.selectPage(pageVO);

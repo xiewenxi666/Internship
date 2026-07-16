@@ -3,13 +3,18 @@ package com.meession.etm.module.crm.controller.admin.customer.vo.customer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+/**
+ * 管理后台 - CRM 客户锁定/解锁 Request VO
+ */
 @Schema(description = "管理后台 - CRM 客户锁定/解锁 Request VO")
 @Data
 public class CrmCustomerLockReqVO {
 
+    /** 客户编号 */
     @Schema(description = "客户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "13563")
     private Long id;
 
+    /** 客户锁定状态 */
     @Schema(description = "客户锁定状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
     private Boolean lockStatus;
 

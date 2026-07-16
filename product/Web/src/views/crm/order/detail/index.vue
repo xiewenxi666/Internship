@@ -3,6 +3,14 @@
     <el-button v-if="permissionListRef?.validateWrite" @click="openForm('update', order.id)">
       {{ t('common.edit') }}
     </el-button>
+    <el-button
+      v-if="order.status === 15"
+      v-hasPermi="['crm:order:update']"
+      type="warning"
+      @click="handleWithdraw"
+    >
+      {{ t('crm.order.withdrawAudit') }}
+    </el-button>
     <el-button v-if="permissionListRef?.validateOwnerUser" type="primary" @click="transferOrderObj">
       {{ t('crm.customer.transfer') }}
     </el-button>
@@ -84,6 +92,13 @@ const getOperateLog = async (id: number) => {
     bizId: id
   })
   logList.value = data.list
+}
+
+const handleWithdraw = async () => {
+  await message.confirm(t('crm.order.withdrawAuditConfirm', { name: order.value.name }))
+  await OrderApi.withdrawOrder(order.value.id)
+  message.success(t('crm.order.withdrawAuditSuccess'))
+  await getOrderData()
 }
 
 const transferFormRef = ref<InstanceType<typeof CrmTransferForm>>()

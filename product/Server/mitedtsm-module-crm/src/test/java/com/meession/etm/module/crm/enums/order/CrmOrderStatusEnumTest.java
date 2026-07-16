@@ -13,7 +13,7 @@ public class CrmOrderStatusEnumTest {
 
     @Test
     public void testValues() {
-        assertEquals(8, CrmOrderStatusEnum.values().length);
+        assertEquals(7, CrmOrderStatusEnum.values().length);
     }
 
     @Test
@@ -52,13 +52,6 @@ public class CrmOrderStatusEnumTest {
     }
 
     @Test
-    public void testProcessing() {
-        CrmOrderStatusEnum status = CrmOrderStatusEnum.PROCESSING;
-        assertEquals(40, status.getStatus().intValue());
-        assertEquals("处理中", status.getName());
-    }
-
-    @Test
     public void testCompleted() {
         CrmOrderStatusEnum status = CrmOrderStatusEnum.COMPLETED;
         assertEquals(60, status.getStatus().intValue());
@@ -76,16 +69,16 @@ public class CrmOrderStatusEnumTest {
     public void testArray() {
         Integer[] array = CrmOrderStatusEnum.ARRAYS;
         assertNotNull(array);
-        assertEquals(8, array.length);
+        assertEquals(7, array.length);
         assertTrue(array[0] == 0);
-        assertTrue(array[7] == 70);
+        assertTrue(array[6] == 70);
     }
 
     @Test
     public void testArrayMethod() {
         Integer[] array = CrmOrderStatusEnum.DRAFT.array();
         assertNotNull(array);
-        assertEquals(8, array.length);
+        assertEquals(7, array.length);
     }
 
     @Test
@@ -128,12 +121,6 @@ public class CrmOrderStatusEnumTest {
     public void testIsApproving() {
         assertTrue(CrmOrderStatusEnum.isApproving(CrmOrderStatusEnum.APPROVING.getStatus()));
         assertFalse(CrmOrderStatusEnum.isApproving(CrmOrderStatusEnum.DRAFT.getStatus()));
-    }
-
-    @Test
-    public void testIsProcessing() {
-        assertTrue(CrmOrderStatusEnum.isProcessing(CrmOrderStatusEnum.PROCESSING.getStatus()));
-        assertFalse(CrmOrderStatusEnum.isProcessing(CrmOrderStatusEnum.COMPLETED.getStatus()));
     }
 
 }

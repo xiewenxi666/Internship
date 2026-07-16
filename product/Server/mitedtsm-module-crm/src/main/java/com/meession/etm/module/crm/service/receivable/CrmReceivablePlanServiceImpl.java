@@ -53,6 +53,12 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
     @Resource
     private AdminUserApi adminUserApi;
 
+    /**
+     * 创建回款计划
+     *
+     * @param createReqVO 创建请求
+     * @return 回款计划编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_PLAN_TYPE, subType = CRM_RECEIVABLE_PLAN_CREATE_SUB_TYPE, bizNo = "{{#receivablePlan.id}}",
@@ -80,6 +86,11 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         return receivablePlan.getId();
     }
 
+    /**
+     * 更新回款计划
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_PLAN_TYPE, subType = CRM_RECEIVABLE_PLAN_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -109,6 +120,11 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         LogRecordContext.putVariable("receivablePlan", oldReceivablePlan);
     }
 
+    /**
+     * 校验关联数据是否存在
+     *
+     * @param reqVO 请求
+     */
     private void validateRelationDataExists(CrmReceivablePlanSaveReqVO reqVO) {
         // 校验负责人存在
         if (reqVO.getOwnerUserId() != null) {
@@ -121,6 +137,12 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         }
     }
 
+    /**
+     * 更新回款计划的关联回款编号
+     *
+     * @param id 回款计划编号
+     * @param receivableId 回款编号
+     */
     @Override
     public void updateReceivablePlanReceivableId(Long id, Long receivableId) {
         // 校验存在
@@ -129,6 +151,11 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         receivablePlanMapper.updateById(new CrmReceivablePlanDO().setId(id).setReceivableId(receivableId));
     }
 
+    /**
+     * 删除回款计划
+     *
+     * @param id 回款计划编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_PLAN_TYPE, subType = CRM_RECEIVABLE_PLAN_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -147,6 +174,12 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         LogRecordContext.putVariable("receivablePlan", receivablePlan);
     }
 
+    /**
+     * 校验回款计划是否存在
+     *
+     * @param id 回款计划编号
+     * @return 回款计划
+     */
     private CrmReceivablePlanDO validateReceivablePlanExists(Long id) {
         CrmReceivablePlanDO receivablePlan = receivablePlanMapper.selectById(id);
         if (receivablePlan == null) {
@@ -155,12 +188,24 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         return receivablePlan;
     }
 
+    /**
+     * 查询回款计划详情
+     *
+     * @param id 回款计划编号
+     * @return 回款计划
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_RECEIVABLE_PLAN, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmReceivablePlanDO getReceivablePlan(Long id) {
         return receivablePlanMapper.selectById(id);
     }
 
+    /**
+     * 查询回款计划列表
+     *
+     * @param ids 回款计划编号集合
+     * @return 回款计划列表
+     */
     @Override
     public List<CrmReceivablePlanDO> getReceivablePlanList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -169,17 +214,36 @@ public class CrmReceivablePlanServiceImpl implements CrmReceivablePlanService {
         return receivablePlanMapper.selectByIds(ids);
     }
 
+    /**
+     * 分页查询回款计划
+     *
+     * @param pageReqVO 分页请求
+     * @param userId 用户编号
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmReceivablePlanDO> getReceivablePlanPage(CrmReceivablePlanPageReqVO pageReqVO, Long userId) {
         return receivablePlanMapper.selectPage(pageReqVO, userId);
     }
 
+    /**
+     * 根据客户编号分页查询回款计划
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageReqVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmReceivablePlanDO> getReceivablePlanPageByCustomerId(CrmReceivablePlanPageReqVO pageReqVO) {
         return receivablePlanMapper.selectPageByCustomerId(pageReqVO);
     }
 
+    /**
+     * 获取待提醒回款计划数量
+     *
+     * @param userId 用户编号
+     * @return 待提醒数量
+     */
     @Override
     public Long getReceivablePlanRemindCount(Long userId) {
         return receivablePlanMapper.selectReceivablePlanCountByRemind(userId);

@@ -20,10 +20,12 @@ import java.util.List;
 @Mapper
 public interface CrmOrderMapper extends BaseMapperX<CrmOrderDO> {
 
+    /** 按编号查询 */
     default CrmOrderDO selectByNo(String no) {
         return selectOne(CrmOrderDO::getNo, no);
     }
 
+    /** 分页查询（带数据权限） */
     default PageResult<CrmOrderDO> selectPage(CrmOrderPageReqVO pageReqVO, Long userId) {
         MPJLambdaWrapperX<CrmOrderDO> query = new MPJLambdaWrapperX<>();
         CrmPermissionUtils.appendPermissionCondition(query, CrmBizTypeEnum.CRM_ORDER.getType(),
@@ -38,6 +40,7 @@ public interface CrmOrderMapper extends BaseMapperX<CrmOrderDO> {
         return selectJoinPage(pageReqVO, CrmOrderDO.class, query);
     }
 
+    /** 按客户分页查询 */
     default PageResult<CrmOrderDO> selectPageByCustomerId(CrmOrderPageReqVO pageReqVO) {
         return selectPage(pageReqVO, new LambdaQueryWrapperX<CrmOrderDO>()
                 .eq(CrmOrderDO::getCustomerId, pageReqVO.getCustomerId())
@@ -46,6 +49,7 @@ public interface CrmOrderMapper extends BaseMapperX<CrmOrderDO> {
                 .orderByDesc(CrmOrderDO::getId));
     }
 
+    /** 按商机分页查询 */
     default PageResult<CrmOrderDO> selectPageByBusinessId(CrmOrderPageReqVO pageReqVO) {
         return selectPage(pageReqVO, new LambdaQueryWrapperX<CrmOrderDO>()
                 .eq(CrmOrderDO::getBusinessId, pageReqVO.getBusinessId())
@@ -54,6 +58,7 @@ public interface CrmOrderMapper extends BaseMapperX<CrmOrderDO> {
                 .orderByDesc(CrmOrderDO::getId));
     }
 
+    /** 统计待审批订单数 */
     default Long selectCountByAudit(Long userId) {
         MPJLambdaWrapperX<CrmOrderDO> query = new MPJLambdaWrapperX<>();
         CrmPermissionUtils.appendPermissionCondition(query, CrmBizTypeEnum.CRM_ORDER.getType(),

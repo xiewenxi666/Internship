@@ -114,5 +114,6 @@ public interface ErrorCodeConstants {
     ErrorCode ORDER_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS = new ErrorCode(1_020_015_005, "更新订单审核状态失败，原因：订单不是审批中状态");
     ErrorCode ORDER_UPDATE_STATUS_FAIL = new ErrorCode(1_020_015_006, "更新订单状态失败");
     ErrorCode ORDER_TRANSFER_FAIL = new ErrorCode(1_020_015_007, "转移订单失败，原因：不能转移给当前负责人");
+    ErrorCode ORDER_WITHDRAW_FAIL_NOT_APPROVING = new ErrorCode(1_020_015_008, "撤回订单审批失败，原因：订单不是审批中状态");
 
 }

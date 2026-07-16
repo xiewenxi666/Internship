@@ -19,14 +19,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CrmOrderTransferReqVO {
 
+    /** 订单编号 */
     @Schema(description = "订单编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     @NotNull(message = "订单编号不能为空")
     private Long id;
 
+    /** 新负责人的用户编号 */
     @Schema(description = "新负责人的用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     @NotNull(message = "新负责人的用户编号不能为空")
     private Long newOwnerUserId;
 
+    /** 老负责人加入团队后的权限级别 */
     @Schema(description = "老负责人加入团队后的权限级别", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @InEnum(value = CrmPermissionLevelEnum.class)
     private Integer oldOwnerPermissionLevel;

@@ -165,6 +165,8 @@ public interface LogRecordConstants {
     String CRM_ORDER_SUBMIT_SUCCESS = "提交订单【{{#orderName}}】审批成功";
     String CRM_ORDER_UPDATE_STATUS_SUB_TYPE = "更新订单状态";
     String CRM_ORDER_UPDATE_STATUS_SUCCESS = "更新了订单【{{#orderName}}】的状态为【{{#newStatusName}}】";
+    String CRM_ORDER_WITHDRAW_SUB_TYPE = "撤回订单审批";
+    String CRM_ORDER_WITHDRAW_SUCCESS = "撤回了订单【{{#orderName}}】的审批";
     String CRM_ORDER_FOLLOW_UP_SUB_TYPE = "订单跟进";
     String CRM_ORDER_FOLLOW_UP_SUCCESS = "订单跟进【{{#orderName}}】";
 

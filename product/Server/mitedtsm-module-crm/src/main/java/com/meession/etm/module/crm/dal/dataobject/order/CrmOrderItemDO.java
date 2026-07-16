@@ -27,11 +27,17 @@ public class CrmOrderItemDO extends BaseDO {
 
     @TableId
     private Long id;
+    /** 订单编号 */
     private Long orderId;
+    /** 产品编号 */
     private Long productId;
+    /** 产品标准单价 */
     private BigDecimal productPrice;
+    /** 实际成交单价 */
     private BigDecimal orderPrice;
+    /** 数量 */
     private BigDecimal count;
+    /** 小计（orderPrice × count） */
     private BigDecimal totalPrice;
 
 }

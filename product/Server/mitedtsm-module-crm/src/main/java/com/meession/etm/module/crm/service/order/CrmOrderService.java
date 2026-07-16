@@ -57,6 +57,11 @@ public interface CrmOrderService {
     void submitOrder(Long id, Long userId);
 
     /**
+     * 撤回订单审批
+     */
+    void withdrawOrder(Long id, Long userId);
+
+    /**
      * 更新订单审核状态（BPM 回调）
      */
     void updateOrderAuditStatus(Long id, Integer bpmResult);

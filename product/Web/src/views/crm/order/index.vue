@@ -122,47 +122,62 @@
           <dict-tag :type="DICT_TYPE.CRM_ORDER_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" :label="t('common.action')" min-width="280">
+      <el-table-column fixed="right" :label="t('common.action')" min-width="320">
         <template #default="scope">
-          <el-button
-            v-if="scope.row.status === 0"
-            v-hasPermi="['crm:order:update']"
-            link type="primary"
-            @click="openForm('update', scope.row.id)"
-          >
-            {{ t('common.edit') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.status === 0"
-            v-hasPermi="['crm:order:update']"
-            link type="primary"
-            @click="handleSubmit(scope.row)"
-          >
-            {{ t('crm.order.submitAudit') }}
-          </el-button>
-          <el-button
-            v-else-if="scope.row.processInstanceId"
-            link
-            v-hasPermi="['crm:order:update']"
-            type="primary"
-            @click="handleProcessDetail(scope.row)"
-          >
-            {{ t('crm.order.viewApproval') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.status === 0 || scope.row.status === 10 || scope.row.status === 20"
-            v-hasPermi="['crm:order:update']"
-            link type="primary"
-            @click="handleUpdateStatus(scope.row)"
-          >
-            {{ t('crm.order.updateStatus') }}
-          </el-button>
-          <el-button v-hasPermi="['crm:order:query']" link type="primary" @click="openDetail(scope.row.id)">
-            {{ t('common.detail') }}
-          </el-button>
-          <el-button v-hasPermi="['crm:order:delete']" link type="danger" @click="handleDelete(scope.row.id)">
-            {{ t('common.del') }}
-          </el-button>
+          <div style="display: flex; gap: 6px; flex-wrap: nowrap; align-items: center;">
+            <el-button
+              v-if="scope.row.status === 0"
+              v-hasPermi="['crm:order:update']"
+              link type="primary"
+              size="small"
+              @click="openForm('update', scope.row.id)"
+            >
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button
+              v-if="scope.row.status === 0"
+              v-hasPermi="['crm:order:update']"
+              link type="primary"
+              size="small"
+              @click="handleSubmit(scope.row)"
+            >
+              {{ t('crm.order.submitAudit') }}
+            </el-button>
+            <el-button
+              v-if="scope.row.status === 15"
+              v-hasPermi="['crm:order:update']"
+              link type="primary"
+              size="small"
+              @click="handleWithdraw(scope.row)"
+            >
+              {{ t('crm.order.withdrawAudit') }}
+            </el-button>
+            <el-button
+              v-else-if="scope.row.processInstanceId"
+              link
+              v-hasPermi="['crm:order:update']"
+              type="primary"
+              size="small"
+              @click="handleProcessDetail(scope.row)"
+            >
+              {{ t('crm.order.viewApproval') }}
+            </el-button>
+            <el-button
+              v-if="[0, 20, 30, 40, 60].includes(scope.row.status)"
+              v-hasPermi="['crm:order:update']"
+              link type="primary"
+              size="small"
+              @click="handleUpdateStatus(scope.row)"
+            >
+              {{ t('crm.order.updateStatus') }}
+            </el-button>
+            <el-button v-hasPermi="['crm:order:query']" link type="primary" size="small" @click="openDetail(scope.row.id)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button v-hasPermi="['crm:order:delete']" link type="danger" size="small" @click="handleDelete(scope.row.id)">
+              {{ t('common.del') }}
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -177,6 +192,8 @@
   <OrderForm ref="formRef" @success="getList" />
 </template>
 <script lang="ts" setup>
+import { h, ref } from 'vue'
+import { ElMessageBox, ElSelect, ElOption } from 'element-plus'
 import { dateFormatter, dateFormatter2 } from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as OrderApi from '@/api/crm/order'
@@ -266,25 +283,76 @@ const handleSubmit = async (row: OrderApi.OrderVO) => {
   await getList()
 }
 
+const handleWithdraw = async (row: OrderApi.OrderVO) => {
+  await message.confirm(t('crm.order.withdrawAuditConfirm', { name: row.name }))
+  await OrderApi.withdrawOrder(row.id)
+  message.success(t('crm.order.withdrawAuditSuccess'))
+  await getList()
+}
+
 const handleProcessDetail = (row: OrderApi.OrderVO) => {
   push({ name: 'BpmProcessInstanceDetail', query: { id: row.processInstanceId } })
 }
 
+const statusOptions: Record<number, { value: number; label: string }[]> = {
+  0: [
+    { value: 20, label: t('crm.order.statusApproved') },
+    { value: 30, label: t('crm.order.statusRejected') },
+    { value: 70, label: t('crm.order.statusCancelled') }
+  ],
+  20: [
+    { value: 60, label: t('crm.order.statusCompleted') },
+    { value: 70, label: t('crm.order.statusCancelled') }
+  ],
+  30: [
+    { value: 0, label: t('crm.order.statusDraft') },
+    { value: 70, label: t('crm.order.statusCancelled') }
+  ],
+  40: [
+    { value: 60, label: t('crm.order.statusCompleted') },
+    { value: 70, label: t('crm.order.statusCancelled') }
+  ],
+  60: [
+    { value: 20, label: t('crm.order.statusApproved') }
+  ]
+}
+
 const handleUpdateStatus = async (row: OrderApi.OrderVO) => {
-  const status = await message.prompt({
-    title: t('crm.order.updateStatus'),
-    inputType: 'select',
-    inputOptions: [
-      { value: 40, label: t('crm.order.statusProcessing') },
-      { value: 60, label: t('crm.order.statusCompleted') },
-      { value: 70, label: t('crm.order.statusCancelled') }
-    ],
-    inputPlaceholder: t('crm.order.updateStatus')
-  })
-  if (!status) return
-  await OrderApi.updateOrderStatus({ id: row.id, status })
-  message.success(t('crm.order.updateStatusSuccess'))
-  await getList()
+  const opts = statusOptions[row.status]
+  if (!opts || opts.length === 0) return
+
+  const selected = ref(opts[0].value)
+  const node = h('div', null, [
+    h('p', { style: 'margin-bottom: 8px' }, t('crm.order.updateStatusHint')),
+    h(ElSelect, {
+      modelValue: selected.value,
+      'onUpdate:modelValue': (val: number) => { selected.value = val },
+      style: 'width: 100%'
+    }, () => opts.map(opt => h(ElOption, { label: opt.label, value: opt.value })))
+  ])
+
+  try {
+    await ElMessageBox({
+      title: t('crm.order.updateStatus'),
+      message: node,
+      confirmButtonText: t('common.ok'),
+      cancelButtonText: t('common.cancel'),
+      beforeClose: async (action, instance, done) => {
+        if (action === 'confirm') {
+          instance.confirmButtonLoading = true
+          try {
+            await OrderApi.updateOrderStatus({ id: row.id, status: selected.value })
+            message.success(t('crm.order.updateStatusSuccess'))
+            await getList()
+            done()
+          } catch { done() }
+          instance.confirmButtonLoading = false
+        } else {
+          done()
+        }
+      }
+    })
+  } catch {}
 }
 
 const { push } = useRouter()

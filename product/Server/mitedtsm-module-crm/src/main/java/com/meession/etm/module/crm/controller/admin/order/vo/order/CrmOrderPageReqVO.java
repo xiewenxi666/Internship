@@ -21,22 +21,28 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CrmOrderPageReqVO extends PageParam {
 
+    /** 订单编号 */
     @Schema(description = "订单编号", example = "DD20260101000001")
     private String no;
 
+    /** 订单名称 */
     @Schema(description = "订单名称", example = "XX项目订单")
     private String name;
 
+    /** 客户编号 */
     @Schema(description = "客户编号", example = "18336")
     private Long customerId;
 
+    /** 商机编号 */
     @Schema(description = "商机编号", example = "10864")
     private Long businessId;
 
+    /** 订单状态 */
     @Schema(description = "订单状态", example = "20")
     @InEnum(CrmOrderStatusEnum.class)
     private Integer status;
 
+    /** 场景类型 */
     @Schema(description = "场景类型", example = "1")
     @InEnum(CrmSceneTypeEnum.class)
     private Integer sceneType;
