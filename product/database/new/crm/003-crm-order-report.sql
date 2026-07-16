@@ -17,7 +17,7 @@ SET @max_menu_id = (SELECT MAX(id) FROM system_menu);
 
 -- 订单报表菜单 (订单管理下的按钮)
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `component_name`, `status`, `visible`, `keep_alive`, `always_show`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
-VALUES (@max_menu_id + 1, '订单报表', '', 2, 46, 2397, 'order-report', 'ep:data-analysis', 'crm/order/report/index', 'CrmOrderReport', 0, b'1', b'1', b'1', '', NOW(), '', NOW(), b'0');
+VALUES (5306, '订单报表', '', 2, 46, 2397, 'order-report', 'ep:data-analysis', 'crm/order/report/index', 'CrmOrderReport', 0, b'1', b'1', b'1', '', NOW(), '', NOW(), b'0');
 
 -- ==========================================
 -- 订单报表 SQL 数据集（参考，在报表设计器中配置时使用）
@@ -66,4 +66,4 @@ VALUES (@max_menu_id + 1, '订单报表', '', 2, 46, 2397, 'order-report', 'ep:d
 --   status         - 订单状态（下拉框控件，数据字典 CRM_ORDER_STATUS）
 
 -- 回滚脚本
--- DELETE FROM system_menu WHERE id = @max_menu_id + 1;
+-- DELETE FROM system_menu WHERE id IN (5300, 5301, 5302, 5303, 5304, 5305, 5306);

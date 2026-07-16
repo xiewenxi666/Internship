@@ -25,7 +25,7 @@ public enum CrmBizTypeEnum implements ArrayValuable<Integer> {
     CRM_PRODUCT(6, "产品"),
     CRM_RECEIVABLE(7, "回款"),
     CRM_RECEIVABLE_PLAN(8, "回款计划"),
-    CRM_ORDER(9, "订单")
+    CRM_ORDER(16, "订单")
     ;
 
     public static final Integer[] ARRAYS = Arrays.stream(values()).map(CrmBizTypeEnum::getType).toArray(Integer[]::new);
