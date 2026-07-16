@@ -85,8 +85,25 @@ public class CrmReceivablePlanDO extends BaseDO {
      */
     private LocalDateTime remindTime;
     /**
+     * 计划状态
+     *
+     * 枚举 {@link com.meession.etm.module.crm.enums.receivable.CrmReceivablePlanStatusEnum}
+     */
+    private Integer status;
+
+    /**
+     * 计划回款占比，百分比
+     */
+    private BigDecimal percent;
+
+    /**
      * 备注
      */
     private String remark;
+
+    /**
+     * 逾期天数（非持久化，计算字段）
+     */
+    private transient Long overdueDays;
 
 }

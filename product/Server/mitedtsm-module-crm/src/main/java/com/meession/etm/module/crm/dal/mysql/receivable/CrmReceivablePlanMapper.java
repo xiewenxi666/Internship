@@ -12,7 +12,11 @@ import com.meession.etm.module.crm.enums.common.CrmSceneTypeEnum;
 import com.meession.etm.module.crm.util.CrmPermissionUtils;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -51,6 +55,7 @@ public interface CrmReceivablePlanMapper extends BaseMapperX<CrmReceivablePlanDO
         query.selectAll(CrmReceivablePlanDO.class)
                 .eqIfPresent(CrmReceivablePlanDO::getCustomerId, pageReqVO.getCustomerId())
                 .eqIfPresent(CrmReceivablePlanDO::getContractId, pageReqVO.getContractId())
+                .eqIfPresent(CrmReceivablePlanDO::getOwnerUserId, pageReqVO.getOwnerUserId())
                 .orderByDesc(CrmReceivablePlanDO::getPeriod);
         if (Objects.nonNull(pageReqVO.getContractNo())) { // 根据合同编号检索
             query.innerJoin(CrmContractDO.class, on -> on.like(CrmContractDO::getNo, pageReqVO.getContractNo())
@@ -70,20 +75,49 @@ public interface CrmReceivablePlanMapper extends BaseMapperX<CrmReceivablePlanDO
         } else if (CrmReceivablePlanPageReqVO.REMIND_TYPE_RECEIVED.equals(pageReqVO.getRemindType())) { // 已回款
             query.isNotNull(CrmReceivablePlanDO::getReceivableId);
         }
+        // 回款计划状态筛选
+        if (pageReqVO.getStatus() != null) {
+            query.eq(CrmReceivablePlanDO::getStatus, pageReqVO.getStatus());
+        }
         return selectJoinPage(pageReqVO, CrmReceivablePlanDO.class, query);
     }
 
     default Long selectReceivablePlanCountByRemind(Long userId) {
         MPJLambdaWrapperX<CrmReceivablePlanDO> query = new MPJLambdaWrapperX<>();
-        // 我负责的 + 非公海
         CrmPermissionUtils.appendPermissionCondition(query, CrmBizTypeEnum.CRM_RECEIVABLE_PLAN.getType(),
                 CrmReceivablePlanDO::getId, userId, CrmSceneTypeEnum.OWNER.getType());
-        // 未回款 + 已逾期 + 今天开始提醒
         LocalDateTime beginOfToday = LocalDateTimeUtil.beginOfDay(LocalDateTime.now());
-        query.isNull(CrmReceivablePlanDO::getReceivableId) // 未回款
-                .lt(CrmReceivablePlanDO::getReturnTime, beginOfToday) // 已逾期
-                .lt(CrmReceivablePlanDO::getRemindTime, beginOfToday); // 今天开始提醒
+        query.isNull(CrmReceivablePlanDO::getReceivableId)
+                .lt(CrmReceivablePlanDO::getReturnTime, beginOfToday)
+                .lt(CrmReceivablePlanDO::getRemindTime, beginOfToday);
         return selectCount(query);
+    }
+
+    default List<CrmReceivablePlanDO> selectListForSummary(Integer year, Long ownerUserId) {
+        MPJLambdaWrapperX<CrmReceivablePlanDO> query = new MPJLambdaWrapperX<>();
+        query.selectAll(CrmReceivablePlanDO.class);
+        if (year != null) {
+            query.ge(CrmReceivablePlanDO::getReturnTime, LocalDateTime.of(year, 1, 1, 0, 0))
+                 .le(CrmReceivablePlanDO::getReturnTime, LocalDateTime.of(year, 12, 31, 23, 59));
+        }
+        if (ownerUserId != null) {
+            query.eq(CrmReceivablePlanDO::getOwnerUserId, ownerUserId);
+        }
+        return selectList(query);
+    }
+
+    default List<CrmReceivablePlanDO> selectListForReport(Integer year, Long ownerUserId) {
+        MPJLambdaWrapperX<CrmReceivablePlanDO> query = new MPJLambdaWrapperX<>();
+        query.selectAll(CrmReceivablePlanDO.class);
+        if (year != null) {
+            query.ge(CrmReceivablePlanDO::getReturnTime, LocalDateTime.of(year, 1, 1, 0, 0))
+                 .le(CrmReceivablePlanDO::getReturnTime, LocalDateTime.of(year, 12, 31, 23, 59));
+        }
+        if (ownerUserId != null) {
+            query.eq(CrmReceivablePlanDO::getOwnerUserId, ownerUserId);
+        }
+        query.orderByAsc(CrmReceivablePlanDO::getReturnTime);
+        return selectList(query);
     }
 
 }

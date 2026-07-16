@@ -43,4 +43,16 @@ public class CrmReceivablePlanPageReqVO extends PageParam {
     @Schema(description = "提醒类型", example = "1")
     private Integer remindType; // 提醒类型，为 null 时则表示全部
 
+    @Schema(description = "计划状态", example = "1")
+    private Integer status; // 计划状态，为 null 时则表示全部
+
+    @Schema(description = "负责人编号", example = "1")
+    private Long ownerUserId;
+
+    @Schema(description = "年份", example = "2026")
+    private Integer year;
+
+    @Schema(description = "部门编号", example = "1")
+    private Long deptId;
+
 }

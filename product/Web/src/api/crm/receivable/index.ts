@@ -71,3 +71,53 @@ export const submitReceivable = async (id: number) => {
 export const getAuditReceivableCount = async () => {
   return await request.get({ url: '/crm/receivable/audit-count' })
 }
+
+// 获得回款记录报表
+export const getReceivableReport = async (params) => {
+  return await request.get({ url: '/crm/receivable/report', params })
+}
+
+// 撤销回款审批
+export const cancelReceivable = async (id: number, reason?: string) => {
+  const params = new URLSearchParams()
+  params.append('id', String(id))
+  if (reason) {
+    params.append('reason', reason)
+  }
+  return await request.put({ url: `/crm/receivable/cancel?${params.toString()}` })
+}
+
+// 获得回款审批分页
+export const getReceivableApprovalPage = async (params) => {
+  return await request.get({ url: `/crm/receivable/approval-page`, params })
+}
+
+// 审批通过回款
+export const approveReceivable = async (id: number, reason?: string) => {
+  const params = new URLSearchParams()
+  params.append('id', String(id))
+  if (reason) {
+    params.append('reason', reason)
+  }
+  return await request.put({ url: `/crm/receivable/approve?${params.toString()}` })
+}
+
+// 驳回回款审批
+export const rejectReceivable = async (id: number, reason?: string) => {
+  const params = new URLSearchParams()
+  params.append('id', String(id))
+  if (reason) {
+    params.append('reason', reason)
+  }
+  return await request.put({ url: `/crm/receivable/reject?${params.toString()}` })
+}
+
+// 否决回款审批
+export const vetoReceivable = async (id: number, reason?: string) => {
+  const params = new URLSearchParams()
+  params.append('id', String(id))
+  if (reason) {
+    params.append('reason', reason)
+  }
+  return await request.put({ url: `/crm/receivable/veto?${params.toString()}` })
+}

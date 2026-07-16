@@ -70,6 +70,15 @@
               <Icon class="mr-5px" icon="ep:download" />
               {{ t('common.export') }}
             </el-button>
+            <el-button
+              v-hasPermi="['crm:receivable:query']"
+              plain
+              type="info"
+              @click="goToReport"
+            >
+              <Icon class="mr-5px" icon="ep:document" />
+              回款记录报表
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -165,30 +174,12 @@
       <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="180">
         <template #default="scope">
           <el-button
-            v-hasPermi="['crm:receivable:update']"
+            v-hasPermi="['crm:receivable:query']"
             link
             type="primary"
-            @click="openForm('update', scope.row.id)"
+            @click="openDetail(scope.row.id)"
           >
-            {{ t('common.edit') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.auditStatus === 0"
-            v-hasPermi="['crm:receivable:update']"
-            link
-            type="primary"
-            @click="handleSubmit(scope.row)"
-          >
-            {{ t('contract.submitAudit') }}
-          </el-button>
-          <el-button
-            v-else
-            v-hasPermi="['crm:receivable:update']"
-            link
-            type="primary"
-            @click="handleProcessDetail(scope.row)"
-          >
-            {{ t('contract.viewApproval') }}
+            {{ t('common.detail') }}
           </el-button>
           <el-button
             v-hasPermi="['crm:receivable:delete']"
@@ -281,27 +272,11 @@ const openForm = (type: string, id?: number) => {
 /** 删除按钮操作 */
 const handleDelete = async (id: number) => {
   try {
-    // 删除的二次确认
     await message.delConfirm()
-    // 发起删除
     await ReceivableApi.deleteReceivable(id)
     message.success(t('common.delSuccess'))
-    // 刷新列表
     await getList()
   } catch {}
-}
-
-/** 提交审核 **/
-const handleSubmit = async (row: ReceivableApi.ReceivableVO) => {
-  await message.confirm(t('receivable.submitAuditConfirm', { no: row.no }))
-  await ReceivableApi.submitReceivable(row.id)
-  message.success(t('receivable.submitAuditSuccess'))
-  await getList()
-}
-
-/** 查看审批 */
-const handleProcessDetail = (row: ReceivableApi.ReceivableVO) => {
-  push({ name: 'BpmProcessInstanceDetail', query: { id: row.processInstanceId } })
 }
 
 /** 打开回款详情 */
@@ -333,6 +308,11 @@ const handleExport = async () => {
   } finally {
     exportLoading.value = false
   }
+}
+
+/** 查看回款记录报表 */
+const goToReport = () => {
+  push({ name: 'CrmReceivableReport' })
 }
 
 /** 初始化 **/

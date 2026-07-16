@@ -11,12 +11,15 @@ import com.meession.etm.framework.common.util.object.BeanUtils;
 import com.meession.etm.framework.common.util.object.ObjectUtils;
 import com.meession.etm.module.bpm.api.task.BpmProcessInstanceApi;
 import com.meession.etm.module.bpm.api.task.dto.BpmProcessInstanceCreateReqDTO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivablePageReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableReportReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableSaveReqVO;
 import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
 import com.meession.etm.module.crm.dal.mysql.receivable.CrmReceivableMapper;
+import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
 import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
@@ -88,7 +91,7 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         // 1.2 校验关联数据存在
         validateRelationDataExists(createReqVO);
         // 1.3 生成回款编号
-        String no = noRedisDAO.generate(CrmNoRedisDAO.RECEIVABLE_PREFIX);
+        String no = noRedisDAO.generate(CrmBizNoPrefix.RECEIVABLE);
         if (receivableMapper.selectByNo(no) != null) {
             throw exception(RECEIVABLE_NO_EXISTS);
         }
@@ -168,9 +171,10 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         // 1.2 校验可回款金额超过上限
         validateReceivablePriceExceedsLimit(updateReqVO);
 
-        // 1.3 只有草稿、审批中，可以编辑；
+        // 1.3 只有草稿、被驳回、被否决、已撤销，可以编辑；
         if (!ObjectUtils.equalsAny(oldReceivable.getAuditStatus(), CrmAuditStatusEnum.DRAFT.getStatus(),
-                CrmAuditStatusEnum.PROCESS.getStatus())) {
+                CrmAuditStatusEnum.REJECT.getStatus(),
+                CrmAuditStatusEnum.VETO.getStatus(), CrmAuditStatusEnum.CANCEL.getStatus())) {
             throw exception(RECEIVABLE_UPDATE_FAIL_EDITING_PROHIBITED);
         }
 
@@ -241,21 +245,20 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
     @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_SUBMIT_SUB_TYPE, bizNo = "{{#id}}",
             success = CRM_RECEIVABLE_SUBMIT_SUCCESS)
     public void submitReceivable(Long id, Long userId) {
-        // 1. 校验回款是否在审批
         CrmReceivableDO receivable = validateReceivableExists(id);
-        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.DRAFT.getStatus())) {
+        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.DRAFT.getStatus())
+                && ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.REJECT.getStatus())
+                && ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.VETO.getStatus())
+                && ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.CANCEL.getStatus())) {
             throw exception(RECEIVABLE_SUBMIT_FAIL_NOT_DRAFT);
         }
 
-        // 2. 创建回款审批流程实例
         String processInstanceId = bpmProcessInstanceApi.createProcessInstance(userId, new BpmProcessInstanceCreateReqDTO()
                 .setProcessDefinitionKey(BPM_PROCESS_DEFINITION_KEY).setBusinessKey(String.valueOf(id)));
 
-        // 3. 更新回款工作流编号
         receivableMapper.updateById(new CrmReceivableDO().setId(id).setProcessInstanceId(processInstanceId)
                 .setAuditStatus(CrmAuditStatusEnum.PROCESS.getStatus()));
 
-        // 4. 记录日志
         LogRecordContext.putVariable("receivableNo", receivable.getNo());
     }
 
@@ -305,6 +308,79 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
     @Override
     public Long getReceivableCountByContractId(Long contractId) {
         return receivableMapper.selectCountByContractId(contractId);
+    }
+
+    @Override
+    public PageResult<CrmReceivableDO> getReceivableReport(CrmReceivableReportReqVO reqVO) {
+        List<CrmReceivableDO> allReceivables = receivableMapper.selectListForReport(reqVO.getYear(), reqVO.getOwnerUserId());
+        int total = allReceivables.size();
+        int fromIndex = (reqVO.getPageNo() - 1) * reqVO.getPageSize();
+        int toIndex = Math.min(fromIndex + reqVO.getPageSize(), total);
+        if (fromIndex >= total) {
+            return new PageResult<>(ListUtil.empty(), (long) total);
+        }
+        return new PageResult<>(allReceivables.subList(fromIndex, toIndex), (long) total);
+    }
+
+    @Override
+    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_CANCEL_SUB_TYPE, bizNo = "{{#id}}",
+            success = CRM_RECEIVABLE_CANCEL_SUCCESS)
+    public void cancelReceivable(Long id, String reason) {
+        CrmReceivableDO receivable = validateReceivableExists(id);
+        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
+            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
+        }
+        receivableMapper.updateById(new CrmReceivableDO().setId(id).setAuditStatus(CrmAuditStatusEnum.CANCEL.getStatus())
+                .setProcessInstanceId(null));
+        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
+        LogRecordContext.putVariable("receivableNo", receivable.getNo());
+    }
+
+    @Override
+    public PageResult<CrmReceivableDO> getReceivableApprovalPage(CrmReceivableApprovalPageReqVO pageReqVO, Long userId) {
+        return receivableMapper.selectPageForApproval(pageReqVO, userId);
+    }
+
+    @Override
+    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_APPROVE_SUB_TYPE, bizNo = "{{#id}}",
+            success = CRM_RECEIVABLE_APPROVE_SUCCESS)
+    public void approveReceivable(Long id, String reason) {
+        CrmReceivableDO receivable = validateReceivableExists(id);
+        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
+            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
+        }
+        receivableMapper.updateById(new CrmReceivableDO().setId(id)
+                .setAuditStatus(CrmAuditStatusEnum.APPROVE.getStatus()));
+        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
+        LogRecordContext.putVariable("receivableNo", receivable.getNo());
+    }
+
+    @Override
+    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_REJECT_AUDIT_SUB_TYPE, bizNo = "{{#id}}",
+            success = CRM_RECEIVABLE_REJECT_AUDIT_SUCCESS)
+    public void rejectReceivable(Long id, String reason) {
+        CrmReceivableDO receivable = validateReceivableExists(id);
+        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
+            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
+        }
+        receivableMapper.updateById(new CrmReceivableDO().setId(id)
+                .setAuditStatus(CrmAuditStatusEnum.REJECT.getStatus()));
+        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
+        LogRecordContext.putVariable("receivableNo", receivable.getNo());
+    }
+
+    @Override
+    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_VETO_SUB_TYPE, bizNo = "{{#id}}",
+            success = CRM_RECEIVABLE_VETO_SUCCESS)
+    public void vetoReceivable(Long id, String reason) {
+        CrmReceivableDO receivable = validateReceivableExists(id);
+        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
+            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
+        }
+        receivableMapper.updateById(new CrmReceivableDO().setId(id)
+                .setAuditStatus(CrmAuditStatusEnum.VETO.getStatus()));
+        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
+        LogRecordContext.putVariable("receivableNo", receivable.getNo());
     }
 
 }

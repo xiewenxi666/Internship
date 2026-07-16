@@ -16,10 +16,11 @@ import java.util.Arrays;
 public enum CrmAuditStatusEnum implements ArrayValuable<Integer> {
 
     DRAFT(0, "未提交"),
-    PROCESS(10, "审批中"),
-    APPROVE(20, "审核通过"),
-	REJECT(30, "审核不通过"),
-    CANCEL(40, "已取消");
+    PROCESS(10, "待审批"),
+    APPROVE(20, "已通过"),
+    REJECT(30, "被驳回"),
+    CANCEL(40, "已撤销"),
+    VETO(50, "被否决");
 
     private final Integer status;
     private final String name;

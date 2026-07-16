@@ -2,6 +2,8 @@ package com.meession.etm.module.crm.service.receivable;
 
 import com.meession.etm.framework.common.pojo.PageResult;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivablePageReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableApprovalPageReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableReportReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableSaveReqVO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
@@ -129,5 +131,54 @@ public interface CrmReceivableService {
      * @return 回款数量
      */
     Long getReceivableCountByContractId(Long contractId);
+
+    /**
+     * 获得回款记录报表分页
+     *
+     * @param reqVO 查询条件
+     * @return 回款分页
+     */
+    PageResult<CrmReceivableDO> getReceivableReport(CrmReceivableReportReqVO reqVO);
+
+    /**
+     * 撤销回款审批
+     *
+     * @param id     回款编号
+     * @param reason 撤销原因
+     */
+    void cancelReceivable(Long id, String reason);
+
+    /**
+     * 获得回款审批分页
+     *
+     * @param pageReqVO 分页查询
+     * @param userId    用户编号
+     * @return 回款分页
+     */
+    PageResult<CrmReceivableDO> getReceivableApprovalPage(CrmReceivableApprovalPageReqVO pageReqVO, Long userId);
+
+    /**
+     * 审批通过回款
+     *
+     * @param id     回款编号
+     * @param reason 审批意见
+     */
+    void approveReceivable(Long id, String reason);
+
+    /**
+     * 审批驳回回款
+     *
+     * @param id     回款编号
+     * @param reason 驳回原因
+     */
+    void rejectReceivable(Long id, String reason);
+
+    /**
+     * 审批否决回款
+     *
+     * @param id     回款编号
+     * @param reason 否决原因
+     */
+    void vetoReceivable(Long id, String reason);
 
 }

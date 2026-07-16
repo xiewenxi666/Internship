@@ -9,7 +9,6 @@
         </el-col>
       </div>
       <div>
-        <!-- 右上：按钮 -->
         <slot></slot>
       </div>
     </div>
@@ -31,14 +30,18 @@
       <el-descriptions-item :label="t('receivable.ownerUserName')">
         {{ receivable.ownerUserName }}
       </el-descriptions-item>
+      <el-descriptions-item :label="t('receivable.auditStatus')">
+        <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="receivable.auditStatus" />
+      </el-descriptions-item>
     </el-descriptions>
   </ContentWrap>
 </template>
 <script lang="ts" setup>
 import * as ReceivableApi from '@/api/crm/receivable'
+import { DICT_TYPE } from '@/utils/dict'
 import { formatDate } from '@/utils/formatTime'
 import { erpPriceInputFormatter } from '@/utils'
 
-const { t } = useI18n('crm') // 国际化
+const { t } = useI18n('crm')
 const { receivable } = defineProps<{ receivable: ReceivableApi.ReceivableVO }>()
 </script>

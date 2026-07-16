@@ -173,10 +173,10 @@ const handleProcessDetail = (row: ReceivableApi.ReceivableVO) => {
   push({ name: 'BpmProcessInstanceDetail', query: { id: row.processInstanceId } })
 }
 
-/** 打开回款详情 */
+/** 打开回款详情（等待审批页面） */
 const { push } = useRouter()
 const openDetail = (id: number) => {
-  push({ name: 'CrmReceivableDetail', params: { id } })
+  push({ name: 'CrmReceivableApprovalDetail', params: { id } })
 }
 
 /** 打开客户详情 */

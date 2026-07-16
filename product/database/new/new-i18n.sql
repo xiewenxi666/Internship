@@ -1925,4 +1925,7 @@ UPDATE `system_menu_i18n` SET `name` = 'Category Create' WHERE `menu_id` = 2716 
 UPDATE `system_menu_i18n` SET `name` = 'Category Update' WHERE `menu_id` = 2717 AND `language` = 'en';
 UPDATE `system_menu_i18n` SET `name` = 'Category Delete' WHERE `menu_id` = 2718 AND `language` = 'en';
 
+INSERT INTO `system_menu_i18n` (`id`, `menu_id`, `language`, `name`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (1867, 5400, 'zh-CN', '回款审批', '1', NOW(), '1', NOW(), b'0');
+INSERT INTO `system_menu_i18n` (`id`, `menu_id`, `language`, `name`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (1868, 5400, 'en', 'Receivable Audit', '1', NOW(), '1', NOW(), b'0');
+
 COMMIT;

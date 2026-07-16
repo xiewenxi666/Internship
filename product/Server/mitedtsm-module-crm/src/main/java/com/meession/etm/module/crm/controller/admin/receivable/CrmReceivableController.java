@@ -10,7 +10,9 @@ import com.meession.etm.framework.common.util.number.NumberUtils;
 import com.meession.etm.framework.common.util.object.BeanUtils;
 import com.meession.etm.framework.excel.core.util.ExcelUtils;
 import com.meession.etm.module.crm.controller.admin.contract.vo.contract.CrmContractRespVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivablePageReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableReportReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableRespVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableSaveReqVO;
 import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
@@ -178,6 +180,54 @@ public class CrmReceivableController {
     @PreAuthorize("@ss.hasPermission('crm:receivable:query')")
     public CommonResult<Long> getAuditReceivableCount() {
         return success(receivableService.getAuditReceivableCount(getLoginUserId()));
+    }
+
+    @GetMapping("/report")
+    @Operation(summary = "获得回款记录报表")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:query')")
+    public CommonResult<PageResult<CrmReceivableRespVO>> getReceivableReport(@Valid CrmReceivableReportReqVO reqVO) {
+        PageResult<CrmReceivableDO> pageResult = receivableService.getReceivableReport(reqVO);
+        return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
+    }
+
+    @PutMapping("/cancel")
+    @Operation(summary = "撤销回款审批")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
+    public CommonResult<Boolean> cancelReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
+        receivableService.cancelReceivable(id, reason);
+        return success(true);
+    }
+
+    @GetMapping("/approval-page")
+    @Operation(summary = "获得回款审批分页")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:query')")
+    public CommonResult<PageResult<CrmReceivableRespVO>> getReceivableApprovalPage(@Valid CrmReceivableApprovalPageReqVO pageReqVO) {
+        PageResult<CrmReceivableDO> pageResult = receivableService.getReceivableApprovalPage(pageReqVO, getLoginUserId());
+        return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
+    }
+
+    @PutMapping("/approve")
+    @Operation(summary = "审批通过回款")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
+    public CommonResult<Boolean> approveReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
+        receivableService.approveReceivable(id, reason);
+        return success(true);
+    }
+
+    @PutMapping("/reject")
+    @Operation(summary = "驳回回款审批")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
+    public CommonResult<Boolean> rejectReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
+        receivableService.rejectReceivable(id, reason);
+        return success(true);
+    }
+
+    @PutMapping("/veto")
+    @Operation(summary = "否决回款审批")
+    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
+    public CommonResult<Boolean> vetoReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
+        receivableService.vetoReceivable(id, reason);
+        return success(true);
     }
 
 }

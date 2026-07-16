@@ -28,6 +28,17 @@
           <el-descriptions-item :label="t('receivablePlan.remindDays')">
             {{ receivablePlan.remindDays }}
           </el-descriptions-item>
+          <el-descriptions-item :label="t('receivablePlan.finishStatus')">
+            <el-tag v-if="receivablePlan.status === 1" type="success">{{ t('receivablePlan.finishStatusYes') }}</el-tag>
+            <el-tag v-else-if="receivablePlan.status === 2" type="warning">{{ t('receivablePlan.finishStatusNo') }}</el-tag>
+            <el-tag v-else-if="receivablePlan.status === 3" type="danger">{{ t('receivablePlan.statusOverdue') }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="receivablePlan.overdueDays" :label="t('receivablePlan.overdueDays')">
+            <span class="text-red-500">{{ receivablePlan.overdueDays }} {{ t('common.day') }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="receivablePlan.percent" :label="t('receivablePlan.percent')">
+            {{ receivablePlan.percent }}%
+          </el-descriptions-item>
           <el-descriptions-item :label="t('receivablePlan.remark')">{{ receivablePlan.remark }}</el-descriptions-item>
           <el-descriptions-item :label="t('receivablePlan.receivablePrice')">
             <el-text v-if="receivablePlan.receivable">

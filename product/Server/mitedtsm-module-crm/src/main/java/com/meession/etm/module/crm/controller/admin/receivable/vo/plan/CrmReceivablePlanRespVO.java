@@ -88,4 +88,19 @@ public class CrmReceivablePlanRespVO {
     @ExcelProperty("创建人名字")
     private String creatorName;
 
+    @Schema(description = "计划状态", example = "1")
+    @ExcelProperty("计划状态")
+    private Integer status;
+    @Schema(description = "计划状态名称", example = "已完成")
+    @ExcelProperty("计划状态名称")
+    private String statusName;
+
+    @Schema(description = "逾期天数", example = "5")
+    @ExcelProperty("逾期天数")
+    private Long overdueDays;
+
+    @Schema(description = "计划回款占比", example = "25.00")
+    @ExcelProperty("计划回款占比")
+    private BigDecimal percent;
+
 }

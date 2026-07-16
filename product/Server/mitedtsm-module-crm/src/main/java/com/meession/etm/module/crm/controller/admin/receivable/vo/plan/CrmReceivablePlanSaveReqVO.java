@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "管理后台 - CRM 回款计划新增/修改 Request VO")
 @Data
@@ -38,6 +39,9 @@ public class CrmReceivablePlanSaveReqVO {
 
     @Schema(description = "提前几天提醒", example = "1")
     private Integer remindDays;
+
+    @Schema(description = "计划回款占比", example = "25.00")
+    private BigDecimal percent;
 
     @Schema(description = "备注", example = "备注")
     private String remark;

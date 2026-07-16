@@ -557,6 +557,28 @@ const remainingRouter: AppRouteRecordRaw[] = [
         component: () => import('@/views/crm/receivable/plan/detail/index.vue')
       },
       {
+        path: 'receivable-plan/summary',
+        name: 'CrmReceivablePlanSummary',
+        meta: {
+          title: '回款计划汇总',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable-plan'
+        },
+        component: () => import('@/views/crm/receivable/plan/summary/index.vue')
+      },
+      {
+        path: 'receivable-plan/report',
+        name: 'CrmReceivablePlanReport',
+        meta: {
+          title: '计划回款报表',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable-plan'
+        },
+        component: () => import('@/views/crm/receivable/plan/report/index.vue')
+      },
+      {
         path: 'receivable/detail/:id',
         name: 'CrmReceivableDetail',
         meta: {
@@ -566,6 +588,38 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/crm/receivable'
         },
         component: () => import('@/views/crm/receivable/detail/index.vue')
+      },
+      {
+        path: 'receivable/report',
+        name: 'CrmReceivableReport',
+        meta: {
+          title: '回款记录报表',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable'
+        },
+        component: () => import('@/views/crm/receivable/report/index.vue')
+      },
+      {
+        path: 'receivable/approval',
+        name: 'CrmReceivableApproval',
+        meta: {
+          title: '回款审批',
+          noCache: true,
+          activeMenu: '/crm/receivable/approval'
+        },
+        component: () => import('@/views/crm/receivable/approval/index.vue')
+      },
+      {
+        path: 'receivable/approval/detail/:id',
+        name: 'CrmReceivableApprovalDetail',
+        meta: {
+          title: '回款审批详情',
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable/approval'
+        },
+        component: () => import('@/views/crm/receivable/approval/detail/index.vue')
       },
       {
         path: 'contact/detail/:id',

@@ -149,6 +149,14 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_DELETE_SUCCESS = "删除了合同【{getContractById{#receivable.contractId}}】的{{#period != null ? '【第'+ #period +'期】' : '编号为【'+ #receivable.no +'】的'}}回款";
     String CRM_RECEIVABLE_SUBMIT_SUB_TYPE = "提交回款审批";
     String CRM_RECEIVABLE_SUBMIT_SUCCESS = "提交编号为【{{#receivableNo}}】的回款审批成功";
+    String CRM_RECEIVABLE_CANCEL_SUB_TYPE = "撤销回款审批";
+    String CRM_RECEIVABLE_CANCEL_SUCCESS = "撤销了编号为【{{#receivableNo}}】的回款审批，原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_RECEIVABLE_APPROVE_SUB_TYPE = "审批通过回款";
+    String CRM_RECEIVABLE_APPROVE_SUCCESS = "审批通过了编号为【{{#receivableNo}}】的回款，备注：{{#reason != null ? #reason : '无'}}";
+    String CRM_RECEIVABLE_REJECT_AUDIT_SUB_TYPE = "驳回回款审批";
+    String CRM_RECEIVABLE_REJECT_AUDIT_SUCCESS = "驳回了编号为【{{#receivableNo}}】的回款审批，驳回原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_RECEIVABLE_VETO_SUB_TYPE = "否决回款审批";
+    String CRM_RECEIVABLE_VETO_SUCCESS = "否决了编号为【{{#receivableNo}}】的回款审批，否决原因：{{#reason != null ? #reason : '无'}}";
 
     // ======================= CRM_RECEIVABLE_PLAN 回款计划 =======================
 

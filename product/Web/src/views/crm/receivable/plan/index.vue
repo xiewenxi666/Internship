@@ -16,6 +16,7 @@
             <el-select
               v-model="queryParams.customerId"
               class="!w-240px"
+              clearable
               :placeholder="t('customer.ownerUserPlaceholder')"
               @keyup.enter="handleQuery"
             >
@@ -37,6 +38,24 @@
               :placeholder="t('receivablePlan.contractNoPlaceholder')"
               @keyup.enter="handleQuery"
             />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item :label="t('receivablePlan.finishStatus')" prop="status">
+            <el-select
+              v-model="queryParams.status"
+              class="!w-240px"
+              clearable
+              :placeholder="t('common.selectText')"
+            >
+              <el-option :label="t('common.all')" :value="undefined" />
+              <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -70,6 +89,24 @@
               <Icon class="mr-5px" icon="ep:download" />
               {{ t('common.export') }}
             </el-button>
+            <el-button
+              v-hasPermi="['crm:receivable-plan:query']"
+              plain
+              type="info"
+              @click="goToSummary"
+            >
+              <Icon class="mr-5px" icon="ep:data-analysis" />
+              {{ t('receivablePlan.summary') }}
+            </el-button>
+            <el-button
+              v-hasPermi="['crm:receivable-plan:query']"
+              plain
+              type="info"
+              @click="goToReport"
+            >
+              <Icon class="mr-5px" icon="ep:document" />
+              {{ t('receivablePlan.report') }}
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -102,6 +139,14 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column align="center" :label="t('receivablePlan.finishStatus')" prop="status" min-width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.status === 1" type="success">{{ t('receivablePlan.finishStatusYes') }}</el-tag>
+          <el-tag v-else-if="scope.row.status === 2" type="warning">{{ t('receivablePlan.finishStatusNo') }}</el-tag>
+          <el-tag v-else-if="scope.row.status === 3" type="danger">{{ t('receivablePlan.statusOverdue') }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" :label="t('receivablePlan.overdueDays')" prop="overdueDays" min-width="100" />
       <el-table-column
         align="center"
         :label="t('receivablePlan.price') + '（元）'"
@@ -221,6 +266,7 @@
   <!-- 表单弹窗：添加/修改 -->
   <ReceivablePlanForm ref="formRef" @success="getList" />
   <ReceivableForm ref="receivableFormRef" @success="getList" />
+  <ReceivablePlanEditForm ref="editFormRef" @success="getList" />
 </template>
 
 <script lang="ts" setup>
@@ -233,6 +279,7 @@ import * as CustomerApi from '@/api/crm/customer'
 import { erpPriceInputFormatter, erpPriceTableColumnFormatter } from '@/utils'
 import { TabsPaneContext } from 'element-plus'
 import ReceivableForm from '@/views/crm/receivable/ReceivableForm.vue'
+import ReceivablePlanEditForm from './ReceivablePlanEditForm.vue'
 
 defineOptions({ name: 'ReceivablePlan' })
 
@@ -246,12 +293,18 @@ const queryParams = reactive({
   pageSize: 10,
   sceneType: '1', // 默认与 activeName 相等
   customerId: undefined,
-  contractNo: undefined
+  contractNo: undefined,
+  status: undefined
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
 const activeName = ref('1') // 列表 tab
 const customerList = ref<CustomerApi.CustomerVO[]>([]) // 客户列表
+const statusOptions = [
+  { label: '已完成', value: 1 },
+  { label: '未完成', value: 2 },
+  { label: '已逾期', value: 3 }
+]
 
 /** tab 切换 */
 const handleTabClick = (tab: TabsPaneContext) => {
@@ -287,6 +340,16 @@ const resetQuery = () => {
 const formRef = ref()
 const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
+}
+
+/** 导航到汇总页 */
+const goToSummary = () => {
+  push({ name: 'CrmReceivablePlanSummary' })
+}
+
+/** 导航到报表页 */
+const goToReport = () => {
+  push({ name: 'CrmReceivablePlanReport' })
 }
 
 /** 创建回款操作 */
