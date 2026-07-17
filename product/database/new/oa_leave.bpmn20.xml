@@ -19,7 +19,7 @@
         <flowable:formProperty id="day" name="请假天数" type="long" required="true"/>
       </bpmn2:extensionElements>
     </bpmn2:startEvent>
-    <bpmn2:userTask id="approvalTask" name="审批" flowable:candidateGroups="manager">
+    <bpmn2:userTask id="approvalTask" name="审批">
       <bpmn2:extensionElements>
         <flowable:formProperty id="approved" name="审批意见" type="enum" required="true">
           <flowable:value id="true" name="同意"/>
