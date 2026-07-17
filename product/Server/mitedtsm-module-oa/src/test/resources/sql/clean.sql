@@ -1,0 +1,9 @@
+DELETE FROM "oa_leave";
+DELETE FROM "oa_trip";
+DELETE FROM "oa_loan";
+DELETE FROM "oa_visit";
+DELETE FROM "oa_request";
+DELETE FROM "oa_report";
+DELETE FROM "oa_schedule";
+DELETE FROM "oa_task";
+DELETE FROM "oa_document";

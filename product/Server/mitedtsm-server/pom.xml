@@ -118,6 +118,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- OA 办公自动化模块。默认注释，保证编译速度 -->
+        <dependency>
+            <groupId>com.meession.etm</groupId>
+            <artifactId>mitedtsm-module-oa</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- spring boot 配置所需依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

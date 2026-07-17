@@ -150,6 +150,13 @@ export enum DICT_TYPE {
   BPM_TASK_STATUS = 'bpm_task_status',
   BPM_OA_LEAVE_TYPE = 'bpm_oa_leave_type',
   BPM_PROCESS_LISTENER_TYPE = 'bpm_process_listener_type',
+  // ========== OA 模块 ==========
+  OA_LEAVE_TYPE = 'oa_leave_type',
+  OA_TRIP_TYPE = 'oa_trip_type',
+  OA_LOAN_PURPOSE = 'oa_loan_purpose',
+  OA_VISIT_TYPE = 'oa_visit_type',
+  OA_REPORT_TYPE = 'oa_report_type',
+  OA_REQUEST_URGENCY = 'oa_urgency_type',
   BPM_PROCESS_LISTENER_VALUE_TYPE = 'bpm_process_listener_value_type',
 
   // ========== PAY 模块 ==========
