@@ -78,6 +78,9 @@
       <el-tab-pane :label="t('operateLogTab')">
         <OperateLogV2 :log-list="logList" />
       </el-tab-pane>
+      <el-tab-pane label="关联">
+        <RelationPanel :customer-id="customer.id!" />
+      </el-tab-pane>
     </el-tabs>
   </el-col>
 
@@ -104,6 +107,7 @@ import { BizTypeEnum } from '@/api/crm/permission'
 import type { OperateLogVO } from '@/api/system/operatelog'
 import { getOperateLogPage } from '@/api/crm/operateLog'
 import CustomerDistributeForm from '@/views/crm/customer/pool/CustomerDistributeForm.vue'
+import RelationPanel from '@/components/crm/RelationPanel.vue'
 
 defineOptions({ name: 'CrmCustomerDetail' })
 

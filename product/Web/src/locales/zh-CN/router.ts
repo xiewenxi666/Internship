@@ -3,5 +3,21 @@ export default {
   socialLogin: '社交登录',
   home: '首页',
   analysis: '分析页',
-  workplace: '工作台'
+  workplace: '工作台',
+  bpmProcessDefinition: '流程定义',
+  bpmFormEditor: '表单编辑',
+  bpmModelCreate: '新建模型',
+  bpmModelUpdate: '编辑模型',
+  bpmProcessInstanceDetail: '流程实例详情',
+  bpmProcessInstanceReport: '流程实例报表',
+  oaLeaveCreate: '新建请假',
+  oaLeaveDetail: '请假详情',
+  oaTripCreate: '新建出差',
+  oaTripDetail: '出差详情',
+  oaLoanCreate: '新建借款',
+  oaLoanDetail: '借款详情',
+  oaVisitCreate: '新建拜访',
+  oaVisitDetail: '拜访详情',
+  oaRequestCreate: '新建请示',
+  oaRequestDetail: '请示详情'
 }

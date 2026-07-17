@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 
 
 /**
- * Crm 订单序号的 Redis DAO
+ * CRM 通用编号序号的 Redis DAO
+ * 各业务域通过 {@link CrmBizNoPrefix} 常量传入前缀，调用 generate() 生成编号
  *
  * @author HUIHUI
  */

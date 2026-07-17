@@ -17,6 +17,7 @@ import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
 import com.meession.etm.module.crm.dal.mysql.receivable.CrmReceivableMapper;
+import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
 import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
@@ -94,7 +95,7 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         // 1.2 校验关联数据存在
         validateRelationDataExists(createReqVO);
         // 1.3 生成回款编号
-        String no = noRedisDAO.generate(CrmNoRedisDAO.RECEIVABLE_PREFIX);
+        String no = noRedisDAO.generate(CrmBizNoPrefix.RECEIVABLE);
         if (receivableMapper.selectByNo(no) != null) {
             throw exception(RECEIVABLE_NO_EXISTS);
         }

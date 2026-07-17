@@ -297,7 +297,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
       },
       {
         path: 'oa/leave/create',
-        component: () => import('@/views/bpm/oa/leave/create.vue'),
+        component: () => import('@/views/oa/leave/create.vue'),
         name: 'OALeaveCreate',
         meta: {
           noCache: true,
@@ -309,7 +309,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
       },
       {
         path: 'oa/leave/detail',
-        component: () => import('@/views/bpm/oa/leave/detail.vue'),
+        component: () => import('@/views/oa/leave/detail.vue'),
         name: 'OALeaveDetail',
         meta: {
           noCache: true,
@@ -317,6 +317,106 @@ const remainingRouter: AppRouteRecordRaw[] = [
           canTo: true,
           title: t('router.oaLeaveDetail'),
           activeMenu: '/bpm/oa/leave'
+        }
+      },
+      // OA 出差
+      {
+        path: 'oa/trip/create',
+        component: () => import('@/views/oa/trip/create.vue'),
+        name: 'OATripCreate',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaTripCreate'),
+          activeMenu: '/bpm/oa/trip'
+        }
+      },
+      {
+        path: 'oa/trip/detail',
+        component: () => import('@/views/oa/trip/detail.vue'),
+        name: 'OATripDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaTripDetail'),
+          activeMenu: '/bpm/oa/trip'
+        }
+      },
+      // OA 借款
+      {
+        path: 'oa/loan/create',
+        component: () => import('@/views/oa/loan/create.vue'),
+        name: 'OALoanCreate',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaLoanCreate'),
+          activeMenu: '/bpm/oa/loan'
+        }
+      },
+      {
+        path: 'oa/loan/detail',
+        component: () => import('@/views/oa/loan/detail.vue'),
+        name: 'OALoanDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaLoanDetail'),
+          activeMenu: '/bpm/oa/loan'
+        }
+      },
+      // OA 拜访
+      {
+        path: 'oa/visit/create',
+        component: () => import('@/views/oa/visit/create.vue'),
+        name: 'OAVisitCreate',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaVisitCreate'),
+          activeMenu: '/bpm/oa/visit'
+        }
+      },
+      {
+        path: 'oa/visit/detail',
+        component: () => import('@/views/oa/visit/detail.vue'),
+        name: 'OAVisitDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaVisitDetail'),
+          activeMenu: '/bpm/oa/visit'
+        }
+      },
+      // OA 请示
+      {
+        path: 'oa/request/create',
+        component: () => import('@/views/oa/request/create.vue'),
+        name: 'OARequestCreate',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaRequestCreate'),
+          activeMenu: '/bpm/oa/request'
+        }
+      },
+      {
+        path: 'oa/request/detail',
+        component: () => import('@/views/oa/request/detail.vue'),
+        name: 'OARequestDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaRequestDetail'),
+          activeMenu: '/bpm/oa/request'
         }
       },
       {
