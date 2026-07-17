@@ -1,3 +1,9 @@
+/**
+ * 商机更新状态 Request VO
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 package com.meession.etm.module.crm.controller.admin.business.vo.business;
 
 import com.meession.etm.framework.common.validation.InEnum;
@@ -11,13 +17,16 @@ import lombok.Data;
 @Data
 public class CrmBusinessUpdateStatusReqVO {
 
+    /** 商机编号 */
     @Schema(description = "商机编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "32129")
     @NotNull(message = "商机编号不能为空")
     private Long id;
 
+    /** 状态编号 */
     @Schema(description = "状态编号", example = "1")
     private Long statusId;
 
+    /** 结束状态 */
     @Schema(description = "结束状态", example = "1")
     @InEnum(value = CrmBusinessEndStatusEnum.class)
     private Integer endStatus;

@@ -1,3 +1,9 @@
+/**
+ * 合同配置保存 Request VO
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 package com.meession.etm.module.crm.controller.admin.contract.vo.config;
 
 import cn.hutool.core.util.BooleanUtil;
@@ -13,10 +19,12 @@ import java.util.Objects;
 @Data
 public class CrmContractConfigSaveReqVO {
 
+    /** 是否开启提前提醒 */
     @Schema(description = "是否开启提前提醒", example = "true")
     @DiffLogField(name = "是否开启提前提醒")
     private Boolean notifyEnabled;
 
+    /** 提前提醒天数 */
     @Schema(description = "提前提醒天数", example = "2")
     @DiffLogField(name = "提前提醒天数")
     private Integer notifyDays;

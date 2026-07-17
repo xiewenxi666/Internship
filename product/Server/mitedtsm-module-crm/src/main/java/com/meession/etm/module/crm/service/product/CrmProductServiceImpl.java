@@ -54,6 +54,12 @@ public class CrmProductServiceImpl implements CrmProductService {
     @Resource
     private AdminUserApi adminUserApi;
 
+    /**
+     * 创建产品
+     *
+     * @param createReqVO 创建请求
+     * @return 产品编号
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_PRODUCT_TYPE, subType = CRM_PRODUCT_CREATE_SUB_TYPE, bizNo = "{{#productId}}",
@@ -78,6 +84,11 @@ public class CrmProductServiceImpl implements CrmProductService {
         return product.getId();
     }
 
+    /**
+     * 更新产品
+     *
+     * @param updateReqVO 更新请求
+     */
     @Override
     @LogRecord(type = CRM_PRODUCT_TYPE, subType = CRM_PRODUCT_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
             success = CRM_PRODUCT_UPDATE_SUCCESS)
@@ -97,6 +108,12 @@ public class CrmProductServiceImpl implements CrmProductService {
         LogRecordContext.putVariable(DiffParseFunction.OLD_OBJECT, BeanUtils.toBean(crmProductDO, CrmProductSaveReqVO.class));
     }
 
+    /**
+     * 校验产品是否存在
+     *
+     * @param id 产品编号
+     * @return 产品
+     */
     private CrmProductDO validateProductExists(Long id) {
         CrmProductDO product = productMapper.selectById(id);
         if (product == null) {
@@ -105,6 +122,12 @@ public class CrmProductServiceImpl implements CrmProductService {
         return product;
     }
 
+    /**
+     * 校验产品编号是否重复
+     *
+     * @param id 产品编号（为空表示新增）
+     * @param no 产品编号
+     */
     private void validateProductNoDuplicate(Long id, String no) {
         CrmProductDO product = productMapper.selectByNo(no);
         if (product == null
@@ -114,6 +137,11 @@ public class CrmProductServiceImpl implements CrmProductService {
         throw exception(PRODUCT_NO_EXISTS);
     }
 
+    /**
+     * 校验产品分类是否存在
+     *
+     * @param categoryId 产品分类编号
+     */
     private void validateProductCategoryExists(Long categoryId) {
         CrmProductCategoryDO category = productCategoryService.getProductCategory(categoryId);
         if (category == null) {
@@ -121,6 +149,11 @@ public class CrmProductServiceImpl implements CrmProductService {
         }
     }
 
+    /**
+     * 删除产品
+     *
+     * @param id 产品编号
+     */
     @Override
     @LogRecord(type = CRM_PRODUCT_TYPE, subType = CRM_PRODUCT_DELETE_SUB_TYPE, bizNo = "{{#id}}",
             success = CRM_PRODUCT_DELETE_SUCCESS)
@@ -132,27 +165,57 @@ public class CrmProductServiceImpl implements CrmProductService {
         productMapper.deleteById(id);
     }
 
+    /**
+     * 查询产品详情
+     *
+     * @param id 产品编号
+     * @return 产品
+     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_PRODUCT, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmProductDO getProduct(Long id) {
         return productMapper.selectById(id);
     }
 
+    /**
+     * 分页查询产品
+     *
+     * @param pageReqVO 分页请求
+     * @return 分页结果
+     */
     @Override
     public PageResult<CrmProductDO> getProductPage(CrmProductPageReqVO pageReqVO) {
         return productMapper.selectPage(pageReqVO);
     }
 
+    /**
+     * 根据分类统计产品数量
+     *
+     * @param categoryId 分类编号
+     * @return 产品数量
+     */
     @Override
     public Long getProductByCategoryId(Long categoryId) {
         return productMapper.selectCountByCategoryId(categoryId);
     }
 
+    /**
+     * 根据状态查询产品列表
+     *
+     * @param status 状态
+     * @return 产品列表
+     */
     @Override
     public List<CrmProductDO> getProductListByStatus(Integer status) {
         return productMapper.selectListByStatus(status);
     }
 
+    /**
+     * 校验产品列表有效性
+     *
+     * @param ids 产品编号集合
+     * @return 产品列表
+     */
     @Override
     public List<CrmProductDO> validProductList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -172,6 +235,12 @@ public class CrmProductServiceImpl implements CrmProductService {
         return list;
     }
 
+    /**
+     * 根据编号集合查询产品列表
+     *
+     * @param ids 产品编号集合
+     * @return 产品列表
+     */
     @Override
     public List<CrmProductDO> getProductList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {

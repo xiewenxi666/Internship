@@ -8,34 +8,46 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 管理后台 - 客户限制配置 Response VO
+ */
 @Schema(description = "管理后台 - 客户限制配置 Response VO")
 @Data
 public class CrmCustomerLimitConfigRespVO {
 
+    /** 编号 */
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "27930")
     private Long id;
 
+    /** 规则类型 */
     @Schema(description = "规则类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     private Integer type;
 
+    /** 规则适用人群 */
     @Schema(description = "规则适用人群")
     private List<Long> userIds;
 
+    /** 规则适用部门 */
     @Schema(description = "规则适用部门")
     private List<Long> deptIds;
 
+    /** 数量上限 */
     @Schema(description = "数量上限", requiredMode = Schema.RequiredMode.REQUIRED, example = "28384")
     private Integer maxCount;
 
+    /** 成交客户是否占有拥有客户数 */
     @Schema(description = "成交客户是否占有拥有客户数")
     private Boolean dealCountEnabled;
 
+    /** 规则适用人群名称 */
     @Schema(description = "规则适用人群名称")
     private List<AdminUserRespDTO> users;
 
+    /** 规则适用部门名称 */
     @Schema(description = "规则适用部门名称")
     private List<DeptRespDTO> depts;
 
+    /** 创建时间 */
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;
 

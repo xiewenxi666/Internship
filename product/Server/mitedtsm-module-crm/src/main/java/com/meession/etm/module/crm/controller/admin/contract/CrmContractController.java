@@ -58,6 +58,9 @@ import static java.util.Collections.singletonList;
 @RestController
 @RequestMapping("/crm/contract")
 @Validated
+/**
+ * CRM 合同 Controller (Admin)
+ */
 public class CrmContractController {
 
     @Resource
@@ -78,6 +81,11 @@ public class CrmContractController {
     @Resource
     private DeptApi deptApi;
 
+    // ==================== 合同 CRUD ====================
+
+    /**
+     * 创建合同
+     */
     @PostMapping("/create")
     @Operation(summary = "创建合同")
     @PreAuthorize("@ss.hasPermission('crm:contract:create')")
@@ -85,6 +93,9 @@ public class CrmContractController {
         return success(contractService.createContract(createReqVO, getLoginUserId()));
     }
 
+    /**
+     * 更新合同
+     */
     @PutMapping("/update")
     @Operation(summary = "更新合同")
     @PreAuthorize("@ss.hasPermission('crm:contract:update')")
@@ -93,6 +104,9 @@ public class CrmContractController {
         return success(true);
     }
 
+    /**
+     * 删除合同
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除合同")
     @Parameter(name = "id", description = "编号", required = true)
@@ -102,6 +116,9 @@ public class CrmContractController {
         return success(true);
     }
 
+    /**
+     * 获得合同
+     */
     @GetMapping("/get")
     @Operation(summary = "获得合同")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -127,6 +144,9 @@ public class CrmContractController {
         return contractVO;
     }
 
+    /**
+     * 获得合同分页
+     */
     @GetMapping("/page")
     @Operation(summary = "获得合同分页")
     @PreAuthorize("@ss.hasPermission('crm:contract:query')")
@@ -135,6 +155,9 @@ public class CrmContractController {
         return success(BeanUtils.toBean(pageResult, CrmContractRespVO.class).setList(buildContractDetailList(pageResult.getList())));
     }
 
+    /**
+     * 获得合同分页，基于指定客户
+     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得合同分页，基于指定客户")
     public CommonResult<PageResult<CrmContractRespVO>> getContractPageByCustomer(@Valid CrmContractPageReqVO pageVO) {
@@ -143,6 +166,9 @@ public class CrmContractController {
         return success(BeanUtils.toBean(pageResult, CrmContractRespVO.class).setList(buildContractDetailList(pageResult.getList())));
     }
 
+    /**
+     * 获得合同分页，基于指定商机
+     */
     @GetMapping("/page-by-business")
     @Operation(summary = "获得合同分页，基于指定商机")
     public CommonResult<PageResult<CrmContractRespVO>> getContractPageByBusiness(@Valid CrmContractPageReqVO pageVO) {
@@ -151,6 +177,11 @@ public class CrmContractController {
         return success(BeanUtils.toBean(pageResult, CrmContractRespVO.class).setList(buildContractDetailList(pageResult.getList())));
     }
 
+    // ==================== 合同导出 ====================
+
+    /**
+     * 导出合同 Excel
+     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出合同 Excel")
     @PreAuthorize("@ss.hasPermission('crm:contract:export')")
@@ -163,6 +194,11 @@ public class CrmContractController {
                 BeanUtils.toBean(pageResult.getList(), CrmContractRespVO.class));
     }
 
+    // ==================== 合同转移 ====================
+
+    /**
+     * 合同转移
+     */
     @PutMapping("/transfer")
     @Operation(summary = "合同转移")
     @PreAuthorize("@ss.hasPermission('crm:contract:update')")
@@ -174,6 +210,9 @@ public class CrmContractController {
     @PutMapping("/submit")
     @Operation(summary = "提交合同审批")
     @PreAuthorize("@ss.hasPermission('crm:contract:update')")
+    /**
+     * 提交合同审批
+     */
     public CommonResult<Boolean> submitContract(@RequestParam("id") Long id) {
         contractService.submitContract(id, getLoginUserId());
         return success(true);
@@ -219,6 +258,11 @@ public class CrmContractController {
         });
     }
 
+    // ==================== 合同审批 ====================
+
+    /**
+     * 获得待审核合同数量
+     */
     @GetMapping("/audit-count")
     @Operation(summary = "获得待审核合同数量")
     @PreAuthorize("@ss.hasPermission('crm:contract:query')")
@@ -226,6 +270,9 @@ public class CrmContractController {
         return success(contractService.getAuditContractCount(getLoginUserId()));
     }
 
+    /**
+     * 获得即将到期（提醒）的合同数量
+     */
     @GetMapping("/remind-count")
     @Operation(summary = "获得即将到期（提醒）的合同数量")
     @PreAuthorize("@ss.hasPermission('crm:contract:query')")
@@ -233,6 +280,11 @@ public class CrmContractController {
         return success(contractService.getRemindContractCount(getLoginUserId()));
     }
 
+    // ==================== 合同查询 ====================
+
+    /**
+     * 获得合同精简列表，主要用于前端的下拉选项
+     */
     @GetMapping("/simple-list")
     @Operation(summary = "获得合同精简列表", description = "只包含的合同，主要用于前端的下拉选项")
     @Parameter(name = "customerId", description = "客户编号", required = true)

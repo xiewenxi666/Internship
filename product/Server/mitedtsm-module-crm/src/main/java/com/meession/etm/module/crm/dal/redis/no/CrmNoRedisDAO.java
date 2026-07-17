@@ -29,6 +29,11 @@ public class CrmNoRedisDAO {
      */
     public static final String RECEIVABLE_PREFIX = "HK";
 
+    /**
+     * 订单 {@link com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO}
+     */
+    public static final String ORDER_NO_PREFIX = "DD";
+
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

@@ -22,11 +22,19 @@ import static com.meession.etm.framework.common.pojo.CommonResult.success;
 @RestController
 @RequestMapping("/crm/statistics-rank")
 @Validated
+/**
+ * CRM 排行榜统计 Controller (Admin)
+ */
 public class CrmStatisticsRankController {
 
     @Resource
     private CrmStatisticsRankService rankService;
 
+    // ==================== 排行榜查询 ====================
+
+    /**
+     * 获得合同金额排行榜
+     */
     @GetMapping("/get-contract-price-rank")
     @Operation(summary = "获得合同金额排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -34,6 +42,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getContractPriceRank(rankingReqVO));
     }
 
+    /**
+     * 获得回款金额排行榜
+     */
     @GetMapping("/get-receivable-price-rank")
     @Operation(summary = "获得回款金额排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -41,6 +52,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getReceivablePriceRank(rankingReqVO));
     }
 
+    /**
+     * 获得签约合同数量排行榜
+     */
     @GetMapping("/get-contract-count-rank")
     @Operation(summary = "获得签约合同数量排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -48,6 +62,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getContractCountRank(rankingReqVO));
     }
 
+    /**
+     * 获得产品销量排行榜
+     */
     @GetMapping("/get-product-sales-rank")
     @Operation(summary = "获得产品销量排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -55,6 +72,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getProductSalesRank(rankingReqVO));
     }
 
+    /**
+     * 获得新增客户数排行榜
+     */
     @GetMapping("/get-customer-count-rank")
     @Operation(summary = "获得新增客户数排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -62,6 +82,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getCustomerCountRank(rankingReqVO));
     }
 
+    /**
+     * 获得新增联系人数排行榜
+     */
     @GetMapping("/get-contacts-count-rank")
     @Operation(summary = "获得新增联系人数排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -69,6 +92,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getContactsCountRank(rankingReqVO));
     }
 
+    /**
+     * 获得跟进次数排行榜
+     */
     @GetMapping("/get-follow-count-rank")
     @Operation(summary = "获得跟进次数排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")
@@ -76,6 +102,9 @@ public class CrmStatisticsRankController {
         return success(rankService.getFollowCountRank(rankingReqVO));
     }
 
+    /**
+     * 获得跟进客户数排行榜
+     */
     @GetMapping("/get-follow-customer-count-rank")
     @Operation(summary = "获得跟进客户数排行榜")
     @PreAuthorize("@ss.hasPermission('crm:statistics-rank:query')")

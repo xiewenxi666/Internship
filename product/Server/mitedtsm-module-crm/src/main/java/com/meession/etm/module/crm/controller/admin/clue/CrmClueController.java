@@ -45,6 +45,12 @@ import static com.meession.etm.framework.common.util.collection.CollectionUtils.
 import static com.meession.etm.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 import static java.util.Collections.singletonList;
 
+/**
+ * CRM 线索 Controller（Admin）
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 @Tag(name = "管理后台 - 线索")
 @RestController
 @RequestMapping("/crm/clue")
@@ -61,6 +67,11 @@ public class CrmClueController {
     @Resource
     private DeptApi deptApi;
 
+    // ==================== 线索 CRUD ====================
+
+    /**
+     * 创建线索
+     */
     @PostMapping("/create")
     @Operation(summary = "创建线索")
     @PreAuthorize("@ss.hasPermission('crm:clue:create')")
@@ -68,6 +79,9 @@ public class CrmClueController {
         return success(clueService.createClue(createReqVO));
     }
 
+    /**
+     * 更新线索
+     */
     @PutMapping("/update")
     @Operation(summary = "更新线索")
     @PreAuthorize("@ss.hasPermission('crm:clue:update')")
@@ -76,6 +90,9 @@ public class CrmClueController {
         return success(true);
     }
 
+    /**
+     * 删除线索
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除线索")
     @Parameter(name = "id", description = "编号", required = true)
@@ -85,6 +102,9 @@ public class CrmClueController {
         return success(true);
     }
 
+    /**
+     * 获得线索详情
+     */
     @GetMapping("/get")
     @Operation(summary = "获得线索")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -101,6 +121,9 @@ public class CrmClueController {
         return buildClueDetailList(singletonList(clue)).get(0);
     }
 
+    /**
+     * 获得线索分页
+     */
     @GetMapping("/page")
     @Operation(summary = "获得线索分页")
     @PreAuthorize("@ss.hasPermission('crm:clue:query')")
@@ -109,6 +132,9 @@ public class CrmClueController {
         return success(new PageResult<>(buildClueDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
+    /**
+     * 导出线索 Excel
+     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出线索 Excel")
     @PreAuthorize("@ss.hasPermission('crm:clue:export')")
@@ -146,6 +172,11 @@ public class CrmClueController {
         });
     }
 
+    // ==================== 线索操作 ====================
+
+    /**
+     * 线索转移
+     */
     @PutMapping("/transfer")
     @Operation(summary = "线索转移")
     @PreAuthorize("@ss.hasPermission('crm:clue:update')")
@@ -154,6 +185,9 @@ public class CrmClueController {
         return success(true);
     }
 
+    /**
+     * 线索转化为客户
+     */
     @PutMapping("/transform")
     @Operation(summary = "线索转化为客户")
     @Parameter(name = "id", description = "编号", required = true)
@@ -163,6 +197,9 @@ public class CrmClueController {
         return success(Boolean.TRUE);
     }
 
+    /**
+     * 获得分配给我的、待跟进的线索数量
+     */
     @GetMapping("/follow-count")
     @Operation(summary = "获得分配给我的、待跟进的线索数量")
     @PreAuthorize("@ss.hasPermission('crm:clue:query')")

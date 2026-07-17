@@ -40,6 +40,12 @@ import static com.meession.etm.framework.common.util.collection.CollectionUtils.
 import static com.meession.etm.framework.common.util.collection.MapUtils.findAndThen;
 import static com.meession.etm.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 
+/**
+ * CRM 数据权限 Controller（Admin）
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 @Tag(name = "管理后台 - CRM 数据权限")
 @RestController
 @RequestMapping("/crm/permission")
@@ -55,6 +61,11 @@ public class CrmPermissionController {
     @Resource
     private PostApi postApi;
 
+    // ==================== 数据权限 CRUD ====================
+
+    /**
+     * 创建数据权限
+     */
     @PostMapping("/create")
     @Operation(summary = "创建数据权限")
     public CommonResult<Boolean> create(@Valid @RequestBody CrmPermissionSaveReqVO reqVO) {
@@ -62,6 +73,9 @@ public class CrmPermissionController {
         return success(true);
     }
 
+    /**
+     * 编辑数据权限
+     */
     @PutMapping("/update")
     @Operation(summary = "编辑数据权限")
     @CrmPermission(bizTypeValue = "#updateReqVO.bizType", bizId = "#updateReqVO.bizId"
@@ -71,6 +85,9 @@ public class CrmPermissionController {
         return success(true);
     }
 
+    /**
+     * 删除数据权限
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除数据权限")
     @Parameter(name = "ids", description = "数据权限编号", required = true, example = "1024")
@@ -79,6 +96,9 @@ public class CrmPermissionController {
         return success(true);
     }
 
+    /**
+     * 删除自己的数据权限
+     */
     @DeleteMapping("/delete-self")
     @Operation(summary = "删除自己的数据权限")
     @Parameter(name = "id", description = "数据权限编号", required = true, example = "1024")
@@ -87,6 +107,9 @@ public class CrmPermissionController {
         return success(true);
     }
 
+    /**
+     * 获得数据权限列表
+     */
     @GetMapping("/list")
     @Operation(summary = "获得数据权限列表")
     @Parameters({

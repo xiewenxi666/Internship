@@ -20,6 +20,12 @@ import java.util.List;
 
 import static com.meession.etm.framework.common.pojo.CommonResult.success;
 
+/**
+ * CRM 产品分类 Controller（Admin）
+ *
+ * @author 23计三倪雨晗
+ * @since 2026-03
+ */
 @Tag(name = "管理后台 - CRM 产品分类")
 @RestController
 @RequestMapping("/crm/product-category")
@@ -29,6 +35,11 @@ public class CrmProductCategoryController {
     @Resource
     private CrmProductCategoryService productCategoryService;
 
+    // ==================== 产品分类 CRUD ====================
+
+    /**
+     * 创建产品分类
+     */
     @PostMapping("/create")
     @Operation(summary = "创建产品分类")
     @PreAuthorize("@ss.hasPermission('crm:product-category:create')")
@@ -36,6 +47,9 @@ public class CrmProductCategoryController {
         return success(productCategoryService.createProductCategory(createReqVO));
     }
 
+    /**
+     * 更新产品分类
+     */
     @PutMapping("/update")
     @Operation(summary = "更新产品分类")
     @PreAuthorize("@ss.hasPermission('crm:product-category:update')")
@@ -44,6 +58,9 @@ public class CrmProductCategoryController {
         return success(true);
     }
 
+    /**
+     * 删除产品分类
+     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除产品分类")
     @Parameter(name = "id", description = "编号", required = true)
@@ -53,6 +70,9 @@ public class CrmProductCategoryController {
         return success(true);
     }
 
+    /**
+     * 获得产品分类详情
+     */
     @GetMapping("/get")
     @Operation(summary = "获得产品分类")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -62,6 +82,9 @@ public class CrmProductCategoryController {
         return success(BeanUtils.toBean(category, CrmProductCategoryRespVO.class));
     }
 
+    /**
+     * 获得产品分类列表
+     */
     @GetMapping("/list")
     @Operation(summary = "获得产品分类列表")
     @PreAuthorize("@ss.hasPermission('crm:product-category:query')")

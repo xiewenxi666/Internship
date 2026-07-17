@@ -12,80 +12,103 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 管理后台 - CRM 回款 Response VO
+ */
 @Schema(description = "管理后台 - CRM 回款 Response VO")
 @Data
 @ExcelIgnoreUnannotated
 public class CrmReceivableRespVO {
 
+    /** 编号 */
     @Schema(description = "编号", example = "25787")
     @ExcelProperty("编号")
     private Long id;
 
+    /** 回款编号 */
     @Schema(description = "回款编号", example = "31177")
     @ExcelProperty("回款编号")
     private String no;
 
+    /** 回款计划编号 */
     @Schema(description = "回款计划编号", example = "1024")
     @ExcelProperty("回款计划编号")
     private Long planId;
 
+    /** 回款方式 */
     @Schema(description = "回款方式", example = "2")
     @ExcelProperty(value = "回款方式", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.CRM_RECEIVABLE_RETURN_TYPE)
     private Integer returnType;
 
+    /** 回款金额 */
     @Schema(description = "回款金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "9000")
     @ExcelProperty("回款金额")
     private BigDecimal price;
 
+    /** 计划回款日期 */
     @Schema(description = "计划回款日期", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024-02-02")
     @ExcelProperty("计划回款日期")
     private LocalDateTime returnTime;
 
+    /** 客户编号 */
     @Schema(description = "客户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     private Long customerId;
+    /** 客户名字 */
     @Schema(description = "客户名字", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
     @ExcelProperty("客户名字")
     private String customerName;
 
+    /** 合同编号 */
     @Schema(description = "合同编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty("合同编号")
     private Long contractId;
+    /** 合同信息 */
     @Schema(description = "合同信息")
     private CrmContractRespVO contract;
 
+    /** 负责人的用户编号 */
     @Schema(description = "负责人的用户编号", example = "25682")
     private Long ownerUserId;
+    /** 负责人名字 */
     @Schema(description = "负责人名字", example = "25682")
     @ExcelProperty("负责人名字")
     private String ownerUserName;
+    /** 负责人部门 */
     @Schema(description = "负责人部门")
     @ExcelProperty("负责人部门")
     private String ownerUserDeptName;
 
+    /** 工作流编号 */
     @Schema(description = "工作流编号", example = "1043")
     @ExcelProperty("工作流编号")
     private String processInstanceId;
 
+    /** 审批状态 */
     @Schema(description = "审批状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
     @ExcelProperty(value = "审批状态", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.CRM_AUDIT_STATUS)
     private Integer auditStatus;
 
-    @Schema(description = "工作流编号", example = "备注")
-    @ExcelProperty("工作流编号")
+    /** 备注 */
+    @Schema(description = "备注", example = "备注")
+    @ExcelProperty("备注")
     private String remark;
 
+    /** 创建时间 */
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    /** 更新时间 */
     @Schema(description = "更新时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("更新时间")
     private LocalDateTime updateTime;
 
+    /** 创建人 */
     @Schema(description = "创建人", example = "25682")
     private String creator;
+    /** 创建人名字 */
     @Schema(description = "创建人名字", example = "test")
     @ExcelProperty("创建人名字")
     private String creatorName;
