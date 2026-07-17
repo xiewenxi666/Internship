@@ -66,6 +66,7 @@ const formData = ref({
 const formRules = reactive({
   purpose: [{ required: true, message: t('oa.loan.purpose') + t('common.notEmpty'), trigger: 'blur' }],
   amount: [{ required: true, message: t('oa.loan.amount') + t('common.notEmpty'), trigger: 'blur' }],
+  expectedRepayTime: [{ required: true, message: t('oa.loan.expectedRepayTime') + t('common.notEmpty'), trigger: 'change' }],
   reason: [{ required: true, message: t('oa.loan.reason') + t('common.notEmpty'), trigger: 'change' }]
 })
 const formRef = ref()
@@ -105,7 +106,7 @@ const submitForm = async () => {
     await LoanApi.createLoan(data)
     message.success(t('process.instance.startSuccess'))
     delView(unref(currentRoute))
-    await push({ name: 'OaLoan' })
+    await push('/bpm/oa/loan')
   } finally {
     formLoading.value = false
   }

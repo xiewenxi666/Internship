@@ -98,18 +98,109 @@ src/test/java/.../service/
 | # | 文件 | 内容 |
 |---|------|------|
 | 1 | `sql/oa/001-oa-tables.sql` | 9 张 OA 表 DDL |
-| 2 | `sql/oa/002-oa-dict-menu.sql` | 字典类型+数据、菜单+按钮权限 |
-| 3 | `sql/oa/003-oa-menu-fixed.sql` | 菜单修复 |
+| 2 | `sql/oa/002-oa-dict-menu.sql` | 字典类型+数据、菜单+按钮权限（已废弃，仅参考） |
+| 3 | `sql/oa/003-oa-menu-fixed.sql` | 菜单修复 + 完整按钮权限（含 trip/loan/visit/request/report/schedule/task/document） |
+| 4 | `sql/oa/004-oa-menu-cleanup.sql` | 清理 002 旧菜单（已执行） |
+| 5 | `sql/oa/005-oa-menu-move.sql` | OA 菜单移至 工作流程 下 + 删除旧 OA 示例 |
+
+### 2.4 前端路由路径变更（近期）
+
+| # | 范围 | 变更 | 原因 |
+|---|------|------|------|
+| 1 | 5 个 `create.vue` | 提交后导航 `push({ name: 'OaXxx' })` → `push('/bpm/oa/xxx')` | 无此名称的路由，push 静默失败导致停留在创建页 |
+| 2 | `remaining.ts` | `activeMenu: '/oa/xxx'` → `'/bpm/oa/xxx'` | OA 菜单已移至 工作流程(/bpm) 下 |
+| 3 | OA 列表页路由 | `/oa/leave` → `/bpm/oa/leave`（自动生效） | OA 父菜单 path 从 `/oa` 改为 `oa` |
+
+> 注：后端 API 路径（`/oa/leave/create` 等）不变，前端 API 调用不受影响。
+
+### 2.5 后端变更（近期）
+
+| # | 文件 | 变更 | 原因 |
+|---|------|------|------|
+| 1 | `OaLoanCreateReqVO.java` | `expectedRepayTime` 添加 `@NotNull` 验证 | 预计还款时间应必填 |
+
+### 2.6 菜单结构变更
+
+**之前（旧结构）：**
+```
+OA（顶级菜单）
+├── 请假管理
+├── 出差管理
+├── ...
+
+工作流程（上级菜单没有 OA）
+├── 流程管理
+├── 审批中心
+├── OA 示例（已删除）
+│   └── 请假查询
+```
+
+**之后（新结构）：**
+```
+工作流程
+├── 流程管理
+├── 审批中心
+├── OA ← 移至此
+│   ├── 请假管理
+│   ├── 出差管理
+│   ├── 借款管理
+│   ├── 拜访管理
+│   ├── 请示管理
+│   ├── 工作报告
+│   ├── 日程管理
+│   ├── 任务管理
+│   └── 文档管理
+```
+
+> 旧 `OA 示例`（id=5,1118-1120）已从数据中删除。
 
 ---
 
-## 三、BPMN 流程模型建立指南
+## 三、常见问题排查
 
-### 3.1 操作入口
+### 3.1 "没有该操作权限" 弹窗
+
+**现象**：进入 OA 页面或操作时弹出"没有该操作权限"。
+
+**原因**：登录用户的角色没有分配 OA 相关菜单/权限。
+
+**解决步骤**：
+
+1. **系统管理 → 角色管理** → 找到用户所属的角色（如"普通角色"）
+2. 点击 **菜单权限**
+3. 勾选 **工作流程 → OA** 下的所有子模块菜单
+4. 点击 **保存**
+5. 用户**重新登录**，权限即可生效
+
+> 如果之前运行过 `003-oa-menu-fixed.sql` 和 `005-oa-menu-move.sql`，角色 `2`（普通角色）和 `3`（CRM 管理员）已自动关联 OA 菜单。其他角色需手动授权。
+
+**验证**：登录后访问任意 OA 页面（如 `/bpm/oa/leave`），不再弹权限提示即为正常。
+
+### 3.2 创建后页面停留在新建页
+
+**原因**：`create.vue` 提交后导航使用了不存在的路由名 `{ name: 'OaXxx' }`。
+
+**解决**：已改为路径导航 `push('/bpm/oa/xxx')`。刷新页面即可生效。
+
+### 3.3 流程模型未配置
+
+**现象**：创建页面提示"流程模型未配置"。
+
+**原因**：该模块的 BPMN 流程模型未发布或 KEY 不匹配。
+
+**解决**：参考第四章建立并发布对应 KEY 的 BPMN 模型。
+
+---
+
+## 四、BPMN 流程模型建立指南
+
+> 注意：表单提交路由和表单查看路径使用的仍是 `oa/{module}/{action}` 格式（不加 `/bpm` 前缀），因为它们是组件解析路径，不是前端路由路径。
+
+### 4.1 操作入口
 
 系统管理 → 流程管理 → 流程模型 → 新建
 
-### 3.2 各模块参数速查表
+### 4.2 各模块参数速查表
 
 | 模块 | 流程标识 KEY | 流程名称 | 表单提交路由 | 表单查看路径 | PROCESS_KEY(Java) | 流程变量 |
 |------|------------|---------|-------------|-------------|------------------|---------|
@@ -119,7 +210,7 @@ src/test/java/.../service/
 | 拜访 | `oa_visit` | 拜访审批 | `oa/visit/create` | `oa/visit/detail` | `oa_visit` | `{}` |
 | 请示 | `oa_request` | 请示审批 | `oa/request/create` | `oa/request/detail` | `oa_request` | 不传 |
 
-### 3.3 字段对应表（模型器 → 表单配置）
+### 4.3 字段对应表（模型器 → 表单配置）
 
 #### 请假 Leave
 
@@ -169,7 +260,7 @@ src/test/java/.../service/
 | urgency | 下拉选择 | `oa_urgency_type` | 紧急程度(普通/紧急/特急) |
 | content | 多行文本 | — | 内容 |
 
-### 3.4 统一配置项（所有模块相同）
+### 4.4 统一配置项（所有模块相同）
 
 | 配置项 | 值 |
 |--------|-----|
@@ -178,7 +269,7 @@ src/test/java/.../service/
 | 审批人节点策略 | 发起人部门负责人 (dept_leader_from_initiator) |
 | 流程设计 | [开始] → [发起人节点(自动)] → [审批人节点] → [结束] |
 
-### 3.5 操作步骤（模型器内操作）
+### 4.5 操作步骤（模型器内操作）
 
 以"出差"为例，其他 4 个模块同理替换模块名。
 
@@ -248,7 +339,7 @@ src/test/java/.../service/
 
 发布成功后，该流程就会出现在"请假审批"的流程定义列表中，前端创建页面会通过 `processDefineKey = 'oa_trip'` 自动匹配。
 
-### 3.6 各模块操作差异
+### 4.6 各模块操作差异
 
 | 模块 | 表单字段（按顺序添加） | 表单提交路由 | 表单查看路径 |
 |------|---------------------|-------------|-------------|
@@ -258,7 +349,7 @@ src/test/java/.../service/
 | 拜访 | customerId(数字), contactPerson(文本), contactPhone(文本), visitTime(日期时间), location(文本), purpose(文本), notes(多行文本) | `oa/visit/create` | `oa/visit/detail` |
 | 请示 | title(文本), urgency(下拉/oa_urgency_type), content(多行文本) | `oa/request/create` | `oa/request/detail` |
 
-### 3.7 注意事项
+### 4.7 注意事项
 
 - **流程 KEY 必须**与 Java 代码中 `PROCESS_KEY` 常量完全一致（大小写敏感）
 - **表单字段名必须**与前端 `formData.xxx` 中的属性名完全一致（用来实现表单数据自动匹配）
@@ -266,7 +357,7 @@ src/test/java/.../service/
 - 请假之外 4 个模块创建前需确认该模块的后端字典数据已导入（运行过 `002-oa-dict-menu.sql`）
 - 发布后如果前端创建时提示"流程模型未配置"，检查 `processDefineKey` 与发布的 KEY 是否一致
 
-### 3.8 表单提交路由 vs 表单查看路径说明
+### 4.8 表单提交路由 vs 表单查看路径说明
 
 ```
 表单提交路由 = Vue 路由地址，用于创建页面的路由导航
@@ -275,9 +366,9 @@ src/test/java/.../service/
 
 ---
 
-## 四、模块交互接口
+## 五、模块交互接口
 
-### 4.1 BPM 模块 → OA（后端）
+### 5.1 BPM 模块 → OA（后端）
 
 OA 域通过调用 BPM 模块的 API 发起审批流、接收审批回调。
 
@@ -315,7 +406,7 @@ BpmProcessInstanceStatusEventListener:
   → OaXxxService.updateStatus(id, status) 更新单据状态
 ```
 
-### 4.2 前端 → BPM API
+### 5.2 前端 → BPM API
 
 | API 路径 | 前端调用方 | 说明 |
 |----------|----------|------|
@@ -324,7 +415,7 @@ BpmProcessInstanceStatusEventListener:
 | `DELETE /admin-api/bpm/process-instance/cancel-by-start-user` | 各模块 index.vue | 撤销流程 |
 | `GET /admin-api/bpm/definition/get` | 各模块 create.vue | 获取流程定义(含 startUserSelectTasks 等) |
 
-### 4.3 OA 自身 API
+### 5.3 OA 自身 API
 
 所有 OA 业务 API 映射到 `/admin-api/oa/{business}/...`
 
@@ -335,7 +426,7 @@ BpmProcessInstanceStatusEventListener:
 | GET | `/oa/{business}/page` | 分页查询 |
 | DELETE | `/oa/{business}/delete` | 删除 |
 
-### 4.4 字典接口
+### 5.4 字典接口
 
 | 字典类型 | 用途 | 数据来源 |
 |---------|------|---------|
@@ -347,7 +438,7 @@ BpmProcessInstanceStatusEventListener:
 | `oa_report_type` | 报告类型 | 后端 SQL |
 | `bpm_process_instance_status` | 审批状态 | BPM 模块内置 |
 
-### 4.5 数据库交互
+### 5.5 数据库交互
 
 | 表 | 用途 |
 |----|------|
@@ -359,7 +450,7 @@ BpmProcessInstanceStatusEventListener:
 
 ---
 
-## 五、未审批模块说明（P1）
+## 六、未审批模块说明（P1）
 
 以下模块不需要 BPM 审批流，仅有基本的 CRUD：
 
@@ -372,7 +463,7 @@ BpmProcessInstanceStatusEventListener:
 
 ---
 
-## 六、前端文件清单
+## 七、前端文件清单
 
 ```
 Web/src/
@@ -407,18 +498,20 @@ Web/src/
 
 ---
 
-## 七、数据库 SQL 清单
+## 八、数据库 SQL 清单
 
 ```
 Server/sql/oa/
 ├── 001-oa-tables.sql      → 9 张 OA 表建表语句
-├── 002-oa-dict-menu.sql   → 字典类型 + 字典数据 + 菜单 + 按钮权限
-└── 003-oa-menu-fixed.sql  → 菜单修复数据
+├── 002-oa-dict-menu.sql   → 字典类型 + 字典数据 + 菜单 + 按钮权限（已废弃，仅参考；使用 003 替代）
+├── 003-oa-menu-fixed.sql  → 菜单修复 + 完整按钮权限（含 trip/loan/visit/request/report/schedule/task/document）
+├── 004-oa-menu-cleanup.sql→ 清理 002 旧菜单数据
+└── 005-oa-menu-move.sql   → OA 菜单移至 工作流程 下 + 删除旧 OA 示例
 ```
 
 ---
 
-## 八、后端文件清单
+## 九、后端文件清单
 
 ```
 Server/mitedtsm-module-oa/

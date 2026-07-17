@@ -131,7 +131,7 @@ const submitForm = async () => {
     await TripApi.createTrip(data)
     message.success(t('process.instance.startSuccess'))
     delView(unref(currentRoute))
-    await push({ name: 'OaTrip' })
+    await push('/bpm/oa/trip')
   } finally {
     formLoading.value = false
   }

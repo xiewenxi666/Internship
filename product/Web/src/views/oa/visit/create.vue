@@ -108,7 +108,7 @@ const submitForm = async () => {
     await VisitApi.createVisit(data)
     message.success(t('process.instance.startSuccess'))
     delView(unref(currentRoute))
-    await push({ name: 'OaVisit' })
+    await push('/bpm/oa/visit')
   } finally {
     formLoading.value = false
   }

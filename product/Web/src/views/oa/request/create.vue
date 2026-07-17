@@ -109,7 +109,7 @@ const submitForm = async () => {
     await RequestApi.createRequest(data)
     message.success(t('process.instance.startSuccess'))
     delView(unref(currentRoute))
-    await push({ name: 'OaRequest' })
+    await push('/bpm/oa/request')
   } finally {
     formLoading.value = false
   }

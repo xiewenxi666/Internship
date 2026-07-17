@@ -67,8 +67,8 @@ ON DUPLICATE KEY UPDATE label=VALUES(label), value=VALUES(value), color_type=VAL
 
 -- 菜单
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `status`)
-VALUES (5307, 'OA', '', 1, 50, 0, '/oa', 'ep:notebook', '', 0)
-ON DUPLICATE KEY UPDATE name=VALUES(name), path=VALUES(path), icon=VALUES(icon);
+VALUES (5307, 'OA', '', 1, 50, 1185, 'oa', 'ep:notebook', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), path=VALUES(path), icon=VALUES(icon), parent_id=VALUES(parent_id);
 
 SET @oa_menu_id = 5307;
 
@@ -110,8 +110,98 @@ ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=V
 INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
 VALUES (5319, '删除请假', 'oa:leave:delete', 3, 3, 5308, '', '', 0)
 ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
--- ... 出差/借款/拜访/请示/报告/日程/任务/文档 按钮（类似）
--- （完整按钮列表请参考数据库实际数据）
+-- 按钮权限: 出差
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5320, '创建出差', 'oa:trip:create', 3, 1, 5309, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5321, '查询出差', 'oa:trip:query', 3, 2, 5309, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5322, '删除出差', 'oa:trip:delete', 3, 3, 5309, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 借款
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5323, '创建借款', 'oa:loan:create', 3, 1, 5310, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5324, '查询借款', 'oa:loan:query', 3, 2, 5310, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5325, '删除借款', 'oa:loan:delete', 3, 3, 5310, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 拜访
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5326, '创建拜访', 'oa:visit:create', 3, 1, 5311, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5327, '查询拜访', 'oa:visit:query', 3, 2, 5311, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5328, '删除拜访', 'oa:visit:delete', 3, 3, 5311, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 请示
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5329, '创建请示', 'oa:request:create', 3, 1, 5312, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5330, '查询请示', 'oa:request:query', 3, 2, 5312, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5331, '删除请示', 'oa:request:delete', 3, 3, 5312, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 工作报告
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5332, '创建报告', 'oa:report:create', 3, 1, 5313, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5333, '查询报告', 'oa:report:query', 3, 2, 5313, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5334, '更新报告', 'oa:report:update', 3, 3, 5313, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5335, '删除报告', 'oa:report:delete', 3, 4, 5313, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 日程
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5336, '创建日程', 'oa:schedule:create', 3, 1, 5314, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5337, '查询日程', 'oa:schedule:query', 3, 2, 5314, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5338, '更新日程', 'oa:schedule:update', 3, 3, 5314, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5339, '删除日程', 'oa:schedule:delete', 3, 4, 5314, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 任务
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5340, '创建任务', 'oa:task:create', 3, 1, 5315, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5341, '查询任务', 'oa:task:query', 3, 2, 5315, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5342, '更新任务', 'oa:task:update', 3, 3, 5315, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5343, '删除任务', 'oa:task:delete', 3, 4, 5315, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+-- 按钮权限: 文档
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5344, '创建文档', 'oa:document:create', 3, 1, 5316, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5345, '查询文档', 'oa:document:query', 3, 2, 5316, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5346, '更新文档', 'oa:document:update', 3, 3, 5316, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
+INSERT INTO `system_menu` (`id`, `name`, `permission`, `type`, `sort`, `parent_id`, `path`, `component`, `status`)
+VALUES (5347, '删除文档', 'oa:document:delete', 3, 4, 5316, '', '', 0)
+ON DUPLICATE KEY UPDATE name=VALUES(name), permission=VALUES(permission), type=VALUES(type);
 
 -- 角色-菜单关联
 INSERT INTO `system_role_menu` (`role_id`, `menu_id`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`)

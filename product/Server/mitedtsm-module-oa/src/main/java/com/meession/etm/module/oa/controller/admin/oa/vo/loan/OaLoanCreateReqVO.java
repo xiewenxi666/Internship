@@ -22,7 +22,8 @@ public class OaLoanCreateReqVO {
     @Schema(description = "借款金额（分）", requiredMode = Schema.RequiredMode.REQUIRED, example = "50000")
     private Long amount;
 
-    @Schema(description = "预计归还时间")
+    @NotNull(message = "预计归还时间不能为空")
+    @Schema(description = "预计归还时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime expectedRepayTime;
 

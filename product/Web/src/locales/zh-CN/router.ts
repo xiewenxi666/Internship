@@ -6,6 +6,8 @@ export default {
   workplace: '工作台',
   bpmProcessDefinition: '流程定义',
   bpmFormEditor: '表单编辑',
+  bpmModelCreate: '新建模型',
+  bpmModelUpdate: '编辑模型',
   bpmProcessInstanceDetail: '流程实例详情',
   bpmProcessInstanceReport: '流程实例报表',
   oaLeaveCreate: '新建请假',

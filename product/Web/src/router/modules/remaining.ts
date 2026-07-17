@@ -304,7 +304,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaLeaveCreate'),
-          activeMenu: '/oa/leave'
+          activeMenu: '/bpm/oa/leave'
         }
       },
       {
@@ -316,7 +316,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaLeaveDetail'),
-          activeMenu: '/oa/leave'
+          activeMenu: '/bpm/oa/leave'
         }
       },
       // OA 出差
@@ -329,7 +329,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaTripCreate'),
-          activeMenu: '/oa/trip'
+          activeMenu: '/bpm/oa/trip'
         }
       },
       {
@@ -341,7 +341,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaTripDetail'),
-          activeMenu: '/oa/trip'
+          activeMenu: '/bpm/oa/trip'
         }
       },
       // OA 借款
@@ -354,7 +354,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaLoanCreate'),
-          activeMenu: '/oa/loan'
+          activeMenu: '/bpm/oa/loan'
         }
       },
       {
@@ -366,7 +366,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaLoanDetail'),
-          activeMenu: '/oa/loan'
+          activeMenu: '/bpm/oa/loan'
         }
       },
       // OA 拜访
@@ -379,7 +379,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaVisitCreate'),
-          activeMenu: '/oa/visit'
+          activeMenu: '/bpm/oa/visit'
         }
       },
       {
@@ -391,7 +391,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaVisitDetail'),
-          activeMenu: '/oa/visit'
+          activeMenu: '/bpm/oa/visit'
         }
       },
       // OA 请示
@@ -404,7 +404,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaRequestCreate'),
-          activeMenu: '/oa/request'
+          activeMenu: '/bpm/oa/request'
         }
       },
       {
@@ -416,7 +416,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true,
           title: t('router.oaRequestDetail'),
-          activeMenu: '/oa/request'
+          activeMenu: '/bpm/oa/request'
         }
       },
       {

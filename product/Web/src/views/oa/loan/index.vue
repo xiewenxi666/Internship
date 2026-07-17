@@ -37,7 +37,6 @@
           <el-form-item :label="t('oa.loan.reason')" prop="reason">
             <el-input v-model="queryParams.reason" class="!w-240px" clearable :placeholder="t('oa.loan.reasonPlaceholder')" @keyup.enter="handleQuery" />
           </el-form-item>
-          </el-form-item>
         </el-col>
       </el-row>
       <el-row>

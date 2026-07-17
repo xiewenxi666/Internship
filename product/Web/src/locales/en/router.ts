@@ -6,6 +6,8 @@ export default {
   workplace: 'Workplace',
   bpmProcessDefinition: 'Process Definition',
   bpmFormEditor: 'Form Editor',
+  bpmModelCreate: 'Create Model',
+  bpmModelUpdate: 'Edit Model',
   bpmProcessInstanceDetail: 'Process Instance Detail',
   bpmProcessInstanceReport: 'Process Instance Report',
   oaLeaveCreate: 'Create Leave',

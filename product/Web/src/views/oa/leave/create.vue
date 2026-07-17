@@ -126,7 +126,7 @@ const submitForm = async () => {
     await LeaveApi.createLeave(data)
     message.success(t('process.instance.startSuccess'))
     delView(unref(currentRoute))
-    await push({ name: 'OaLeave' })
+    await push('/bpm/oa/leave')
   } finally {
     formLoading.value = false
   }
