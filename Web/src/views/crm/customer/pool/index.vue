@@ -2,6 +2,35 @@
   <doc-alert title="【客户】客户管理、公海客户" url="https://doc.iocoder.cn/crm/customer/" />
   <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/" />
 
+    <!-- 公海统计卡片 -->
+  <ContentWrap>
+    <el-row :gutter="20" class="mb-15px">
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.totalPool }}</div>
+          <div class="stat-label">公海客户数</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #E6A23C">{{ stats.remindCount }}</div>
+          <div class="stat-label">即将掉入</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #67C23A">{{ stats.canClaim }}</div>
+          <div class="stat-label">可领取</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #409EFF">{{ stats.myClaimed }}</div>
+          <div class="stat-label">我已领取</div>
+        </div>
+      </el-col>
+    </el-row>
+  </ContentWrap>
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -130,7 +159,6 @@
         </template>
       </el-table-column>
       <el-table-column :label="t('mobile')" align="center" prop="mobile" min-width="120" />
-      <el-table-column :label="t('telephone')" align="center" prop="telephone" min-width="130" />
       <el-table-column :label="t('email')" align="center" prop="email" min-width="180" />
       <el-table-column align="center" :label="t('level')" prop="level" min-width="135">
         <template #default="scope">
@@ -218,6 +246,7 @@ const exportLoading = ref(false) // 导出的加载中
 
 /** 查询列表 */
 const getList = async () => {
+  loadPoolStats()
   loading.value = true
   try {
     const data = await CustomerApi.getCustomerPage(queryParams.value)
@@ -284,4 +313,24 @@ watch(
 onMounted(() => {
   getList()
 })
-</script>
+onActivated(() => {
+  getList()
+})
+
+/** 公海统计卡片 */
+const stats = reactive({
+  totalPool: 0,
+  remindCount: 0,
+  canClaim: 0,
+  myClaimed: 0
+})
+const loadPoolStats = async () => {
+  try {
+    const poolData = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 1, pool: true })
+    stats.totalPool = poolData.total
+    stats.remindCount = await CustomerApi.getPutPoolRemindCustomerCount()
+    stats.canClaim = poolData.total
+    const myData = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 1, sceneType: '1' })
+    stats.myClaimed = myData.total
+  } catch {}
+}</script>

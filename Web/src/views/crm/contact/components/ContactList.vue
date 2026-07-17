@@ -1,4 +1,18 @@
 <template>
+  <!-- 快速搜索 -->
+  <ContentWrap>
+    <el-row :gutter="10">
+      <el-col :span="6">
+        <el-input v-model="searchName" placeholder="按姓名搜索" clearable size="small" @input="onSearch" />
+      </el-col>
+      <el-col :span="6">
+        <el-input v-model="searchMobile" placeholder="按手机号搜索" clearable size="small" @input="onSearch" />
+      </el-col>
+      <el-col :span="6">
+        <el-input v-model="searchPost" placeholder="按职位搜索" clearable size="small" @input="onSearch" />
+      </el-col>
+    </el-row>
+  </ContentWrap>
   <!-- 操作栏 -->
   <el-row justify="end">
     <el-button @click="openForm">
@@ -185,4 +199,15 @@ watch(
   },
   { immediate: true, deep: true }
 )
-</script>
+
+/** 联系人搜索 */
+const searchName = ref('')
+const searchMobile = ref('')
+const searchPost = ref('')
+const onSearch = () => {
+  queryParams.name = searchName.value || undefined
+  queryParams.mobile = searchMobile.value || undefined
+  queryParams.post = searchPost.value || undefined
+  queryParams.pageNo = 1
+  getList()
+}</script>
