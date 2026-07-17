@@ -34,7 +34,9 @@ export enum BizTypeEnum {
   CRM_CONTRACT = 5, // 合同
   CRM_PRODUCT = 6, // 产品
   CRM_RECEIVABLE = 7, // 回款
-  CRM_RECEIVABLE_PLAN = 8 // 回款计划
+  CRM_RECEIVABLE_PLAN = 8, // 回款计划
+  CRM_REIMBURSEMENT = 12, // 报销
+  CRM_REFUND = 13 // 退款
 }
 
 /**

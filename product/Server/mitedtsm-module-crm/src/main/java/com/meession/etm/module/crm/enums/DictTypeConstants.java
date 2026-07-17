@@ -16,5 +16,7 @@ public interface DictTypeConstants {
     String CRM_FOLLOW_UP_TYPE = "crm_follow_up_type"; // CRM 跟进方式
     String CRM_RECEIVABLE_RETURN_TYPE = "crm_receivable_return_type"; // CRM 回款方式
     String CRM_INVOICE_TYPE = "crm_invoice_type"; // CRM 发票类型
+    String CRM_REIMBURSEMENT_TYPE = "crm_reimbursement_type"; // CRM 报销类型
+    String CRM_REFUND_TYPE = "crm_refund_type"; // CRM 退款类型
 
 }

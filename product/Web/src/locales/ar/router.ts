@@ -21,5 +21,14 @@ export default {
   crmInvoice: 'إدارة الفواتير',
   crmInvoiceRecord: 'سجلات الفواتير',
   crmInvoiceReport: 'تقرير الفواتير',
-  crmInvoiceDetail: 'تفاصيل الفاتورة'
+  crmInvoiceDetail: 'تفاصيل الفاتورة',
+  crmReimbursement: 'إدارة السداد',
+  crmReimbursementDetail: 'تفاصيل السداد',
+  crmReimbursementApproval: 'الموافقة على السداد',
+  crmReimbursementApprovalDetail: 'تفاصيل الموافقة على السداد',
+  crmRefund: 'إدارة الاسترداد',
+  crmRefundDetail: 'تفاصيل الاسترداد',
+  crmRefundApproval: 'الموافقة على الاسترداد',
+  crmRefundApprovalDetail: 'تفاصيل الموافقة على الاسترداد',
+  crmRefundRecord: 'سجلات الاسترداد'
 }

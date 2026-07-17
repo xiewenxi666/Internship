@@ -21,5 +21,14 @@ export default {
   crmInvoice: 'Invoice Management',
   crmInvoiceRecord: 'Invoice Records',
   crmInvoiceReport: 'Invoice Report',
-  crmInvoiceDetail: 'Invoice Detail'
+  crmInvoiceDetail: 'Invoice Detail',
+  crmReimbursement: 'Reimbursement',
+  crmReimbursementDetail: 'Reimbursement Detail',
+  crmReimbursementApproval: 'Reimbursement Approval',
+  crmReimbursementApprovalDetail: 'Reimbursement Approval Detail',
+  crmRefund: 'Refund Management',
+  crmRefundDetail: 'Refund Detail',
+  crmRefundApproval: 'Refund Approval',
+  crmRefundApprovalDetail: 'Refund Approval Detail',
+  crmRefundRecord: 'Refund Records'
 }

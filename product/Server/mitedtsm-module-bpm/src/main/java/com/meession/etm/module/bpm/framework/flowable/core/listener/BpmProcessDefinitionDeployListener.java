@@ -58,6 +58,20 @@ public class BpmProcessDefinitionDeployListener implements ApplicationRunner {
      */
     private static final String RECEIVABLE_VIEW_PATH = "/crm/receivable/approval/detail/index";
     /**
+     * CRM 报销审批流程标识
+     */
+    private static final String REIMBURSEMENT_PROCESS_KEY = "crm-reimbursement-audit";
+    private static final String REIMBURSEMENT_PROCESS_NAME = "报销审批";
+    private static final String REIMBURSEMENT_CREATE_PATH = "/crm/reimbursement/detail/index";
+    private static final String REIMBURSEMENT_VIEW_PATH = "/crm/reimbursement/approval/detail/index";
+    /**
+     * CRM 退款审批流程标识
+     */
+    private static final String REFUND_PROCESS_KEY = "crm-refund-audit";
+    private static final String REFUND_PROCESS_NAME = "退款审批";
+    private static final String REFUND_CREATE_PATH = "/crm/refund/detail/index";
+    private static final String REFUND_VIEW_PATH = "/crm/refund/approval/detail/index";
+    /**
      * 审批人角色编号：1 - 超级管理员
      */
     private static final String APPROVE_ROLE_IDS = "1";
@@ -77,6 +91,8 @@ public class BpmProcessDefinitionDeployListener implements ApplicationRunner {
         TenantContextHolder.setTenantId(DEFAULT_TENANT_ID);
         try {
             deployReceivableAuditProcess();
+            deployReimbursementAuditProcess();
+            deployRefundAuditProcess();
         } catch (Exception ex) {
             log.error("[run][部署内置流程({}) 失败]", RECEIVABLE_PROCESS_KEY, ex);
         } finally {
@@ -86,9 +102,8 @@ public class BpmProcessDefinitionDeployListener implements ApplicationRunner {
 
     private void deployReceivableAuditProcess() {
         String tenantId = FlowableUtils.getTenantId();
-        // 1. 清理历史部署的「无租户」流程定义。由于发起流程时按照租户过滤，这类部署无法被查询到，
-        // 反而会导致存在性判断误判，跳过正确的部署
-        cleanStaleDeployments();
+        // 1. 清理历史部署的「无租户」流程定义
+        cleanStaleDeployments(RECEIVABLE_PROCESS_KEY);
 
         // 2. 当前租户下已存在，则跳过部署
         ProcessDefinition definition = repositoryService.createProcessDefinitionQuery()
@@ -137,22 +152,182 @@ public class BpmProcessDefinitionDeployListener implements ApplicationRunner {
         }
     }
 
+    private void deployReimbursementAuditProcess() {
+        String tenantId = FlowableUtils.getTenantId();
+        cleanStaleDeployments(REIMBURSEMENT_PROCESS_KEY);
+
+        ProcessDefinition definition = repositoryService.createProcessDefinitionQuery()
+                .processDefinitionKey(REIMBURSEMENT_PROCESS_KEY)
+                .processDefinitionTenantId(tenantId)
+                .latestVersion().singleResult();
+        if (definition == null) {
+            Deployment deployment = repositoryService.createDeployment()
+                    .key(REIMBURSEMENT_PROCESS_KEY).name(REIMBURSEMENT_PROCESS_NAME)
+                    .addBpmnModel(REIMBURSEMENT_PROCESS_KEY + ".bpmn20.xml", buildReimbursementAuditModel())
+                    .tenantId(tenantId)
+                    .disableSchemaValidation()
+                    .deploy();
+            definition = repositoryService.createProcessDefinitionQuery()
+                    .deploymentId(deployment.getId()).singleResult();
+            log.info("[deployReimbursementAuditProcess][部署流程({}) 成功，流程定义编号({})]",
+                    REIMBURSEMENT_PROCESS_KEY, definition.getId());
+        }
+
+        BpmProcessDefinitionInfoDO info = processDefinitionInfoMapper.selectByProcessDefinitionId(definition.getId());
+        if (info == null) {
+            processDefinitionInfoMapper.insert(new BpmProcessDefinitionInfoDO()
+                    .setProcessDefinitionId(definition.getId())
+                    .setModelId(definition.getId())
+                    .setModelType(BpmModelTypeEnum.BPMN.getType())
+                    .setCategory("DEFAULT")
+                    .setFormType(BpmModelFormTypeEnum.CUSTOM.getType())
+                    .setFormCustomCreatePath(REIMBURSEMENT_CREATE_PATH)
+                    .setFormCustomViewPath(REIMBURSEMENT_VIEW_PATH)
+                    .setVisible(true)
+                    .setSort(0L)
+                    .setAllowCancelRunningProcess(true)
+                    .setAllowWithdrawTask(false)
+                    .setAutoApprovalType(BpmAutoApproveTypeEnum.NONE.getType()));
+            log.info("[deployReimbursementAuditProcess][创建流程定义拓展信息：{} ({})]",
+                    REIMBURSEMENT_PROCESS_KEY, definition.getId());
+        } else if (!REIMBURSEMENT_VIEW_PATH.equals(info.getFormCustomViewPath())) {
+            processDefinitionInfoMapper.updateById(new BpmProcessDefinitionInfoDO()
+                    .setId(info.getId())
+                    .setFormCustomCreatePath(REIMBURSEMENT_CREATE_PATH)
+                    .setFormCustomViewPath(REIMBURSEMENT_VIEW_PATH));
+            log.info("[deployReimbursementAuditProcess][更新流程定义({}) 的业务表单查看路径为：{}]",
+                    definition.getId(), REIMBURSEMENT_VIEW_PATH);
+        }
+    }
+
+    private void deployRefundAuditProcess() {
+        String tenantId = FlowableUtils.getTenantId();
+        cleanStaleDeployments(REFUND_PROCESS_KEY);
+
+        ProcessDefinition definition = repositoryService.createProcessDefinitionQuery()
+                .processDefinitionKey(REFUND_PROCESS_KEY)
+                .processDefinitionTenantId(tenantId)
+                .latestVersion().singleResult();
+        if (definition == null) {
+            Deployment deployment = repositoryService.createDeployment()
+                    .key(REFUND_PROCESS_KEY).name(REFUND_PROCESS_NAME)
+                    .addBpmnModel(REFUND_PROCESS_KEY + ".bpmn20.xml", buildRefundAuditModel())
+                    .tenantId(tenantId)
+                    .disableSchemaValidation()
+                    .deploy();
+            definition = repositoryService.createProcessDefinitionQuery()
+                    .deploymentId(deployment.getId()).singleResult();
+            log.info("[deployRefundAuditProcess][部署流程({}) 成功，流程定义编号({})]",
+                    REFUND_PROCESS_KEY, definition.getId());
+        }
+
+        BpmProcessDefinitionInfoDO info = processDefinitionInfoMapper.selectByProcessDefinitionId(definition.getId());
+        if (info == null) {
+            processDefinitionInfoMapper.insert(new BpmProcessDefinitionInfoDO()
+                    .setProcessDefinitionId(definition.getId())
+                    .setModelId(definition.getId())
+                    .setModelType(BpmModelTypeEnum.BPMN.getType())
+                    .setCategory("DEFAULT")
+                    .setFormType(BpmModelFormTypeEnum.CUSTOM.getType())
+                    .setFormCustomCreatePath(REFUND_CREATE_PATH)
+                    .setFormCustomViewPath(REFUND_VIEW_PATH)
+                    .setVisible(true)
+                    .setSort(0L)
+                    .setAllowCancelRunningProcess(true)
+                    .setAllowWithdrawTask(false)
+                    .setAutoApprovalType(BpmAutoApproveTypeEnum.NONE.getType()));
+            log.info("[deployRefundAuditProcess][创建流程定义拓展信息：{} ({})]",
+                    REFUND_PROCESS_KEY, definition.getId());
+        } else if (!REFUND_VIEW_PATH.equals(info.getFormCustomViewPath())) {
+            processDefinitionInfoMapper.updateById(new BpmProcessDefinitionInfoDO()
+                    .setId(info.getId())
+                    .setFormCustomCreatePath(REFUND_CREATE_PATH)
+                    .setFormCustomViewPath(REFUND_VIEW_PATH));
+            log.info("[deployRefundAuditProcess][更新流程定义({}) 的业务表单查看路径为：{}]",
+                    definition.getId(), REFUND_VIEW_PATH);
+        }
+    }
+
+    private BpmnModel buildRefundAuditModel() {
+        BpmnModel model = new BpmnModel();
+        Process process = new Process();
+        process.setId(REFUND_PROCESS_KEY);
+        process.setName(REFUND_PROCESS_NAME);
+        process.setExecutable(true);
+        model.addProcess(process);
+
+        StartEvent start = new StartEvent();
+        start.setId("start");
+        process.addFlowElement(start);
+
+        UserTask approve = new UserTask();
+        approve.setId("approve");
+        approve.setName("审批退款");
+        BpmnModelUtils.addCandidateElements(BpmTaskCandidateStrategyEnum.ROLE.getStrategy(),
+                APPROVE_ROLE_IDS, approve);
+        process.addFlowElement(approve);
+
+        EndEvent end = new EndEvent();
+        end.setId("end");
+        process.addFlowElement(end);
+
+        process.addFlowElement(new SequenceFlow("start", "approve"));
+        process.addFlowElement(new SequenceFlow("approve", "end"));
+
+        new BpmnAutoLayout(model).execute();
+        return model;
+    }
+
     private void cleanStaleDeployments() {
+        cleanStaleDeployments(RECEIVABLE_PROCESS_KEY);
+    }
+
+    private void cleanStaleDeployments(String processKey) {
         // 删除无租户的流程定义对应的拓展信息
         List<ProcessDefinition> staleDefinitions = repositoryService.createProcessDefinitionQuery()
-                .processDefinitionKey(RECEIVABLE_PROCESS_KEY)
+                .processDefinitionKey(processKey)
                 .processDefinitionWithoutTenantId().list();
         staleDefinitions.forEach(definition -> processDefinitionInfoMapper.delete(
                 new LambdaQueryWrapper<BpmProcessDefinitionInfoDO>()
                         .eq(BpmProcessDefinitionInfoDO::getProcessDefinitionId, definition.getId())));
         // 删除无租户的部署（级联删除流程定义）
         List<Deployment> staleDeployments = repositoryService.createDeploymentQuery()
-                .processDefinitionKey(RECEIVABLE_PROCESS_KEY)
+                .processDefinitionKey(processKey)
                 .deploymentWithoutTenantId().list();
         staleDeployments.forEach(deployment -> {
             repositoryService.deleteDeployment(deployment.getId(), true);
             log.info("[cleanStaleDeployments][清理无租户的历史部署({})]", deployment.getId());
         });
+    }
+
+    private BpmnModel buildReimbursementAuditModel() {
+        BpmnModel model = new BpmnModel();
+        Process process = new Process();
+        process.setId(REIMBURSEMENT_PROCESS_KEY);
+        process.setName(REIMBURSEMENT_PROCESS_NAME);
+        process.setExecutable(true);
+        model.addProcess(process);
+
+        StartEvent start = new StartEvent();
+        start.setId("start");
+        process.addFlowElement(start);
+
+        UserTask approve = new UserTask();
+        approve.setId("approve");
+        approve.setName("审批报销");
+        BpmnModelUtils.addCandidateElements(BpmTaskCandidateStrategyEnum.ROLE.getStrategy(),
+                APPROVE_ROLE_IDS, approve);
+        process.addFlowElement(approve);
+
+        EndEvent end = new EndEvent();
+        end.setId("end");
+        process.addFlowElement(end);
+
+        process.addFlowElement(new SequenceFlow("start", "approve"));
+        process.addFlowElement(new SequenceFlow("approve", "end"));
+
+        new BpmnAutoLayout(model).execute();
+        return model;
     }
 
     private BpmnModel buildReceivableAuditModel() {

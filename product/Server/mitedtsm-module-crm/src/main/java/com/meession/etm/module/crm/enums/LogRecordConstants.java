@@ -168,6 +168,46 @@ public interface LogRecordConstants {
     String CRM_RECEIVABLE_PLAN_DELETE_SUB_TYPE = "删除回款计划";
     String CRM_RECEIVABLE_PLAN_DELETE_SUCCESS = "删除了合同【{getContractById{#receivablePlan.contractId}}】的第【{{#receivablePlan.period}}】期回款计划";
 
+    // ======================= CRM_REIMBURSEMENT 报销 =======================
+
+    String CRM_REIMBURSEMENT_TYPE = "CRM 报销";
+    String CRM_REIMBURSEMENT_CREATE_SUB_TYPE = "创建报销";
+    String CRM_REIMBURSEMENT_CREATE_SUCCESS = "创建了编号为【{{#reimbursement.no}}】的报销";
+    String CRM_REIMBURSEMENT_UPDATE_SUB_TYPE = "更新报销";
+    String CRM_REIMBURSEMENT_UPDATE_SUCCESS = "更新了编号为【{{#oldReimbursement.no}}】的报销: {_DIFF{#updateReqVO}}";
+    String CRM_REIMBURSEMENT_DELETE_SUB_TYPE = "删除报销";
+    String CRM_REIMBURSEMENT_DELETE_SUCCESS = "删除了编号为【{{#reimbursement.no}}】的报销";
+    String CRM_REIMBURSEMENT_SUBMIT_SUB_TYPE = "提交报销审批";
+    String CRM_REIMBURSEMENT_SUBMIT_SUCCESS = "提交编号为【{{#reimbursementNo}}】的报销审批成功";
+    String CRM_REIMBURSEMENT_CANCEL_SUB_TYPE = "撤销报销审批";
+    String CRM_REIMBURSEMENT_CANCEL_SUCCESS = "撤销了编号为【{{#reimbursementNo}}】的报销审批，原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_REIMBURSEMENT_APPROVE_SUB_TYPE = "审批通过报销";
+    String CRM_REIMBURSEMENT_APPROVE_SUCCESS = "审批通过了编号为【{{#reimbursementNo}}】的报销，备注：{{#reason != null ? #reason : '无'}}";
+    String CRM_REIMBURSEMENT_REJECT_AUDIT_SUB_TYPE = "驳回报销审批";
+    String CRM_REIMBURSEMENT_REJECT_AUDIT_SUCCESS = "驳回了编号为【{{#reimbursementNo}}】的报销审批，驳回原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_REIMBURSEMENT_VETO_SUB_TYPE = "否决报销审批";
+    String CRM_REIMBURSEMENT_VETO_SUCCESS = "否决了编号为【{{#reimbursementNo}}】的报销审批，否决原因：{{#reason != null ? #reason : '无'}}";
+
+    // ======================= CRM_REFUND 退款 =======================
+
+    String CRM_REFUND_TYPE = "CRM 退款";
+    String CRM_REFUND_CREATE_SUB_TYPE = "创建退款";
+    String CRM_REFUND_CREATE_SUCCESS = "创建了编号为【{{#refund.no}}】的退款";
+    String CRM_REFUND_UPDATE_SUB_TYPE = "更新退款";
+    String CRM_REFUND_UPDATE_SUCCESS = "更新了编号为【{{#oldRefund.no}}】的退款: {_DIFF{#updateReqVO}}";
+    String CRM_REFUND_DELETE_SUB_TYPE = "删除退款";
+    String CRM_REFUND_DELETE_SUCCESS = "删除了编号为【{{#refund.no}}】的退款";
+    String CRM_REFUND_SUBMIT_SUB_TYPE = "提交退款审批";
+    String CRM_REFUND_SUBMIT_SUCCESS = "提交编号为【{{#refundNo}}】的退款审批成功";
+    String CRM_REFUND_CANCEL_SUB_TYPE = "撤销退款审批";
+    String CRM_REFUND_CANCEL_SUCCESS = "撤销了编号为【{{#refundNo}}】的退款审批，原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_REFUND_APPROVE_SUB_TYPE = "审批通过退款";
+    String CRM_REFUND_APPROVE_SUCCESS = "审批通过了编号为【{{#refundNo}}】的退款，备注：{{#reason != null ? #reason : '无'}}";
+    String CRM_REFUND_REJECT_AUDIT_SUB_TYPE = "驳回退款审批";
+    String CRM_REFUND_REJECT_AUDIT_SUCCESS = "驳回了编号为【{{#refundNo}}】的退款审批，驳回原因：{{#reason != null ? #reason : '无'}}";
+    String CRM_REFUND_VETO_SUB_TYPE = "否决退款审批";
+    String CRM_REFUND_VETO_SUCCESS = "否决了编号为【{{#refundNo}}】的退款审批，否决原因：{{#reason != null ? #reason : '无'}}";
+
     // ======================= CRM_INVOICE 发票 =======================
 
     String CRM_INVOICE_TYPE = "CRM 发票";

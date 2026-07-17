@@ -684,6 +684,103 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/crm/invoice'
         },
         component: () => import('@/views/crm/invoice/detail/index.vue')
+      },
+      {
+        path: 'reimbursement',
+        name: 'CrmReimbursement',
+        meta: {
+          title: t('router.crmReimbursement'),
+          noCache: true,
+          activeMenu: '/crm/reimbursement'
+        },
+        component: () => import('@/views/crm/reimbursement/index.vue')
+      },
+      {
+        path: 'reimbursement/detail/:id',
+        name: 'CrmReimbursementDetail',
+        meta: {
+          title: t('router.crmReimbursementDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/reimbursement'
+        },
+        component: () => import('@/views/crm/reimbursement/detail/index.vue')
+      },
+      {
+        path: 'reimbursement/approval',
+        name: 'CrmReimbursementApproval',
+        meta: {
+          title: t('router.crmReimbursementApproval'),
+          noCache: true,
+          activeMenu: '/crm/reimbursement/approval'
+        },
+        component: () => import('@/views/crm/reimbursement/approval/index.vue')
+      },
+      {
+        path: 'reimbursement/approval/detail/:id',
+        name: 'CrmReimbursementApprovalDetail',
+        meta: {
+          title: t('router.crmReimbursementApprovalDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/reimbursement/approval'
+        },
+        component: () => import('@/views/crm/reimbursement/approval/detail/index.vue')
+      },
+      // 退款管理
+      {
+        path: 'refund',
+        name: 'CrmRefund',
+        meta: {
+          title: t('router.crmRefund'),
+          noCache: true,
+          activeMenu: '/crm/refund'
+        },
+        component: () => import('@/views/crm/refund/index.vue')
+      },
+      {
+        path: 'refund/detail/:id',
+        name: 'CrmRefundDetail',
+        meta: {
+          title: t('router.crmRefundDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund'
+        },
+        component: () => import('@/views/crm/refund/detail/index.vue')
+      },
+      // 退款审批
+      {
+        path: 'refund/approval',
+        name: 'CrmRefundApproval',
+        meta: {
+          title: t('router.crmRefundApproval'),
+          noCache: true,
+          activeMenu: '/crm/refund/approval'
+        },
+        component: () => import('@/views/crm/refund/approval/index.vue')
+      },
+      {
+        path: 'refund/approval/detail/:id',
+        name: 'CrmRefundApprovalDetail',
+        meta: {
+          title: t('router.crmRefundApprovalDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund/approval'
+        },
+        component: () => import('@/views/crm/refund/approval/detail/index.vue')
+      },
+      // 退款记录
+      {
+        path: 'refund/record',
+        name: 'CrmRefundRecord',
+        meta: {
+          title: t('router.crmRefundRecord'),
+          noCache: true,
+          activeMenu: '/crm/refund/record'
+        },
+        component: () => import('@/views/crm/refund/record/index.vue')
       }
     ]
   },

@@ -21,5 +21,14 @@ export default {
   crmInvoice: '发票管理',
   crmInvoiceRecord: '发票记录',
   crmInvoiceReport: '开票记录报表',
-  crmInvoiceDetail: '发票详情'
+  crmInvoiceDetail: '发票详情',
+  crmReimbursement: '报销管理',
+  crmReimbursementDetail: '报销详情',
+  crmReimbursementApproval: '报销审批',
+  crmReimbursementApprovalDetail: '报销审批详情',
+  crmRefund: '退款管理',
+  crmRefundDetail: '退款详情',
+  crmRefundApproval: '退款审批',
+  crmRefundApprovalDetail: '退款审批详情',
+  crmRefundRecord: '退款记录'
 }

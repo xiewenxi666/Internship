@@ -48,6 +48,9 @@ public class CrmOperateLogController {
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_PRODUCT.getType(), CRM_PRODUCT_TYPE);
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE.getType(), CRM_RECEIVABLE_TYPE);
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE_PLAN.getType(), CRM_RECEIVABLE_PLAN_TYPE);
+        BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_REIMBURSEMENT.getType(), CRM_REIMBURSEMENT_TYPE);
+        BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_REFUND.getType(), CRM_REFUND_TYPE);
+        BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_INVOICE.getType(), CRM_INVOICE_TYPE);
     }
 
     @GetMapping("/page")

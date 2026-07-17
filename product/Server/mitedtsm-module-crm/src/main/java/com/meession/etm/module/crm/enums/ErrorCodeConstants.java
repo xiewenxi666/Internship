@@ -107,6 +107,24 @@ public interface ErrorCodeConstants {
     ErrorCode INVOICE_NOT_EXISTS = new ErrorCode(1_020_015_000, "发票不存在");
     ErrorCode INVOICE_NO_EXISTS = new ErrorCode(1_020_015_001, "生成发票序列号重复，请重试");
 
+    // ========== 报销 1_020_016_000 ==========
+    ErrorCode REIMBURSEMENT_NOT_EXISTS = new ErrorCode(1_020_016_000, "报销不存在");
+    ErrorCode REIMBURSEMENT_UPDATE_FAIL_EDITING_PROHIBITED = new ErrorCode(1_020_016_001, "更新报销失败，原因：禁止编辑");
+    ErrorCode REIMBURSEMENT_DELETE_FAIL_IS_APPROVE = new ErrorCode(1_020_016_002, "删除报销失败，原因：报销审批已通过");
+    ErrorCode REIMBURSEMENT_SUBMIT_FAIL_NOT_DRAFT = new ErrorCode(1_020_016_003, "报销提交审核失败，原因：报销没处在未提交状态");
+    ErrorCode REIMBURSEMENT_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS = new ErrorCode(1_020_016_004, "更新报销审核状态失败，原因：报销不是审核中状态");
+    ErrorCode REIMBURSEMENT_NO_EXISTS = new ErrorCode(1_020_016_005, "生成报销序列号重复，请重试");
+    ErrorCode REIMBURSEMENT_CREATE_FAIL_CONTRACT_NOT_APPROVE = new ErrorCode(1_020_016_006, "创建报销失败，原因：合同不是审核通过状态");
+
+    // ========== 退款 1_020_017_000 ==========
+    ErrorCode REFUND_NOT_EXISTS = new ErrorCode(1_020_017_000, "退款不存在");
+    ErrorCode REFUND_UPDATE_FAIL_EDITING_PROHIBITED = new ErrorCode(1_020_017_001, "更新退款失败，原因：禁止编辑");
+    ErrorCode REFUND_DELETE_FAIL_IS_APPROVE = new ErrorCode(1_020_017_002, "删除退款失败，原因：退款审批已通过");
+    ErrorCode REFUND_SUBMIT_FAIL_NOT_DRAFT = new ErrorCode(1_020_017_003, "退款提交审核失败，原因：退款没处在未提交状态");
+    ErrorCode REFUND_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS = new ErrorCode(1_020_017_004, "更新退款审核状态失败，原因：退款不是审核中状态");
+    ErrorCode REFUND_NO_EXISTS = new ErrorCode(1_020_017_005, "生成退款序列号重复，请重试");
+    ErrorCode REFUND_CREATE_FAIL_CONTRACT_NOT_APPROVE = new ErrorCode(1_020_017_006, "创建退款失败，原因：合同不是审核通过状态");
+
     // ========== 数据统计 1_020_014_000 ==========
 
 }
