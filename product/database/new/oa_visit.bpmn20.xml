@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:flowable="http://flowable.org/bpmn"
+  id="diagram_oa_visit"
+  targetNamespace="http://flowable.org/bpmn">
+
+  <bpmn2:process id="oa_visit" name="OA拜访审批" isExecutable="true">
+    <bpmn2:startEvent id="startEvent" name="发起申请" flowable:initiator="startUser">
+      <bpmn2:extensionElements>
+        <flowable:formProperty id="customerId" name="客户" type="string" required="true"/>
+        <flowable:formProperty id="contactPerson" name="联系人" type="string" required="true"/>
+        <flowable:formProperty id="visitTime" name="拜访时间" type="datetime" required="true"/>
+        <flowable:formProperty id="location" name="拜访地点" type="string" required="true"/>
+        <flowable:formProperty id="purpose" name="拜访目的" type="string" required="true"/>
+      </bpmn2:extensionElements>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="approvalTask" name="审批" flowable:candidateGroups="manager">
+      <bpmn2:extensionElements>
+        <flowable:formProperty id="approved" name="审批意见" type="enum" required="true">
+          <flowable:value id="true" name="同意"/>
+          <flowable:value id="false" name="驳回"/>
+        </flowable:formProperty>
+        <flowable:formProperty id="comment" name="审批备注" type="string"/>
+      </bpmn2:extensionElements>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="endEvent" name="结束"/>
+    <bpmn2:sequenceFlow id="flow1" sourceRef="startEvent" targetRef="approvalTask"/>
+    <bpmn2:sequenceFlow id="flow2" sourceRef="approvalTask" targetRef="endEvent"/>
+  </bpmn2:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="oa_visit">
+      <bpmndi:BPMNShape id="shape_startEvent" bpmnElement="startEvent">
+        <dc:Bounds x="100" y="180" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_approvalTask" bpmnElement="approvalTask">
+        <dc:Bounds x="220" y="158" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_endEvent" bpmnElement="endEvent">
+        <dc:Bounds x="410" y="180" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge_flow1" bpmnElement="flow1">
+        <di:waypoint x="136" y="198"/>
+        <di:waypoint x="220" y="198"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_flow2" bpmnElement="flow2">
+        <di:waypoint x="320" y="198"/>
+        <di:waypoint x="410" y="198"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

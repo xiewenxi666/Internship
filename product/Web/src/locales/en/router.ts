@@ -3,5 +3,19 @@ export default {
   socialLogin: 'Social Login',
   home: 'Home',
   analysis: 'Analysis',
-  workplace: 'Workplace'
+  workplace: 'Workplace',
+  bpmProcessDefinition: 'Process Definition',
+  bpmFormEditor: 'Form Editor',
+  bpmProcessInstanceDetail: 'Process Instance Detail',
+  bpmProcessInstanceReport: 'Process Instance Report',
+  oaLeaveCreate: 'Create Leave',
+  oaLeaveDetail: 'Leave Detail',
+  oaTripCreate: 'Create Trip',
+  oaTripDetail: 'Trip Detail',
+  oaLoanCreate: 'Create Loan',
+  oaLoanDetail: 'Loan Detail',
+  oaVisitCreate: 'Create Visit',
+  oaVisitDetail: 'Visit Detail',
+  oaRequestCreate: 'Create Request',
+  oaRequestDetail: 'Request Detail'
 }
