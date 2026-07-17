@@ -26,19 +26,11 @@ import static com.meession.etm.framework.common.pojo.CommonResult.success;
 @RestController
 @RequestMapping("/crm/statistics-funnel")
 @Validated
-/**
- * CRM 销售漏斗 Controller (Admin)
- */
 public class CrmStatisticsFunnelController {
 
     @Resource
     private CrmStatisticsFunnelService funnelService;
 
-    // ==================== 销售漏斗分析 ====================
-
-    /**
-     * 获取销售漏斗统计数据
-     */
     @GetMapping("/get-funnel-summary")
     @Operation(summary = "获取销售漏斗统计数据", description = "用于【销售漏斗】页面的【销售漏斗分析】")
     @PreAuthorize("@ss.hasPermission('crm:statistics-funnel:query')")
@@ -46,9 +38,6 @@ public class CrmStatisticsFunnelController {
         return success(funnelService.getFunnelSummary(reqVO));
     }
 
-    /**
-     * 获取商机结束状态统计
-     */
     @GetMapping("/get-business-summary-by-end-status")
     @Operation(summary = "获取商机结束状态统计", description = "用于【销售漏斗】页面的【销售漏斗分析】")
     @PreAuthorize("@ss.hasPermission('crm:statistics-funnel:query')")
@@ -56,11 +45,6 @@ public class CrmStatisticsFunnelController {
         return success(funnelService.getBusinessSummaryByEndStatus(reqVO));
     }
 
-    // ==================== 新增商机分析 ====================
-
-    /**
-     * 获取新增商机分析(按日期)
-     */
     @GetMapping("/get-business-summary-by-date")
     @Operation(summary = "获取新增商机分析(按日期)", description = "用于【销售漏斗】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-funnel:query')")
@@ -68,9 +52,6 @@ public class CrmStatisticsFunnelController {
         return success(funnelService.getBusinessSummaryByDate(reqVO));
     }
 
-    /**
-     * 获取商机转化率分析(按日期)
-     */
     @GetMapping("/get-business-inversion-rate-summary-by-date")
     @Operation(summary = "获取商机转化率分析(按日期)", description = "用于【销售漏斗】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-funnel:query')")
@@ -78,11 +59,6 @@ public class CrmStatisticsFunnelController {
         return success(funnelService.getBusinessInversionRateSummaryByDate(reqVO));
     }
 
-    // ==================== 商机分页查询 ====================
-
-    /**
-     * 获得商机分页(按日期)
-     */
     @GetMapping("/get-business-page-by-date")
     @Operation(summary = "获得商机分页(按日期)", description = "用于【销售漏斗】页面的【新增商机分析】")
     @PreAuthorize("@ss.hasPermission('crm:business:query')")

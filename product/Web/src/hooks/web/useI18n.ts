@@ -14,7 +14,7 @@ type I18nTranslationRestParameters = [string, any]
 // 顶级命名空间列表，这些命名空间不应该被添加前缀
 const topLevelNamespaces = new Set([
   'common', 'action', 'table', 'dialog', 'form', 'error', 'login',
-  'setting', 'profile', 'lock', 'captcha', 'router',
+  'permission', 'setting', 'profile', 'lock', 'captcha', 'router',
   'analysis', 'workplace', 'watermark', 'sys', 'cropper', 'size',
   'system', 'mall', 'crm', 'erp', 'iot', 'bpm', 'ai', 'pay', 'member', 'mp', 'infra'
 ])

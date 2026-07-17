@@ -7,21 +7,14 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * 管理后台 - CRM 联系人商机 Request VO
- *
- * 【联系人关联商机】用于关联，取消关联的操作
- */
 @Schema(description = "管理后台 - CRM 联系人商机 Request VO") // 【联系人关联商机】用于关联，取消关联的操作
 @Data
 public class CrmContactBusinessReqVO {
 
-    /** 联系人编号 */
     @Schema(description = "联系人编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "20878")
     @NotNull(message="联系人不能为空")
     private Long contactId;
 
-    /** 商机编号数组 */
     @Schema(description = "商机编号数组", requiredMode = Schema.RequiredMode.REQUIRED, example = "7638")
     @NotEmpty(message="商机不能为空")
     private List<Long> businessIds;

@@ -47,12 +47,6 @@ import static com.meession.etm.framework.common.util.collection.CollectionUtils.
 import static com.meession.etm.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 import static com.meession.etm.module.crm.enums.ErrorCodeConstants.CUSTOMER_NOT_EXISTS;
 
-/**
- * CRM 商机 Controller（Admin）
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 @Tag(name = "管理后台 - CRM 商机")
 @RestController
 @RequestMapping("/crm/business")
@@ -75,11 +69,6 @@ public class CrmBusinessController {
     @Resource
     private DeptApi deptApi;
 
-    // ==================== 商机 CRUD ====================
-
-    /**
-     * 创建商机
-     */
     @PostMapping("/create")
     @Operation(summary = "创建商机")
     @PreAuthorize("@ss.hasPermission('crm:business:create')")
@@ -87,9 +76,6 @@ public class CrmBusinessController {
         return success(businessService.createBusiness(createReqVO, getLoginUserId()));
     }
 
-    /**
-     * 更新商机
-     */
     @PutMapping("/update")
     @Operation(summary = "更新商机")
     @PreAuthorize("@ss.hasPermission('crm:business:update')")
@@ -98,9 +84,6 @@ public class CrmBusinessController {
         return success(true);
     }
 
-    /**
-     * 更新商机状态
-     */
     @PutMapping("/update-status")
     @Operation(summary = "更新商机状态")
     @PreAuthorize("@ss.hasPermission('crm:business:update')")
@@ -109,9 +92,6 @@ public class CrmBusinessController {
         return success(true);
     }
 
-    /**
-     * 删除商机
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除商机")
     @Parameter(name = "id", description = "编号", required = true)
@@ -121,9 +101,6 @@ public class CrmBusinessController {
         return success(true);
     }
 
-    /**
-     * 获得商机详情
-     */
     @GetMapping("/get")
     @Operation(summary = "获得商机")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -149,9 +126,6 @@ public class CrmBusinessController {
         return businessVO;
     }
 
-    /**
-     * 获得商机的精简列表
-     */
     @GetMapping("/simple-all-list")
     @Operation(summary = "获得商机的精简列表")
     @PreAuthorize("@ss.hasPermission('crm:business:query')")
@@ -164,9 +138,6 @@ public class CrmBusinessController {
                         .setCustomerId(business.getCustomerId())));
     }
 
-    /**
-     * 获得商机分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得商机分页")
     @PreAuthorize("@ss.hasPermission('crm:business:query')")
@@ -175,9 +146,6 @@ public class CrmBusinessController {
         return success(new PageResult<>(buildBusinessDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得商机分页，基于指定客户
-     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得商机分页，基于指定客户")
     public CommonResult<PageResult<CrmBusinessRespVO>> getBusinessPageByCustomer(@Valid CrmBusinessPageReqVO pageReqVO) {
@@ -188,9 +156,6 @@ public class CrmBusinessController {
         return success(new PageResult<>(buildBusinessDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得联系人的商机分页
-     */
     @GetMapping("/page-by-contact")
     @Operation(summary = "获得联系人的商机分页")
     @PreAuthorize("@ss.hasPermission('crm:business:query')")
@@ -199,9 +164,6 @@ public class CrmBusinessController {
         return success(new PageResult<>(buildBusinessDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 导出商机 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出商机 Excel")
     @PreAuthorize("@ss.hasPermission('crm:business:export')")
@@ -249,11 +211,6 @@ public class CrmBusinessController {
         });
     }
 
-    // ==================== 商机操作 ====================
-
-    /**
-     * 商机转移
-     */
     @PutMapping("/transfer")
     @Operation(summary = "商机转移")
     @PreAuthorize("@ss.hasPermission('crm:business:update')")

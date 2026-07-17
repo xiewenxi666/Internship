@@ -10,35 +10,27 @@ import lombok.Data;
 
 import java.util.Objects;
 
-/**
- * 管理后台 - CRM 客户公海配置的创建/更新 Request VO
- */
 @Schema(description = "管理后台 - CRM 客户公海配置的创建/更新 Request VO")
 @Data
 public class CrmCustomerPoolConfigSaveReqVO {
 
-    /** 是否启用客户公海 */
     @Schema(description = "是否启用客户公海", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
     @DiffLogField(name = "是否启用客户公海")
     @NotNull(message = "是否启用客户公海不能为空")
     private Boolean enabled;
 
-    /** 未跟进放入公海天数 */
     @Schema(description = "未跟进放入公海天数", example = "2")
     @DiffLogField(name = "未跟进放入公海天数")
     private Integer contactExpireDays;
 
-    /** 未成交放入公海天数 */
     @Schema(description = "未成交放入公海天数", example = "2")
     @DiffLogField(name = "未成交放入公海天数")
     private Integer dealExpireDays;
 
-    /** 是否开启提前提醒 */
     @Schema(description = "是否开启提前提醒", example = "true")
     @DiffLogField(name = "是否开启提前提醒")
     private Boolean notifyEnabled;
 
-    /** 提前提醒天数 */
     @Schema(description = "提前提醒天数", example = "2")
     @DiffLogField(name = "提前提醒天数")
     private Integer notifyDays;

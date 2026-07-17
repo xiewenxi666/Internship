@@ -25,19 +25,11 @@ import static com.meession.etm.framework.common.pojo.CommonResult.success;
 @RestController
 @RequestMapping("/crm/statistics-portrait")
 @Validated
-/**
- * CRM 客户画像 Controller (Admin)
- */
 public class CrmStatisticsPortraitController {
 
     @Resource
     private CrmStatisticsPortraitService statisticsPortraitService;
 
-    // ==================== 客户画像分析 ====================
-
-    /**
-     * 获取客户地区统计数据
-     */
     @GetMapping("/get-customer-area-summary")
     @Operation(summary = "获取客户地区统计数据", description = "用于【城市分布分析】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-portrait:query')")
@@ -45,9 +37,6 @@ public class CrmStatisticsPortraitController {
         return success(statisticsPortraitService.getCustomerSummaryByArea(reqVO));
     }
 
-    /**
-     * 获取客户行业统计数据
-     */
     @GetMapping("/get-customer-industry-summary")
     @Operation(summary = "获取客户行业统计数据", description = "用于【客户行业分析】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-portrait:query')")
@@ -55,9 +44,6 @@ public class CrmStatisticsPortraitController {
         return success(statisticsPortraitService.getCustomerSummaryByIndustry(reqVO));
     }
 
-    /**
-     * 获取客户级别统计数据
-     */
     @GetMapping("/get-customer-level-summary")
     @Operation(summary = "获取客户级别统计数据", description = "用于【客户级别分析】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-portrait:query')")
@@ -65,9 +51,6 @@ public class CrmStatisticsPortraitController {
         return success(statisticsPortraitService.getCustomerSummaryByLevel(reqVO));
     }
 
-    /**
-     * 获取客户来源统计数据
-     */
     @GetMapping("/get-customer-source-summary")
     @Operation(summary = "获取客户来源统计数据", description = "用于【客户来源分析】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-portrait:query')")

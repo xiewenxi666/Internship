@@ -46,12 +46,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
     @Resource
     private DeptApi deptApi;
 
-    /**
-     * 按日期统计客户概况（创建数、成交数）
-     *
-     * @param reqVO 统计请求
-     * @return 按日期汇总的客户统计数据
-     */
     @Override
     public List<CrmStatisticsCustomerSummaryByDateRespVO> getCustomerSummaryByDate(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -79,12 +73,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         });
     }
 
-    /**
-     * 按用户统计客户概况（创建数、成交数、合同金额、回款金额）
-     *
-     * @param reqVO 统计请求
-     * @return 按用户汇总的客户统计数据
-     */
     @Override
     public List<CrmStatisticsCustomerSummaryByUserRespVO> getCustomerSummaryByUser(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -118,12 +106,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return summaryList;
     }
 
-    /**
-     * 按日期统计跟进概况（跟进记录数、跟进客户数）
-     *
-     * @param reqVO 统计请求
-     * @return 按日期汇总的跟进统计数据
-     */
     @Override
     public List<CrmStatisticsFollowUpSummaryByDateRespVO> getFollowUpSummaryByDate(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -151,12 +133,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         });
     }
 
-    /**
-     * 按用户统计跟进概况
-     *
-     * @param reqVO 统计请求
-     * @return 按用户汇总的跟进统计数据
-     */
     @Override
     public List<CrmStatisticsFollowUpSummaryByUserRespVO> getFollowUpSummaryByUser(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -183,12 +159,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return summaryList;
     }
 
-    /**
-     * 按跟进类型统计跟进概况
-     *
-     * @param reqVO 统计请求
-     * @return 按类型汇总的跟进统计数据
-     */
     @Override
     public List<CrmStatisticsFollowUpSummaryByTypeRespVO> getFollowUpSummaryByType(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -201,12 +171,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return customerMapper.selectFollowUpRecordCountGroupByType(reqVO);
     }
 
-    /**
-     * 统计客户合同概况
-     *
-     * @param reqVO 统计请求
-     * @return 客户合同统计数据
-     */
     @Override
     public List<CrmStatisticsCustomerContractSummaryRespVO> getContractSummary(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -228,12 +192,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return summaryList;
     }
 
-    /**
-     * 按日期统计公海概况（放入数、领取数）
-     *
-     * @param reqVO 统计请求
-     * @return 按日期汇总的公海统计数据
-     */
     @Override
     public List<CrmStatisticsPoolSummaryByDateRespVO> getPoolSummaryByDate(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -261,12 +219,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         });
     }
 
-    /**
-     * 按用户统计公海概况
-     *
-     * @param reqVO 统计请求
-     * @return 按用户汇总的公海统计数据
-     */
     @Override
     public List<CrmStatisticsPoolSummaryByUserRespVO> getPoolSummaryByUser(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -294,12 +246,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return summaryList;
     }
 
-    /**
-     * 按日期统计客户成交周期
-     *
-     * @param reqVO 统计请求
-     * @return 按日期汇总的成交周期数据
-     */
     @Override
     public List<CrmStatisticsCustomerDealCycleByDateRespVO> getCustomerDealCycleByDate(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -323,12 +269,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         });
     }
 
-    /**
-     * 按用户统计客户成交周期
-     *
-     * @param reqVO 统计请求
-     * @return 按用户汇总的成交周期数据
-     */
     @Override
     public List<CrmStatisticsCustomerDealCycleByUserRespVO> getCustomerDealCycleByUser(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -355,12 +295,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         return summaryList;
     }
 
-    /**
-     * 按地区统计客户成交周期
-     *
-     * @param reqVO 统计请求
-     * @return 按地区汇总的成交周期数据
-     */
     @Override
     public List<CrmStatisticsCustomerDealCycleByAreaRespVO> getCustomerDealCycleByArea(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组
@@ -387,12 +321,6 @@ public class CrmStatisticsCustomerServiceImpl implements CrmStatisticsCustomerSe
         });
     }
 
-    /**
-     * 按产品统计客户成交周期
-     *
-     * @param reqVO 统计请求
-     * @return 按产品汇总的成交周期数据
-     */
     @Override
     public List<CrmStatisticsCustomerDealCycleByProductRespVO> getCustomerDealCycleByProduct(CrmStatisticsCustomerReqVO reqVO) {
         // 1. 获得用户编号数组

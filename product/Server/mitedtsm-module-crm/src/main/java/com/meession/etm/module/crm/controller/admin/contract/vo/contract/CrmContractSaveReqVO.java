@@ -1,9 +1,3 @@
-/**
- * 合同创建/更新 Request VO
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 package com.meession.etm.module.crm.controller.admin.contract.vo.contract;
 
 import com.meession.etm.module.crm.framework.operatelog.core.CrmBusinessParseFunction;
@@ -28,105 +22,86 @@ import static com.meession.etm.framework.common.util.date.DateUtils.FORMAT_YEAR_
 @Data
 public class CrmContractSaveReqVO {
 
-    /** 合同编号 */
     @Schema(description = "合同编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10430")
     private Long id;
 
-    /** 合同名称 */
     @Schema(description = "合同名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")
     @DiffLogField(name = "合同名称")
     @NotNull(message = "合同名称不能为空")
     private String name;
 
-    /** 客户编号 */
     @Schema(description = "客户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "18336")
     @DiffLogField(name = "客户", function = CrmCustomerParseFunction.NAME)
     @NotNull(message = "客户编号不能为空")
     private Long customerId;
 
-    /** 商机编号 */
     @Schema(description = "商机编号", example = "10864")
     @DiffLogField(name = "商机", function = CrmBusinessParseFunction.NAME)
     private Long businessId;
 
-    /** 负责人的用户编号 */
     @Schema(description = "负责人的用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "17144")
     @DiffLogField(name = "负责人", function = SysAdminUserParseFunction.NAME)
     @NotNull(message = "负责人不能为空")
     private Long ownerUserId;
 
-    /** 下单日期 */
     @Schema(description = "下单日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @DiffLogField(name = "下单日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     @NotNull(message = "下单日期不能为空")
     private LocalDateTime orderDate;
 
-    /** 开始时间 */
     @Schema(description = "开始时间")
     @DiffLogField(name = "开始时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime startTime;
 
-    /** 结束时间 */
     @Schema(description = "结束时间")
     @DiffLogField(name = "结束时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime endTime;
 
-    /** 整单折扣 */
     @Schema(description = "整单折扣", requiredMode = Schema.RequiredMode.REQUIRED, example = "55.00")
     @DiffLogField(name = "整单折扣")
     @NotNull(message = "整单折扣不能为空")
     private BigDecimal discountPercent;
 
-    /** 合同金额 */
     @Schema(description = "合同金额", example = "5617")
     @DiffLogField(name = "合同金额")
     private BigDecimal totalPrice;
 
-    /** 客户签约人编号 */
     @Schema(description = "客户签约人编号", example = "18546")
     @DiffLogField(name = "客户签约人", function = CrmContactParseFunction.NAME)
     private Long signContactId;
 
-    /** 公司签约人 */
     @Schema(description = "公司签约人", example = "14036")
     @DiffLogField(name = "公司签约人", function = SysAdminUserParseFunction.NAME)
     private Long signUserId;
 
-    /** 备注 */
     @Schema(description = "备注", example = "你猜")
     @DiffLogField(name = "备注")
     private String remark;
 
-    /** 产品列表 */
     @Schema(description = "产品列表")
     private List<Product> products;
 
-    /** 产品列表 */
     @Schema(description = "产品列表")
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Product {
 
-        /** 产品编号 */
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "20529")
         @NotNull(message = "产品编号不能为空")
         private Long productId;
 
-        /** 产品单价 */
         @Schema(description = "产品单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "123.00")
         @NotNull(message = "产品单价不能为空")
         private BigDecimal productPrice;
 
-        /** 合同价格 */
         @Schema(description = "合同价格", requiredMode = Schema.RequiredMode.REQUIRED, example = "123.00")
         @NotNull(message = "合同价格不能为空")
         private BigDecimal contractPrice;
 
-        /** 产品数量 */
         @Schema(description = "产品数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "8911")
         @NotNull(message = "产品数量不能为空")
         private Integer count;

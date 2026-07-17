@@ -29,9 +29,6 @@ import static com.meession.etm.module.crm.enums.LogRecordConstants.*;
 @RestController
 @RequestMapping("/crm/operate-log")
 @Validated
-/**
- * CRM 操作日志 Controller (Admin)
- */
 public class CrmOperateLogController {
 
     @Resource
@@ -51,14 +48,8 @@ public class CrmOperateLogController {
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_PRODUCT.getType(), CRM_PRODUCT_TYPE);
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE.getType(), CRM_RECEIVABLE_TYPE);
         BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE_PLAN.getType(), CRM_RECEIVABLE_PLAN_TYPE);
-        BIZ_TYPE_MAP.put(CrmBizTypeEnum.CRM_ORDER.getType(), CRM_ORDER_TYPE);
     }
 
-    // ==================== 操作日志查询 ====================
-
-    /**
-     * 获得操作日志
-     */
     @GetMapping("/page")
     @Operation(summary = "获得操作日志")
     public CommonResult<PageResult<CrmOperateLogRespVO>> getCustomerOperateLog(@Valid CrmOperateLogPageReqVO pageReqVO) {

@@ -5,10 +5,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.meession.etm.framework.common.util.spring.SpringExpressionUtils;
 import com.meession.etm.framework.web.core.util.WebFrameworkUtils;
-import com.meession.etm.module.bpm.api.task.BpmProcessInstanceApi;
-import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.dal.dataobject.permission.CrmPermissionDO;
-import com.meession.etm.module.crm.dal.mysql.order.CrmOrderMapper;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
 import com.meession.etm.module.crm.framework.permission.core.annotations.CrmPermission;
@@ -46,21 +43,6 @@ public class CrmPermissionAspect {
     @Resource
     private AdminUserApi adminUserApi;
 
-    @Resource
-    private BpmProcessInstanceApi bpmProcessInstanceApi;
-
-    @Resource
-    private CrmOrderMapper orderMapper;
-
-    /** CRM 业务类型 → BPM 流程定义标识映射 */
-    private static final Map<Integer, String> BIZ_TYPE_PROCESS_KEY_MAP = new HashMap<>();
-
-    static {
-        BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_ORDER.getType(), "crm-order-audit");
-        BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_CONTRACT.getType(), "crm-contract-audit");
-        BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE.getType(), "crm-receivable-audit");
-    }
-
     @Before("@annotation(crmPermission)")
     public void doBefore(JoinPoint joinPoint, CrmPermission crmPermission) {
         // 1.1 获取相关属性值
@@ -80,10 +62,10 @@ public class CrmPermissionAspect {
         // 2. 逐个校验权限
         List<CrmPermissionDO> permissionList = crmPermissionService.getPermissionListByBiz(bizType, bizIds);
         Map<Long, List<CrmPermissionDO>> multiMap = convertMultiMap(permissionList, CrmPermissionDO::getBizId);
-        bizIds.forEach(bizId -> validatePermission(bizType, bizId, multiMap.get(bizId), permissionLevel));
+        bizIds.forEach(bizId -> validatePermission(bizType, multiMap.get(bizId), permissionLevel));
     }
 
-    private void validatePermission(Integer bizType, Long bizId, List<CrmPermissionDO> bizPermissions, Integer permissionLevel) {
+    private void validatePermission(Integer bizType, List<CrmPermissionDO> bizPermissions, Integer permissionLevel) {
         // 1. 如果是超级管理员则直接通过
         if (CrmPermissionUtils.isCrmAdmin()) {
             return;
@@ -118,27 +100,6 @@ public class CrmPermissionAspect {
             CrmPermissionDO subordinatePermission = CollUtil.findOne(bizPermissions,
                     permission -> ObjUtil.equal(permission.getUserId(), subordinateUserId));
             if (subordinatePermission != null && isUserPermissionValid(subordinatePermission, permissionLevel)) {
-                return;
-            }
-        }
-
-        // 3.5 检查是否有活跃的 BPM 审批任务（仅 READ 权限）
-        if (CrmPermissionLevelEnum.isRead(permissionLevel) && bizId != null) {
-            String processInstanceId = getProcessInstanceId(bizType, bizId);
-            // 优先通过 processInstanceId 查询（更准确）
-            if (processInstanceId != null
-                    && bpmProcessInstanceApi.hasActiveTaskByProcessInstanceId(processInstanceId, userId)) {
-                return;
-            }
-            // 降级：通过 businessKey 查询
-            String processKey = BIZ_TYPE_PROCESS_KEY_MAP.get(bizType);
-            if (processKey != null
-                    && bpmProcessInstanceApi.hasActiveTask(processKey, String.valueOf(bizId), userId)) {
-                return;
-            }
-            // 3.6 流程运行中放行 READ（审批中人无需额外 CRM 权限）
-            if (processInstanceId != null
-                    && bpmProcessInstanceApi.isProcessRunning(processInstanceId)) {
                 return;
             }
         }
@@ -196,19 +157,6 @@ public class CrmPermissionAspect {
         }
         // 2. 执行解析
         return SpringExpressionUtils.parseExpressions(joinPoint, expressionStrings);
-    }
-
-    /**
-     * 根据业务类型和业务编号获取流程实例 ID
-     */
-    private String getProcessInstanceId(Integer bizType, Long bizId) {
-        if (CrmBizTypeEnum.CRM_ORDER.getType().equals(bizType)) {
-            CrmOrderDO order = orderMapper.selectById(bizId);
-            if (order != null) {
-                return order.getProcessInstanceId();
-            }
-        }
-        return null;
     }
 
 }

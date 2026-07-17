@@ -23,93 +23,75 @@ import java.time.LocalDateTime;
 import static com.meession.etm.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
 import static com.meession.etm.module.crm.enums.DictTypeConstants.CRM_CUSTOMER_INDUSTRY;
 
-/**
- * 管理后台 - CRM 客户新增/修改 Request VO
- */
 @Schema(description = "管理后台 - CRM 客户新增/修改 Request VO")
 @Data
 public class CrmCustomerSaveReqVO {
 
-    /** 编号 */
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "13563")
     private Long id;
 
-    /** 客户名称 */
     @Schema(description = "客户名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")
     @DiffLogField(name = "客户名称")
     @NotEmpty(message = "客户名称不能为空")
     private String name;
 
-    /** 下次联系时间 */
     @Schema(description = "下次联系时间")
     @DiffLogField(name = "下次联系时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime contactNextTime;
 
-    /** 负责人的用户编号 */
     @Schema(description = "负责人的用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "13563")
     @NotNull(message = "负责人的用户编号不能为空")
     private Long ownerUserId;
 
-    /** 手机 */
     @Schema(description = "手机", example = "18000000000")
     @DiffLogField(name = "手机")
     @Mobile
     private String mobile;
 
-    /** 电话 */
     @Schema(description = "电话", example = "18000000000")
     @DiffLogField(name = "电话")
     @Telephone
     private String telephone;
 
-    /** QQ */
     @Schema(description = "QQ", example = "123456789")
     @DiffLogField(name = "QQ")
     @Size(max = 20, message = "QQ长度不能超过 20 个字符")
     private String qq;
 
-    /** 微信 */
     @Schema(description = "微信", example = "123456789")
     @DiffLogField(name = "微信")
     @Size(max = 255, message = "微信长度不能超过 255 个字符")
     private String wechat;
 
-    /** 邮箱 */
     @Schema(description = "邮箱", example = "123456789@qq.com")
     @DiffLogField(name = "邮箱")
     @Email(message = "邮箱格式不正确")
     @Size(max = 255, message = "邮箱长度不能超过 255 个字符")
     private String email;
 
-    /** 地区编号 */
     @Schema(description = "地区编号", example = "20158")
     @DiffLogField(name = "地区编号", function = SysAreaParseFunction.NAME)
     private Integer areaId;
 
-    /** 详细地址 */
     @Schema(description = "详细地址", example = "北京市海淀区")
     @DiffLogField(name = "详细地址")
     private String detailAddress;
 
-    /** 所属行业 */
     @Schema(description = "所属行业", example = "1")
     @DiffLogField(name = "所属行业", function = CrmCustomerIndustryParseFunction.NAME)
     @DictFormat(CRM_CUSTOMER_INDUSTRY)
     private Integer industryId;
 
-    /** 客户等级 */
     @Schema(description = "客户等级", example = "2")
     @DiffLogField(name = "客户等级", function = CrmCustomerLevelParseFunction.NAME)
     @InEnum(CrmCustomerLevelEnum.class)
     private Integer level;
 
-    /** 客户来源 */
     @Schema(description = "客户来源", example = "3")
     @DiffLogField(name = "客户来源", function = CrmCustomerSourceParseFunction.NAME)
     private Integer source;
 
-    /** 备注 */
     @Schema(description = "备注", example = "随便")
     @DiffLogField(name = "备注")
     private String remark;

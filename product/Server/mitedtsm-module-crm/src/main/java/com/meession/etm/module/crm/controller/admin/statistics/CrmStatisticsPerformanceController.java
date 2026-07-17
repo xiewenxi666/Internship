@@ -23,19 +23,11 @@ import static com.meession.etm.framework.common.pojo.CommonResult.success;
 @RestController
 @RequestMapping("/crm/statistics-performance")
 @Validated
-/**
- * CRM 员工业绩统计 Controller (Admin)
- */
 public class CrmStatisticsPerformanceController {
 
     @Resource
     private CrmStatisticsPerformanceService performanceService;
 
-    // ==================== 员工业绩统计 ====================
-
-    /**
-     * 合同数量统计
-     */
     @GetMapping("/get-contract-count-performance")
     @Operation(summary = "合同数量统计", description = "用于【合同数量分析】页面")
     @PreAuthorize("@ss.hasPermission('crm:statistics-performance:query')")
@@ -43,9 +35,6 @@ public class CrmStatisticsPerformanceController {
         return success(performanceService.getContractCountPerformance(performanceReqVO));
     }
 
-    /**
-     * 合同金额统计
-     */
     @GetMapping("/get-contract-price-performance")
     @Operation(summary = "合同金额统计")
     @PreAuthorize("@ss.hasPermission('crm:statistics-performance:query')")
@@ -53,9 +42,6 @@ public class CrmStatisticsPerformanceController {
         return success(performanceService.getContractPricePerformance(performanceReqVO));
     }
 
-    /**
-     * 回款金额统计
-     */
     @GetMapping("/get-receivable-price-performance")
     @Operation(summary = "回款金额统计")
     @PreAuthorize("@ss.hasPermission('crm:statistics-performance:query')")

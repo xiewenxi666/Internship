@@ -45,12 +45,6 @@ import static com.meession.etm.framework.common.util.collection.MapUtils.findAnd
 import static com.meession.etm.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 import static java.util.Collections.singletonList;
 
-/**
- * CRM 联系人 Controller（Admin）
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 @Tag(name = "管理后台 - CRM 联系人")
 @RestController
 @RequestMapping("/crm/contact")
@@ -70,11 +64,6 @@ public class CrmContactController {
     @Resource
     private DeptApi deptApi;
 
-    // ==================== 联系人 CRUD ====================
-
-    /**
-     * 创建联系人
-     */
     @PostMapping("/create")
     @Operation(summary = "创建联系人")
     @PreAuthorize("@ss.hasPermission('crm:contact:create')")
@@ -82,9 +71,6 @@ public class CrmContactController {
         return success(contactService.createContact(createReqVO, getLoginUserId()));
     }
 
-    /**
-     * 更新联系人
-     */
     @PutMapping("/update")
     @Operation(summary = "更新联系人")
     @PreAuthorize("@ss.hasPermission('crm:contact:update')")
@@ -93,9 +79,6 @@ public class CrmContactController {
         return success(true);
     }
 
-    /**
-     * 删除联系人
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除联系人")
     @Parameter(name = "id", description = "编号", required = true)
@@ -105,9 +88,6 @@ public class CrmContactController {
         return success(true);
     }
 
-    /**
-     * 获得联系人详情
-     */
     @GetMapping("/get")
     @Operation(summary = "获得联系人")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -124,9 +104,6 @@ public class CrmContactController {
         return buildContactDetailList(singletonList(contact)).get(0);
     }
 
-    /**
-     * 获得联系人的精简列表
-     */
     @GetMapping("/simple-all-list")
     @Operation(summary = "获得联系人的精简列表")
     @PreAuthorize("@ss.hasPermission('crm:contact:query')")
@@ -137,9 +114,6 @@ public class CrmContactController {
                         .setCustomerId(contact.getCustomerId())));
     }
 
-    /**
-     * 获得联系人分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得联系人分页")
     @PreAuthorize("@ss.hasPermission('crm:contact:query')")
@@ -148,9 +122,6 @@ public class CrmContactController {
         return success(new PageResult<>(buildContactDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得联系人分页，基于指定客户
-     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得联系人分页，基于指定客户")
     public CommonResult<PageResult<CrmContactRespVO>> getContactPageByCustomer(@Valid CrmContactPageReqVO pageVO) {
@@ -159,9 +130,6 @@ public class CrmContactController {
         return success(new PageResult<>(buildContactDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得联系人分页，基于指定商机
-     */
     @GetMapping("/page-by-business")
     @Operation(summary = "获得联系人分页，基于指定商机")
     public CommonResult<PageResult<CrmContactRespVO>> getContactPageByBusiness(@Valid CrmContactPageReqVO pageVO) {
@@ -170,9 +138,6 @@ public class CrmContactController {
         return success(new PageResult<>(buildContactDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 导出联系人 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出联系人 Excel")
     @PreAuthorize("@ss.hasPermission('crm:contact:export')")
@@ -215,9 +180,6 @@ public class CrmContactController {
         });
     }
 
-    /**
-     * 联系人转移
-     */
     @PutMapping("/transfer")
     @Operation(summary = "联系人转移")
     @PreAuthorize("@ss.hasPermission('crm:contact:update')")
@@ -228,9 +190,6 @@ public class CrmContactController {
 
     // ================== 关联/取关商机 ===================
 
-    /**
-     * 创建联系人与商机的关联
-     */
     @PostMapping("/create-business-list")
     @Operation(summary = "创建联系人与商机的关联")
     @PreAuthorize("@ss.hasPermission('crm:contact:create-business')")
@@ -240,9 +199,6 @@ public class CrmContactController {
     }
 
 
-    /**
-     * 创建联系人与商机的关联（批量）
-     */
     @PostMapping("/create-business-list2")
     @Operation(summary = "创建联系人与商机的关联")
     @PreAuthorize("@ss.hasPermission('crm:contact:create-business')")
@@ -251,9 +207,6 @@ public class CrmContactController {
         return success(true);
     }
 
-    /**
-     * 删除联系人与商机的关联
-     */
     @DeleteMapping("/delete-business-list")
     @Operation(summary = "删除联系人与联系人的关联")
     @PreAuthorize("@ss.hasPermission('crm:contact:delete-business')")
@@ -262,9 +215,6 @@ public class CrmContactController {
         return success(true);
     }
 
-    /**
-     * 删除联系人与商机的关联（批量）
-     */
     @DeleteMapping("/delete-business-list2")
     @Operation(summary = "删除联系人与联系人的关联")
     @PreAuthorize("@ss.hasPermission('crm:contact:delete-business')")

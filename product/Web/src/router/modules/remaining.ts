@@ -568,17 +568,6 @@ const remainingRouter: AppRouteRecordRaw[] = [
         component: () => import('@/views/crm/receivable/detail/index.vue')
       },
       {
-        path: 'order/detail/:id',
-        name: 'CrmOrderDetail',
-        meta: {
-          title: t('router.crmOrderDetail'),
-          noCache: true,
-          hidden: true,
-          activeMenu: '/crm/order'
-        },
-        component: () => import('@/views/crm/order/detail/index.vue')
-      },
-      {
         path: 'contact/detail/:id',
         name: 'CrmContactDetail',
         meta: {

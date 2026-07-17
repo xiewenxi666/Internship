@@ -1,9 +1,3 @@
-/**
- * 商机状态组新增/修改 Request VO
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 package com.meession.etm.module.crm.controller.admin.business.vo.status;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,20 +13,16 @@ import java.util.List;
 @Data
 public class CrmBusinessStatusSaveReqVO {
 
-    /** 主键 */
     @Schema(description = "主键", requiredMode = Schema.RequiredMode.REQUIRED, example = "2934")
     private Long id;
 
-    /** 状态类型名 */
     @Schema(description = "状态类型名", requiredMode = Schema.RequiredMode.REQUIRED, example = "李四")
     @NotEmpty(message = "状态类型名不能为空")
     private String name;
 
-    /** 使用的部门编号 */
     @Schema(description = "使用的部门编号")
     private List<Long> deptIds;
 
-    /** 商机状态集合 */
     @Schema(description = "商机状态集合", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "商机状态集合不能为空")
     @Valid
@@ -41,21 +31,17 @@ public class CrmBusinessStatusSaveReqVO {
     @Data
     public static class Status {
 
-        /** 状态编号 */
         @Schema(description = "状态编号", example = "23899")
         private Long id;
 
-        /** 状态名 */
         @Schema(description = "状态名", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")
         @NotEmpty(message = "状态名不能为空")
         private String name;
 
-        /** 赢单率 */
         @Schema(description = "赢单率", requiredMode = Schema.RequiredMode.REQUIRED, example = "50")
         @NotNull(message = "赢单率不能为空")
         private BigDecimal percent;
 
-        /** 排序 */
         @Schema(description = "排序", hidden = true, example = "1")
         private Integer sort;
 

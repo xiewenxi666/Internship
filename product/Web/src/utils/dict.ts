@@ -201,7 +201,6 @@ export enum DICT_TYPE {
 
   // ========== CRM - 客户管理模块 ==========
   CRM_AUDIT_STATUS = 'crm_audit_status', // CRM 审批状态
-  CRM_ORDER_STATUS = 'crm_order_status', // CRM 订单状态
   CRM_BIZ_TYPE = 'crm_biz_type', // CRM 业务类型
   CRM_BUSINESS_END_STATUS_TYPE = 'crm_business_end_status_type', // CRM 商机结束状态类型
   CRM_RECEIVABLE_RETURN_TYPE = 'crm_receivable_return_type', // CRM 回款的还款方式

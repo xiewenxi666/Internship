@@ -37,9 +37,6 @@ import static com.meession.etm.framework.security.core.util.SecurityFrameworkUti
 @RestController
 @RequestMapping("/crm/follow-up-record")
 @Validated
-/**
- * 跟进记录 Controller (Admin)
- */
 public class CrmFollowUpRecordController {
 
     @Resource
@@ -52,20 +49,12 @@ public class CrmFollowUpRecordController {
     @Resource
     private AdminUserApi adminUserApi;
 
-    // ==================== 跟进记录 CRUD ====================
-
-    /**
-     * 创建跟进记录
-     */
     @PostMapping("/create")
     @Operation(summary = "创建跟进记录")
     public CommonResult<Long> createFollowUpRecord(@Valid @RequestBody CrmFollowUpRecordSaveReqVO createReqVO) {
         return success(followUpRecordService.createFollowUpRecord(createReqVO));
     }
 
-    /**
-     * 删除跟进记录
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除跟进记录")
     @Parameter(name = "id", description = "编号", required = true)
@@ -74,9 +63,6 @@ public class CrmFollowUpRecordController {
         return success(true);
     }
 
-    /**
-     * 获得跟进记录
-     */
     @GetMapping("/get")
     @Operation(summary = "获得跟进记录")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -85,9 +71,6 @@ public class CrmFollowUpRecordController {
         return success(BeanUtils.toBean(followUpRecord, CrmFollowUpRecordRespVO.class));
     }
 
-    /**
-     * 获得跟进记录分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得跟进记录分页")
     public CommonResult<PageResult<CrmFollowUpRecordRespVO>> getFollowUpRecordPage(@Valid CrmFollowUpRecordPageReqVO pageReqVO) {

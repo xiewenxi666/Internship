@@ -42,11 +42,6 @@ public class CrmContactBusinessServiceImpl implements CrmContactBusinessService 
     @Lazy // 延迟加载，为了解决延迟加载
     private CrmContactService contactService;
 
-    /**
-     * 创建联系人与商机的关联（从联系人维度）
-     *
-     * @param createReqVO 创建请求
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#createReqVO.contactId", level = CrmPermissionLevelEnum.WRITE)
     public void createContactBusinessList(CrmContactBusinessReqVO createReqVO) {
@@ -73,11 +68,6 @@ public class CrmContactBusinessServiceImpl implements CrmContactBusinessService 
         }
     }
 
-    /**
-     * 创建联系人与商机的关联（从商机维度）
-     *
-     * @param createReqVO 创建请求
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#createReqVO.businessId", level = CrmPermissionLevelEnum.WRITE)
     public void createContactBusinessList2(CrmContactBusiness2ReqVO createReqVO) {
@@ -104,11 +94,6 @@ public class CrmContactBusinessServiceImpl implements CrmContactBusinessService 
         }
     }
 
-    /**
-     * 删除联系人与商机的关联（从联系人维度）
-     *
-     * @param deleteReqVO 删除请求
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#deleteReqVO.contactId", level = CrmPermissionLevelEnum.WRITE)
     public void deleteContactBusinessList(CrmContactBusinessReqVO deleteReqVO) {
@@ -121,11 +106,6 @@ public class CrmContactBusinessServiceImpl implements CrmContactBusinessService 
                 deleteReqVO.getContactId(), deleteReqVO.getBusinessIds());
     }
 
-    /**
-     * 删除联系人与商机的关联（从商机维度）
-     *
-     * @param deleteReqVO 删除请求
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#deleteReqVO.businessId", level = CrmPermissionLevelEnum.WRITE)
     public void deleteContactBusinessList2(CrmContactBusiness2ReqVO deleteReqVO) {
@@ -138,35 +118,18 @@ public class CrmContactBusinessServiceImpl implements CrmContactBusinessService 
                 deleteReqVO.getBusinessId(), deleteReqVO.getContactIds());
     }
 
-    /**
-     * 根据联系人编号删除所有关联的商机
-     *
-     * @param contactId 联系人编号
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#contactId", level = CrmPermissionLevelEnum.WRITE)
     public void deleteContactBusinessByContactId(Long contactId) {
         contactBusinessMapper.delete(CrmContactBusinessDO::getContactId, contactId);
     }
 
-    /**
-     * 根据联系人编号查询关联商机列表
-     *
-     * @param contactId 联系人编号
-     * @return 关联列表
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#contactId", level = CrmPermissionLevelEnum.READ)
     public List<CrmContactBusinessDO> getContactBusinessListByContactId(Long contactId) {
         return contactBusinessMapper.selectListByContactId(contactId);
     }
 
-    /**
-     * 根据商机编号查询关联联系人列表
-     *
-     * @param businessId 商机编号
-     * @return 关联列表
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#businessId", level = CrmPermissionLevelEnum.READ)
     public List<CrmContactBusinessDO> getContactBusinessListByBusinessId(Long businessId) {

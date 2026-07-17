@@ -78,12 +78,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
     @Resource
     private BpmProcessInstanceApi bpmProcessInstanceApi;
 
-    /**
-     * 创建回款
-     *
-     * @param createReqVO 创建请求
-     * @return 回款编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_CREATE_SUB_TYPE, bizNo = "{{#receivable.id}}",
@@ -121,11 +115,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         return receivable.getId();
     }
 
-    /**
-     * 校验回款金额是否超过可回款上限
-     *
-     * @param reqVO 请求
-     */
     private void validateReceivablePriceExceedsLimit(CrmReceivableSaveReqVO reqVO) {
         // 1. 计算剩余可退款金额，不包括 reqVO 自身
         CrmContractDO contract = contractService.validateContract(reqVO.getContractId());
@@ -142,11 +131,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         }
     }
 
-    /**
-     * 校验关联数据是否存在
-     *
-     * @param reqVO 请求
-     */
     private void validateRelationDataExists(CrmReceivableSaveReqVO reqVO) {
         if (reqVO.getOwnerUserId() != null) {
             adminUserApi.validateUser(reqVO.getOwnerUserId()); // 校验负责人存在
@@ -169,11 +153,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         }
     }
 
-    /**
-     * 更新回款
-     *
-     * @param updateReqVO 更新请求
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -206,12 +185,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         LogRecordContext.putVariable(DiffParseFunction.OLD_OBJECT, BeanUtils.toBean(oldReceivable, CrmReceivableSaveReqVO.class));
     }
 
-    /**
-     * 获取回款计划期数
-     *
-     * @param planId 回款计划编号
-     * @return 期数
-     */
     private Integer getReceivablePeriod(Long planId) {
         if (Objects.isNull(planId)) {
             return null;
@@ -220,12 +193,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         return receivablePlan.getPeriod();
     }
 
-    /**
-     * 更新回款审批状态
-     *
-     * @param id 回款编号
-     * @param bpmResult BPM 审批结果
-     */
     @Override
     public void updateReceivableAuditStatus(Long id, Integer bpmResult) {
         // 1.1 校验存在
@@ -242,11 +209,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         receivableMapper.updateById(new CrmReceivableDO().setId(id).setAuditStatus(auditStatus));
     }
 
-    /**
-     * 删除回款
-     *
-     * @param id 回款编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -274,12 +236,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         LogRecordContext.putVariable("period", getReceivablePeriod(receivable.getPlanId()));
     }
 
-    /**
-     * 提交回款审批
-     *
-     * @param id 回款编号
-     * @param userId 用户编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_SUBMIT_SUB_TYPE, bizNo = "{{#id}}",
@@ -303,12 +259,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         LogRecordContext.putVariable("receivableNo", receivable.getNo());
     }
 
-    /**
-     * 校验回款是否存在
-     *
-     * @param id 回款编号
-     * @return 回款
-     */
     private CrmReceivableDO validateReceivableExists(Long id) {
         CrmReceivableDO receivable = receivableMapper.selectById(id);
         if (receivable == null) {
@@ -317,24 +267,12 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         return receivable;
     }
 
-    /**
-     * 查询回款详情
-     *
-     * @param id 回款编号
-     * @return 回款
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_RECEIVABLE, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmReceivableDO getReceivable(Long id) {
         return receivableMapper.selectById(id);
     }
 
-    /**
-     * 查询回款列表
-     *
-     * @param ids 回款编号集合
-     * @return 回款列表
-     */
     @Override
     public List<CrmReceivableDO> getReceivableList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -343,58 +281,27 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
         return receivableMapper.selectByIds(ids);
     }
 
-    /**
-     * 分页查询回款
-     *
-     * @param pageReqVO 分页请求
-     * @param userId 用户编号
-     * @return 分页结果
-     */
     @Override
     public PageResult<CrmReceivableDO> getReceivablePage(CrmReceivablePageReqVO pageReqVO, Long userId) {
         return receivableMapper.selectPage(pageReqVO, userId);
     }
 
-    /**
-     * 根据客户编号分页查询回款
-     *
-     * @param pageReqVO 分页请求
-     * @return 分页结果
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageReqVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmReceivableDO> getReceivablePageByCustomerId(CrmReceivablePageReqVO pageReqVO) {
         return receivableMapper.selectPageByCustomerId(pageReqVO);
     }
 
-    /**
-     * 获取待审核回款数量
-     *
-     * @param userId 用户编号
-     * @return 待审核数量
-     */
     @Override
     public Long getAuditReceivableCount(Long userId) {
         return receivableMapper.selectCountByAudit(userId);
     }
 
-    /**
-     * 根据合同编号集合获取回款金额映射
-     *
-     * @param contractIds 合同编号集合
-     * @return 合同编号 -> 回款金额
-     */
     @Override
     public Map<Long, BigDecimal> getReceivablePriceMapByContractId(Collection<Long> contractIds) {
         return receivableMapper.selectReceivablePriceMapByContractId(contractIds);
     }
 
-    /**
-     * 根据合同编号统计回款数量
-     *
-     * @param contractId 合同编号
-     * @return 回款数量
-     */
     @Override
     public Long getReceivableCountByContractId(Long contractId) {
         return receivableMapper.selectCountByContractId(contractId);

@@ -32,12 +32,6 @@ import static com.meession.etm.framework.apilog.core.enums.OperateTypeEnum.EXPOR
 import static com.meession.etm.framework.common.pojo.CommonResult.success;
 import static com.meession.etm.framework.common.util.collection.CollectionUtils.convertList;
 
-/**
- * CRM 产品 Controller（Admin）
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 @Tag(name = "管理后台 - CRM 产品")
 @RestController
 @RequestMapping("/crm/product")
@@ -49,11 +43,6 @@ public class CrmProductController {
     @Resource
     private AdminUserApi adminUserApi;
 
-    // ==================== 产品 CRUD ====================
-
-    /**
-     * 创建产品
-     */
     @PostMapping("/create")
     @Operation(summary = "创建产品")
     @PreAuthorize("@ss.hasPermission('crm:product:create')")
@@ -61,9 +50,6 @@ public class CrmProductController {
         return success(productService.createProduct(createReqVO));
     }
 
-    /**
-     * 更新产品
-     */
     @PutMapping("/update")
     @Operation(summary = "更新产品")
     @PreAuthorize("@ss.hasPermission('crm:product:update')")
@@ -72,9 +58,6 @@ public class CrmProductController {
         return success(true);
     }
 
-    /**
-     * 删除产品
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除产品")
     @Parameter(name = "id", description = "编号", required = true)
@@ -84,9 +67,6 @@ public class CrmProductController {
         return success(true);
     }
 
-    /**
-     * 获得产品详情
-     */
     @GetMapping("/get")
     @Operation(summary = "获得产品")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -97,9 +77,6 @@ public class CrmProductController {
         return success(BeanUtils.toBean(product, CrmProductRespVO.class));
     }
 
-    /**
-     * 获得产品精简列表（只包含已启用的产品，用于下拉选项）
-     */
     @GetMapping("/simple-list")
     @Operation(summary = "获得产品精简列表", description = "只包含被开启的产品，主要用于前端的下拉选项")
     public CommonResult<List<CrmProductRespVO>> getProductSimpleList() {
@@ -108,9 +85,6 @@ public class CrmProductController {
                 .setUnit(product.getUnit()).setNo(product.getNo()).setPrice(product.getPrice())));
     }
 
-    /**
-     * 获得产品分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得产品分页")
     @PreAuthorize("@ss.hasPermission('crm:product:query')")
@@ -120,9 +94,6 @@ public class CrmProductController {
         return success(BeanUtils.toBean(pageResult, CrmProductRespVO.class));
     }
 
-    /**
-     * 导出产品 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出产品 Excel")
     @PreAuthorize("@ss.hasPermission('crm:product:export')")

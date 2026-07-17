@@ -316,11 +316,6 @@ export default {
   // Editor
   imageUploadFailed: 'Image upload failed',
   videoUploadFailed: 'Video upload failed',
-  // Dialog buttons
-  dialog: {
-    confirm: 'Confirm',
-    cancel: 'Cancel'
-  },
   // Route titles
   router: {
     home: 'Home',
@@ -370,7 +365,6 @@ export default {
     crmContractDetail: 'Contract Detail',
     crmReceivablePlanDetail: 'Receivable Plan Detail',
     crmReceivableDetail: 'Receivable Detail',
-    crmOrderDetail: 'Order Detail',
     crmContactDetail: 'Contact Detail',
     crmProductDetail: 'Product Detail',
     // AI module

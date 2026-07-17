@@ -29,12 +29,6 @@ import java.util.Map;
 import static com.meession.etm.framework.common.pojo.CommonResult.success;
 import static com.meession.etm.framework.common.util.collection.CollectionUtils.convertSetByFlatMap;
 
-/**
- * CRM 客户限制配置 Controller（Admin）
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 @Tag(name = "管理后台 - CRM 客户限制配置")
 @RestController
 @RequestMapping("/crm/customer-limit-config")
@@ -49,11 +43,6 @@ public class CrmCustomerLimitConfigController {
     @Resource
     private AdminUserApi adminUserApi;
 
-    // ==================== 客户限制配置 CRUD ====================
-
-    /**
-     * 创建客户限制配置
-     */
     @PostMapping("/create")
     @Operation(summary = "创建客户限制配置")
     @PreAuthorize("@ss.hasPermission('crm:customer-limit-config:create')")
@@ -61,9 +50,6 @@ public class CrmCustomerLimitConfigController {
         return success(customerLimitConfigService.createCustomerLimitConfig(createReqVO));
     }
 
-    /**
-     * 更新客户限制配置
-     */
     @PutMapping("/update")
     @Operation(summary = "更新客户限制配置")
     @PreAuthorize("@ss.hasPermission('crm:customer-limit-config:update')")
@@ -72,9 +58,6 @@ public class CrmCustomerLimitConfigController {
         return success(true);
     }
 
-    /**
-     * 删除客户限制配置
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除客户限制配置")
     @Parameter(name = "id", description = "编号", required = true)
@@ -84,9 +67,6 @@ public class CrmCustomerLimitConfigController {
         return success(true);
     }
 
-    /**
-     * 获得客户限制配置详情
-     */
     @GetMapping("/get")
     @Operation(summary = "获得客户限制配置")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -102,9 +82,6 @@ public class CrmCustomerLimitConfigController {
         }));
     }
 
-    /**
-     * 获得客户限制配置分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得客户限制配置分页")
     @PreAuthorize("@ss.hasPermission('crm:customer-limit-config:query')")

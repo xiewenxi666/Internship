@@ -69,13 +69,6 @@ public class CrmContactServiceImpl implements CrmContactService {
     @Resource
     private AdminUserApi adminUserApi;
 
-    /**
-     * 创建联系人
-     *
-     * @param createReqVO 创建请求
-     * @param userId 用户编号
-     * @return 联系人编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_CREATE_SUB_TYPE, bizNo = "{{#contact.id}}",
@@ -105,11 +98,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         return contact.getId();
     }
 
-    /**
-     * 更新联系人
-     *
-     * @param updateReqVO 更新请求
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
@@ -155,11 +143,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         }
     }
 
-    /**
-     * 删除联系人
-     *
-     * @param id 联系人编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_DELETE_SUB_TYPE, bizNo = "{{#id}}",
@@ -185,12 +168,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         LogRecordContext.putVariable("contactName", contact.getName());
     }
 
-    /**
-     * 校验联系人是否存在
-     *
-     * @param id 联系人编号
-     * @return 联系人
-     */
     private CrmContactDO validateContactExists(Long id) {
         CrmContactDO contact = contactMapper.selectById(id);
         if (contact == null) {
@@ -199,12 +176,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         return contact;
     }
 
-    /**
-     * 转移联系人负责人
-     *
-     * @param reqVO 转移请求
-     * @param userId 当前用户编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
@@ -224,12 +195,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         LogRecordContext.putVariable("contact", contact);
     }
 
-    /**
-     * 根据客户编号批量更新联系人负责人
-     *
-     * @param customerId 客户编号
-     * @param ownerUserId 新负责人编号
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#customerId", level = CrmPermissionLevelEnum.OWNER)
@@ -250,12 +215,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         }
     }
 
-    /**
-     * 记录联系人转移日志
-     *
-     * @param contact 联系人
-     * @param ownerUserId 新负责人编号
-     */
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_UPDATE_OWNER_USER_SUB_TYPE, bizNo = "{{#contact.id}}",
             success = CRM_CONTACT_UPDATE_OWNER_USER_SUCCESS)
     public void receiveContactLog(CrmContactDO contact, Long ownerUserId) {
@@ -264,13 +223,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         LogRecordContext.putVariable("ownerUserId", ownerUserId);
     }
 
-    /**
-     * 更新联系人跟进信息
-     *
-     * @param id 联系人编号
-     * @param contactNextTime 下次联系时间
-     * @param contactLastContent 最后跟进内容
-     */
     @Override
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_FOLLOW_UP_SUB_TYPE, bizNo = "{{#id}}",
             success = CRM_CONTACT_FOLLOW_UP_SUCCESS)
@@ -287,12 +239,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         LogRecordContext.putVariable("contactName", contact.getName());
     }
 
-    /**
-     * 批量更新联系人的下次联系时间
-     *
-     * @param ids 联系人编号集合
-     * @param contactNextTime 下次联系时间
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#ids", level = CrmPermissionLevelEnum.WRITE)
     public void updateContactContactNextTime(Collection<Long> ids, LocalDateTime contactNextTime) {
@@ -301,34 +247,17 @@ public class CrmContactServiceImpl implements CrmContactService {
 
     //======================= 查询相关 =======================
 
-    /**
-     * 查询联系人详情
-     *
-     * @param id 联系人编号
-     * @return 联系人
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmContactDO getContact(Long id) {
         return contactMapper.selectById(id);
     }
 
-    /**
-     * 校验联系人是否存在
-     *
-     * @param id 联系人编号
-     */
     @Override
     public void validateContact(Long id) {
         validateContactExists(id);
     }
 
-    /**
-     * 查询联系人列表
-     *
-     * @param ids 联系人编号集合
-     * @return 联系人列表
-     */
     @Override
     public List<CrmContactDO> getContactList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
@@ -337,12 +266,6 @@ public class CrmContactServiceImpl implements CrmContactService {
         return contactMapper.selectByIds(ids);
     }
 
-    /**
-     * 根据用户编号查询联系人列表（不分页）
-     *
-     * @param userId 用户编号
-     * @return 联系人列表
-     */
     @Override
     public List<CrmContactDO> getContactList(Long userId) {
         CrmContactPageReqVO reqVO = new CrmContactPageReqVO();
@@ -350,36 +273,17 @@ public class CrmContactServiceImpl implements CrmContactService {
         return contactMapper.selectPage(reqVO, userId).getList();
     }
 
-    /**
-     * 分页查询联系人
-     *
-     * @param pageReqVO 分页请求
-     * @param userId 用户编号
-     * @return 分页结果
-     */
     @Override
     public PageResult<CrmContactDO> getContactPage(CrmContactPageReqVO pageReqVO, Long userId) {
         return contactMapper.selectPage(pageReqVO, userId);
     }
 
-    /**
-     * 根据客户编号分页查询联系人
-     *
-     * @param pageVO 分页请求
-     * @return 分页结果
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#pageVO.customerId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmContactDO> getContactPageByCustomerId(CrmContactPageReqVO pageVO) {
         return contactMapper.selectPageByCustomerId(pageVO);
     }
 
-    /**
-     * 根据商机编号分页查询联系人
-     *
-     * @param pageVO 分页请求
-     * @return 分页结果
-     */
     @Override
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#pageVO.businessId", level = CrmPermissionLevelEnum.READ)
     public PageResult<CrmContactDO> getContactPageByBusinessId(CrmContactPageReqVO pageVO) {
@@ -390,24 +294,11 @@ public class CrmContactServiceImpl implements CrmContactService {
         return contactMapper.selectPageByBusinessId(pageVO, convertSet(contactBusinessList, CrmContactBusinessDO::getContactId));
     }
 
-    /**
-     * 根据客户编号统计联系人数量
-     *
-     * @param customerId 客户编号
-     * @return 联系人数量
-     */
     @Override
     public Long getContactCountByCustomerId(Long customerId) {
         return contactMapper.selectCount(CrmContactDO::getCustomerId, customerId);
     }
 
-    /**
-     * 根据客户编号和负责人编号查询联系人列表
-     *
-     * @param customerId 客户编号
-     * @param ownerUserId 负责人编号
-     * @return 联系人列表
-     */
     @Override
     public List<CrmContactDO> getContactListByCustomerIdOwnerUserId(Long customerId, Long ownerUserId) {
         return contactMapper.selectListByCustomerIdOwnerUserId(customerId, ownerUserId);

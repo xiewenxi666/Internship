@@ -51,9 +51,6 @@ import static com.meession.etm.framework.security.core.util.SecurityFrameworkUti
 @RestController
 @RequestMapping("/crm/receivable")
 @Validated
-/**
- * CRM 回款 Controller (Admin)
- */
 public class CrmReceivableController {
 
     @Resource
@@ -68,21 +65,13 @@ public class CrmReceivableController {
     @Resource
     private DeptApi deptApi;
 
-    // ==================== 回款 CRUD ====================
-
     @PostMapping("/create")
     @Operation(summary = "创建回款")
     @PreAuthorize("@ss.hasPermission('crm:receivable:create')")
-    /**
-     * 创建回款
-     */
     public CommonResult<Long> createReceivable(@Valid @RequestBody CrmReceivableSaveReqVO createReqVO) {
         return success(receivableService.createReceivable(createReqVO));
     }
 
-    /**
-     * 更新回款
-     */
     @PutMapping("/update")
     @Operation(summary = "更新回款")
     @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
@@ -91,9 +80,6 @@ public class CrmReceivableController {
         return success(true);
     }
 
-    /**
-     * 删除回款
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除回款")
     @Parameter(name = "id", description = "编号", required = true)
@@ -103,9 +89,6 @@ public class CrmReceivableController {
         return success(true);
     }
 
-    /**
-     * 获得回款
-     */
     @GetMapping("/get")
     @Operation(summary = "获得回款")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -122,9 +105,6 @@ public class CrmReceivableController {
         return buildReceivableDetailList(Collections.singletonList(receivable)).get(0);
     }
 
-    /**
-     * 获得回款分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得回款分页")
     @PreAuthorize("@ss.hasPermission('crm:receivable:query')")
@@ -133,9 +113,6 @@ public class CrmReceivableController {
         return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得回款分页，基于指定客户
-     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得回款分页，基于指定客户")
     public CommonResult<PageResult<CrmReceivableRespVO>> getReceivablePageByCustomer(@Valid CrmReceivablePageReqVO pageReqVO) {
@@ -144,11 +121,6 @@ public class CrmReceivableController {
         return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    // ==================== 回款导出 ====================
-
-    /**
-     * 导出回款 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出回款 Excel")
     @PreAuthorize("@ss.hasPermission('crm:receivable:export')")
@@ -193,11 +165,6 @@ public class CrmReceivableController {
         });
     }
 
-    // ==================== 回款审批 ====================
-
-    /**
-     * 提交回款审批
-     */
     @PutMapping("/submit")
     @Operation(summary = "提交回款审批")
     @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
@@ -206,9 +173,6 @@ public class CrmReceivableController {
         return success(true);
     }
 
-    /**
-     * 获得待审核回款数量
-     */
     @GetMapping("/audit-count")
     @Operation(summary = "获得待审核回款数量")
     @PreAuthorize("@ss.hasPermission('crm:receivable:query')")

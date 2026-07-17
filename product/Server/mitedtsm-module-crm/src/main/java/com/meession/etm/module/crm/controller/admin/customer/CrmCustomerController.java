@@ -50,9 +50,6 @@ import static java.util.Collections.singletonList;
 @RestController
 @RequestMapping("/crm/customer")
 @Validated
-/**
- * CRM 客户 Controller (Admin)
- */
 public class CrmCustomerController {
 
     @Resource
@@ -65,11 +62,6 @@ public class CrmCustomerController {
     @Resource
     private AdminUserApi adminUserApi;
 
-    // ==================== 客户 CRUD ====================
-
-    /**
-     * 创建客户
-     */
     @PostMapping("/create")
     @Operation(summary = "创建客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:create')")
@@ -77,9 +69,6 @@ public class CrmCustomerController {
         return success(customerService.createCustomer(createReqVO, getLoginUserId()));
     }
 
-    /**
-     * 更新客户
-     */
     @PutMapping("/update")
     @Operation(summary = "更新客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:update')")
@@ -88,9 +77,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 更新客户的成交状态
-     */
     @PutMapping("/update-deal-status")
     @Operation(summary = "更新客户的成交状态")
     @Parameters({
@@ -103,9 +89,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 删除客户
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除客户")
     @Parameter(name = "id", description = "客户编号", required = true)
@@ -115,9 +98,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 获得客户
-     */
     @GetMapping("/get")
     @Operation(summary = "获得客户")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -136,9 +116,6 @@ public class CrmCustomerController {
         return buildCustomerDetailList(singletonList(customer)).get(0);
     }
 
-    /**
-     * 获得客户分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得客户分页")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
@@ -179,9 +156,6 @@ public class CrmCustomerController {
         });
     }
 
-    /**
-     * 获得待进入公海客户分页
-     */
     @GetMapping("/put-pool-remind-page")
     @Operation(summary = "获得待进入公海客户分页")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
@@ -192,9 +166,6 @@ public class CrmCustomerController {
         return success(new PageResult<>(buildCustomerDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得待进入公海客户数量
-     */
     @GetMapping("/put-pool-remind-count")
     @Operation(summary = "获得待进入公海客户数量")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
@@ -202,9 +173,6 @@ public class CrmCustomerController {
         return success(customerService.getPutPoolRemindCustomerCount(getLoginUserId()));
     }
 
-    /**
-     * 获得今日需联系客户数量
-     */
     @GetMapping("/today-contact-count")
     @Operation(summary = "获得今日需联系客户数量")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
@@ -212,11 +180,6 @@ public class CrmCustomerController {
         return success(customerService.getTodayContactCustomerCount(getLoginUserId()));
     }
 
-    // ==================== 客户统计 ====================
-
-    /**
-     * 获得分配给我、待跟进的线索数量的客户数量
-     */
     @GetMapping("/follow-count")
     @Operation(summary = "获得分配给我、待跟进的线索数量的客户数量")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
@@ -258,11 +221,6 @@ public class CrmCustomerController {
         });
     }
 
-    // ==================== 客户查询 ====================
-
-    /**
-     * 获取客户精简信息列表，主要用于前端的下拉选项
-     */
     @GetMapping(value = "/simple-list")
     @Operation(summary = "获取客户精简信息列表", description = "只包含有读权限的客户，主要用于前端的下拉选项")
     public CommonResult<List<CrmCustomerRespVO>> getCustomerSimpleList() {
@@ -273,11 +231,6 @@ public class CrmCustomerController {
                 new CrmCustomerRespVO().setId(customer.getId()).setName(customer.getName())));
     }
 
-    // ==================== 客户导出 ====================
-
-    /**
-     * 导出客户 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出客户 Excel")
     @PreAuthorize("@ss.hasPermission('crm:customer:export')")
@@ -291,11 +244,6 @@ public class CrmCustomerController {
                 buildCustomerDetailList(list));
     }
 
-    // ==================== 客户导入 ====================
-
-    /**
-     * 获得导入客户模板
-     */
     @GetMapping("/get-import-template")
     @Operation(summary = "获得导入客户模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
@@ -312,9 +260,6 @@ public class CrmCustomerController {
         ExcelUtils.write(response, "客户导入模板.xls", "客户列表", CrmCustomerImportExcelVO.class, list);
     }
 
-    /**
-     * 导入客户
-     */
     @PostMapping("/import")
     @Operation(summary = "导入客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:import')")
@@ -324,11 +269,6 @@ public class CrmCustomerController {
         return success(customerService.importCustomerList(list, importReqVO));
     }
 
-    // ==================== 客户转移 ====================
-
-    /**
-     * 转移客户
-     */
     @PutMapping("/transfer")
     @Operation(summary = "转移客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:update')")
@@ -337,9 +277,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 锁定/解锁客户
-     */
     @PutMapping("/lock")
     @Operation(summary = "锁定/解锁客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:update')")
@@ -350,9 +287,6 @@ public class CrmCustomerController {
 
     // ==================== 公海相关操作 ====================
 
-    /**
-     * 数据放入公海
-     */
     @PutMapping("/put-pool")
     @Operation(summary = "数据放入公海")
     @Parameter(name = "id", description = "客户编号", required = true, example = "1024")
@@ -362,9 +296,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 领取公海客户
-     */
     @PutMapping("/receive")
     @Operation(summary = "领取公海客户")
     @Parameter(name = "ids", description = "编号数组", required = true, example = "1,2,3")
@@ -374,9 +305,6 @@ public class CrmCustomerController {
         return success(true);
     }
 
-    /**
-     * 分配公海给对应负责人
-     */
     @PutMapping("/distribute")
     @Operation(summary = "分配公海给对应负责人")
     @PreAuthorize("@ss.hasPermission('crm:customer:distribute')")

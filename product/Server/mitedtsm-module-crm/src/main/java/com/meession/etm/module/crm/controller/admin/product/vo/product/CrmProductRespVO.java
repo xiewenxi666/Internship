@@ -1,9 +1,3 @@
-/**
- * 产品 Response VO
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 package com.meession.etm.module.crm.controller.admin.product.vo.product;
 
 import com.meession.etm.framework.excel.core.annotations.DictFormat;
@@ -26,78 +20,63 @@ import java.time.LocalDateTime;
 @ExcelIgnoreUnannotated
 public class CrmProductRespVO implements VO {
 
-    /** 产品编号 */
     @Schema(description = "产品编号", example = "20529")
     @ExcelProperty("产品编号")
     private Long id;
 
-    /** 产品名称 */
     @Schema(description = "产品名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "好产品")
     @ExcelProperty("产品名称")
     private String name;
 
-    /** 产品编码 */
     @Schema(description = "产品编码", requiredMode = Schema.RequiredMode.REQUIRED, example = "12306")
     @ExcelProperty("产品编码")
     private String no;
 
-    /** 单位 */
     @Schema(description = "单位", example = "2")
     @ExcelProperty(value = "单位", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.CRM_PRODUCT_UNIT)
     private Integer unit;
 
-    /** 价格, 单位：分 */
     @Schema(description = "价格, 单位：分", requiredMode = Schema.RequiredMode.REQUIRED, example = "8911")
     @ExcelProperty("价格，单位：分")
     private BigDecimal price;
 
-    /** 状态 */
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "上架")
     @ExcelProperty(value = "单位", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.CRM_PRODUCT_STATUS)
     private Integer status;
 
-    /** 产品分类编号 */
     @Schema(description = "产品分类编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @Trans(type = TransType.SIMPLE, target = CrmProductCategoryDO.class, fields = "name", ref = "categoryName")
     private Long categoryId;
-    /** 产品分类名字 */
     @Schema(description = "产品分类名字", requiredMode = Schema.RequiredMode.REQUIRED, example = "衣服")
     @ExcelProperty("产品分类")
     private String categoryName;
 
-    /** 产品描述 */
     @Schema(description = "产品描述", example = "你说的对")
     @ExcelProperty("产品描述")
     private String description;
 
-    /** 负责人的用户编号 */
     @Schema(description = "负责人的用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "31926")
     @Trans(type = TransType.SIMPLE, targetClassName = "com.meession.etm.module.system.dal.dataobject.user.AdminUserDO",
             fields = "nickname", ref = "ownerUserName")
     private Long ownerUserId;
-    /** 负责人的用户昵称 */
     @Schema(description = "负责人的用户昵称", requiredMode = Schema.RequiredMode.REQUIRED, example = "密讯")
     @ExcelProperty("负责人")
     private String ownerUserName;
 
-    /** 创建人编号 */
     @Schema(description = "创建人编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @Trans(type = TransType.SIMPLE, targetClassName = "com.meession.etm.module.system.dal.dataobject.user.AdminUserDO",
             fields = "nickname", ref = "creatorName")
     private String creator;
-    /** 创建人名字 */
     @Schema(description = "创建人名字", requiredMode = Schema.RequiredMode.REQUIRED, example = "密讯")
     @ExcelProperty("创建人")
     private String creatorName;
 
-    /** 创建时间 */
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-    /** 更新时间 */
     @Schema(description = "更新时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("更新时间")
     private LocalDateTime updateTime;

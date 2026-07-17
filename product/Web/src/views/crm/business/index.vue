@@ -140,30 +140,24 @@
         prop="statusName"
         min-width="120"
       />
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="130">
+      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="150">
         <template #default="scope">
-          <el-dropdown @command="(command) => handleCommand(command, scope.row)">
-            <el-button link type="primary">
-              <Icon icon="ep:d-arrow-right" /> {{ t('common.action') }}
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="edit" v-hasPermi="['crm:business:update']">
-                  {{ t('common.edit') }}
-                </el-dropdown-item>
-                <el-dropdown-item
-                  v-if="!scope.row.endStatus"
-                  command="changeStatus"
-                  v-hasPermi="['crm:business:update']"
-                >
-                  {{ t('crm.business.changeStatus') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="delete" v-hasPermi="['crm:business:delete']">
-                  {{ t('common.del') }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <el-button
+            v-hasPermi="['crm:business:update']"
+            link
+            type="primary"
+            @click="openForm('update', scope.row.id)"
+          >
+            {{ t('common.edit') }}
+          </el-button>
+          <el-button
+            v-hasPermi="['crm:business:delete']"
+            link
+            type="danger"
+            @click="handleDelete(scope.row.id)"
+          >
+            {{ t('common.del') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -178,8 +172,6 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <BusinessForm ref="formRef" @success="getList" />
-  <!-- 表单弹窗：变更商机状态 -->
-  <BusinessUpdateStatusForm ref="statusFormRef" @success="getList" />
 </template>
 
 <script lang="ts" setup>
@@ -187,7 +179,6 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as BusinessApi from '@/api/crm/business'
 import BusinessForm from './BusinessForm.vue'
-import BusinessUpdateStatusForm from './BusinessUpdateStatusForm.vue'
 import { erpPriceTableColumnFormatter } from '@/utils'
 import { TabsPaneContext } from 'element-plus'
 
@@ -253,27 +244,6 @@ const openCustomerDetail = (id: number) => {
 const formRef = ref()
 const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
-}
-
-/** 变更商机状态 */
-const statusFormRef = ref()
-const openStatusForm = (row: BusinessApi.BusinessVO) => {
-  statusFormRef.value.open(row)
-}
-
-/** 更多操作菜单 */
-const handleCommand = (command: string, row: BusinessApi.BusinessVO) => {
-  switch (command) {
-    case 'edit':
-      openForm('update', row.id)
-      break
-    case 'changeStatus':
-      openStatusForm(row)
-      break
-    case 'delete':
-      handleDelete(row.id)
-      break
-  }
 }
 
 /** 删除按钮操作 */

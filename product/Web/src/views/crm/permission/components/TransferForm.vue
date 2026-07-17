@@ -45,8 +45,8 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{ t('common.ok') }}</el-button>
-      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{ t('dialog.confirm') }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('dialog.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -57,7 +57,6 @@ import * as ClueApi from '@/api/crm/clue'
 import * as ContactApi from '@/api/crm/contact'
 import * as CustomerApi from '@/api/crm/customer'
 import * as ContractApi from '@/api/crm/contract'
-import * as OrderApi from '@/api/crm/order'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { BizTypeEnum, PermissionLevelEnum, TransferReqVO } from '@/api/crm/permission'
 
@@ -130,8 +129,6 @@ const transfer = async (data: TransferReqVO) => {
       return await BusinessApi.transferBusiness(data)
     case BizTypeEnum.CRM_CONTRACT:
       return await ContractApi.transferContract(data)
-    case BizTypeEnum.CRM_ORDER:
-      return await OrderApi.transferOrder(data)
     default:
       message.error(t('permission.transferFailed'))
       throw new Error(t('permission.transferFailed'))
@@ -149,8 +146,6 @@ const getDialogTitle = () => {
       return t('business.title') + t('customer.transfer')
     case BizTypeEnum.CRM_CONTRACT:
       return t('contract.title') + t('customer.transfer')
-    case BizTypeEnum.CRM_ORDER:
-      return t('order.title') + t('customer.transfer')
     default:
       return t('customer.transfer')
   }

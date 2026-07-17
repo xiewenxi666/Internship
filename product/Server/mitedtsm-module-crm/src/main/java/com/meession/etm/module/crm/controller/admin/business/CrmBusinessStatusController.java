@@ -32,12 +32,6 @@ import static com.meession.etm.framework.common.pojo.CommonResult.success;
 import static com.meession.etm.framework.common.util.collection.CollectionUtils.*;
 import static com.meession.etm.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 
-/**
- * CRM 商机状态 Controller（Admin）
- *
- * @author 23计三倪雨晗
- * @since 2026-03
- */
 @Tag(name = "管理后台 - CRM 商机状态")
 @RestController
 @RequestMapping("/crm/business-status")
@@ -52,11 +46,6 @@ public class CrmBusinessStatusController {
     @Resource
     private DeptApi deptApi;
 
-    // ==================== 商机状态 CRUD ====================
-
-    /**
-     * 创建商机状态
-     */
     @PostMapping("/create")
     @Operation(summary = "创建商机状态")
     @PreAuthorize("@ss.hasPermission('crm:business-status:create')")
@@ -64,9 +53,6 @@ public class CrmBusinessStatusController {
         return success(businessStatusTypeService.createBusinessStatus(createReqVO));
     }
 
-    /**
-     * 更新商机状态
-     */
     @PutMapping("/update")
     @Operation(summary = "更新商机状态")
     @PreAuthorize("@ss.hasPermission('crm:business-status:update')")
@@ -75,9 +61,6 @@ public class CrmBusinessStatusController {
         return success(true);
     }
 
-    /**
-     * 删除商机状态
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除商机状态")
     @Parameter(name = "id", description = "编号", required = true)
@@ -87,9 +70,6 @@ public class CrmBusinessStatusController {
         return success(true);
     }
 
-    /**
-     * 获得商机状态详情
-     */
     @GetMapping("/get")
     @Operation(summary = "获得商机状态")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -104,9 +84,6 @@ public class CrmBusinessStatusController {
                 statusTypeVO -> statusTypeVO.setStatuses(BeanUtils.toBean(statuses, CrmBusinessStatusRespVO.Status.class))));
     }
 
-    /**
-     * 获得商机状态分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得商机状态分页")
     @PreAuthorize("@ss.hasPermission('crm:business-status:query')")
@@ -128,11 +105,6 @@ public class CrmBusinessStatusController {
         }));
     }
 
-    // ==================== 商机状态查询 ====================
-
-    /**
-     * 获得商机状态组列表
-     */
     @GetMapping("/type-simple-list")
     @Operation(summary = "获得商机状态组列表")
     public CommonResult<List<CrmBusinessStatusRespVO>> getBusinessStatusTypeSimpleList() {
@@ -143,9 +115,6 @@ public class CrmBusinessStatusController {
         return success(BeanUtils.toBean(list, CrmBusinessStatusRespVO.class));
     }
 
-    /**
-     * 获得商机状态列表（根据状态组）
-     */
     @GetMapping("/status-simple-list")
     @Operation(summary = "获得商机状态列表")
     @Parameter(name = "typeId", description = "商机状态组", required = true, example = "1024")
