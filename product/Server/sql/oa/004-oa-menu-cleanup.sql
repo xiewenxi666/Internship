@@ -16,14 +16,14 @@ DELETE FROM `system_menu` WHERE id BETWEEN 2000 AND 2094;
 
 -- ==========================================
 -- Step 2: 将 003 菜单授权给 role_id=2
--- 003 已补充完整按钮权限（type=3），但角色关联只覆盖 5307-5347
+-- 003 已补充完整按钮权限（type=3），但角色关联只覆盖 5700-5740
 -- 这里确保关联到位
 -- ==========================================
 
 INSERT INTO `system_role_menu` (`role_id`, `menu_id`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`)
 SELECT 2, id, '1', NOW(), '1', NOW(), 0, 1
 FROM `system_menu`
-WHERE id BETWEEN 5307 AND 5347
+WHERE id BETWEEN 5700 AND 5740
   AND id NOT IN (SELECT menu_id FROM `system_role_menu` WHERE role_id = 2)
   AND deleted = 0;
 

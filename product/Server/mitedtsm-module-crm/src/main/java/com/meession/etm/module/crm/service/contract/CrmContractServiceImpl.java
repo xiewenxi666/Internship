@@ -18,6 +18,7 @@ import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractProductDO;
 import com.meession.etm.module.crm.dal.mysql.contract.CrmContractMapper;
 import com.meession.etm.module.crm.dal.mysql.contract.CrmContractProductMapper;
+import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
 import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
@@ -106,7 +107,7 @@ public class CrmContractServiceImpl implements CrmContractService {
         // 1.2 校验关联字段
         validateRelationDataExists(createReqVO);
         // 1.3 生成序号
-        String no = noRedisDAO.generate(CrmNoRedisDAO.CONTRACT_NO_PREFIX);
+        String no = noRedisDAO.generate(CrmBizNoPrefix.CONTRACT);
         if (contractMapper.selectByNo(no) != null) {
             throw exception(CONTRACT_NO_EXISTS);
         }

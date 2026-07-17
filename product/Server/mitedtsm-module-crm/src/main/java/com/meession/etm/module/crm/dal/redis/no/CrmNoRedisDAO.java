@@ -12,22 +12,13 @@ import java.time.LocalDateTime;
 
 
 /**
- * Crm 订单序号的 Redis DAO
+ * CRM 通用编号序号的 Redis DAO
+ * 各业务域通过 {@link CrmBizNoPrefix} 常量传入前缀，调用 generate() 生成编号
  *
  * @author HUIHUI
  */
 @Repository
 public class CrmNoRedisDAO {
-
-    /**
-     * 合同 {@link com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO}
-     */
-    public static final String CONTRACT_NO_PREFIX = "HT";
-
-    /**
-     * 回款 {@link com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO}
-     */
-    public static final String RECEIVABLE_PREFIX = "HK";
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
