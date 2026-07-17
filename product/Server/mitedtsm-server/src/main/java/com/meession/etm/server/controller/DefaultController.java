@@ -12,19 +12,12 @@ import static com.meession.etm.framework.common.exception.enums.GlobalErrorCodeC
 
 /**
  * 默认 Controller，解决部分 module 未开启时的 404 提示。
- * 例如说，/bpm/** 路径，工作流
  *
  * @author 密讯
  */
 @RestController
 @Slf4j
 public class DefaultController {
-
-    @RequestMapping("/admin-api/bpm/**")
-    public CommonResult<Boolean> bpm404() {
-        return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                "[工作流模块 mitedtsm-module-bpm - 已禁用]");
-    }
 
     @RequestMapping("/admin-api/mp/**")
     public CommonResult<Boolean> mp404() {
