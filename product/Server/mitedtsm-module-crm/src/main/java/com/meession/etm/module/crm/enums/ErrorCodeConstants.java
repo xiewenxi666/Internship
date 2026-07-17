@@ -125,6 +125,10 @@ public interface ErrorCodeConstants {
     ErrorCode REFUND_NO_EXISTS = new ErrorCode(1_020_017_005, "生成退款序列号重复，请重试");
     ErrorCode REFUND_CREATE_FAIL_CONTRACT_NOT_APPROVE = new ErrorCode(1_020_017_006, "创建退款失败，原因：合同不是审核通过状态");
 
+    // ========== 费用 1_020_018_000 ==========
+    ErrorCode EXPENSE_NOT_EXISTS = new ErrorCode(1_020_018_000, "费用不存在");
+    ErrorCode EXPENSE_NO_EXISTS = new ErrorCode(1_020_018_001, "生成费用序列号重复，请重试");
+
     // ========== 数据统计 1_020_014_000 ==========
 
 }

@@ -30,5 +30,9 @@ export default {
   crmRefundDetail: 'Refund Detail',
   crmRefundApproval: 'Refund Approval',
   crmRefundApprovalDetail: 'Refund Approval Detail',
-  crmRefundRecord: 'Refund Records'
+  crmRefundRecord: 'Refund Records',
+  crmExpense: 'Expense Management',
+  crmExpenseDetail: 'Expense Detail',
+  crmExpenseRecord: 'Expense Records',
+  crmFinance: 'Financial Data Analysis'
 }

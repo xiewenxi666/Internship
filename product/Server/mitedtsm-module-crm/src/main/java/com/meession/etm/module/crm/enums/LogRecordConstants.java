@@ -208,6 +208,16 @@ public interface LogRecordConstants {
     String CRM_REFUND_VETO_SUB_TYPE = "否决退款审批";
     String CRM_REFUND_VETO_SUCCESS = "否决了编号为【{{#refundNo}}】的退款审批，否决原因：{{#reason != null ? #reason : '无'}}";
 
+    // ======================= CRM_EXPENSE 费用 =======================
+
+    String CRM_EXPENSE_TYPE = "CRM 费用";
+    String CRM_EXPENSE_CREATE_SUB_TYPE = "创建费用";
+    String CRM_EXPENSE_CREATE_SUCCESS = "创建了编号为【{{#expense.no}}】的费用";
+    String CRM_EXPENSE_UPDATE_SUB_TYPE = "更新费用";
+    String CRM_EXPENSE_UPDATE_SUCCESS = "更新了编号为【{{#oldExpense.no}}】的费用";
+    String CRM_EXPENSE_DELETE_SUB_TYPE = "删除费用";
+    String CRM_EXPENSE_DELETE_SUCCESS = "删除了编号为【{{#expense.no}}】的费用";
+
     // ======================= CRM_INVOICE 发票 =======================
 
     String CRM_INVOICE_TYPE = "CRM 发票";

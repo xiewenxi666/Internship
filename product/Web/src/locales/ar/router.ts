@@ -30,5 +30,9 @@ export default {
   crmRefundDetail: 'تفاصيل الاسترداد',
   crmRefundApproval: 'الموافقة على الاسترداد',
   crmRefundApprovalDetail: 'تفاصيل الموافقة على الاسترداد',
-  crmRefundRecord: 'سجلات الاسترداد'
+  crmRefundRecord: 'سجلات الاسترداد',
+  crmExpense: 'إدارة المصروفات',
+  crmExpenseDetail: 'تفاصيل المصروفات',
+  crmExpenseRecord: 'سجلات المصروفات',
+  crmFinance: 'تحليل البيانات المالية'
 }

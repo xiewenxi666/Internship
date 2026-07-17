@@ -34,4 +34,6 @@ public interface CrmBizNoPrefix {
     String TASK = "RW";
     /** 工作报告 */
     String REPORT = "BG";
+    /** 费用 */
+    String EXPENSE = "FY";
 }

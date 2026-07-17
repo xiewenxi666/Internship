@@ -30,5 +30,9 @@ export default {
   crmRefundDetail: '退款详情',
   crmRefundApproval: '退款审批',
   crmRefundApprovalDetail: '退款审批详情',
-  crmRefundRecord: '退款记录'
+  crmRefundRecord: '退款记录',
+  crmExpense: '费用管理',
+  crmExpenseDetail: '费用详情',
+  crmExpenseRecord: '费用记录',
+  crmFinance: '财务数据分析'
 }

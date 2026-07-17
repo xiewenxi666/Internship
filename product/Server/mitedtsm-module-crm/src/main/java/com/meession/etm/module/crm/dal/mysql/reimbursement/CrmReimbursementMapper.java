@@ -11,6 +11,8 @@ import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.common.CrmSceneTypeEnum;
 import com.meession.etm.module.crm.util.CrmPermissionUtils;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -52,6 +54,18 @@ public interface CrmReimbursementMapper extends BaseMapperX<CrmReimbursementDO> 
                 CrmReimbursementDO::getId, userId, CrmSceneTypeEnum.OWNER.getType());
         query.eq(CrmReimbursementDO::getAuditStatus, CrmAuditStatusEnum.PROCESS.getStatus());
         return selectCount(query);
+    }
+
+    default List<CrmReimbursementDO> selectListForReport(Integer year, Long ownerUserId) {
+        LambdaQueryWrapperX<CrmReimbursementDO> query = new LambdaQueryWrapperX<CrmReimbursementDO>()
+                .orderByDesc(CrmReimbursementDO::getId);
+        if (ownerUserId != null) {
+            query.eq(CrmReimbursementDO::getOwnerUserId, ownerUserId);
+        }
+        if (year != null) {
+            query.apply("YEAR(apply_date) = {0}", year);
+        }
+        return selectList(query);
     }
 
     default PageResult<CrmReimbursementDO> selectPageForApproval(CrmReimbursementApprovalPageReqVO pageReqVO, Long userId) {

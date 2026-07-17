@@ -18,5 +18,6 @@ public interface DictTypeConstants {
     String CRM_INVOICE_TYPE = "crm_invoice_type"; // CRM 发票类型
     String CRM_REIMBURSEMENT_TYPE = "crm_reimbursement_type"; // CRM 报销类型
     String CRM_REFUND_TYPE = "crm_refund_type"; // CRM 退款类型
+    String CRM_EXPENSE_TYPE = "crm_expense_type"; // CRM 费用类型
 
 }

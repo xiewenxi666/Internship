@@ -781,6 +781,47 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/crm/refund/record'
         },
         component: () => import('@/views/crm/refund/record/index.vue')
+      },
+      {
+        path: 'finance',
+        name: 'CrmFinance',
+        meta: {
+          title: t('router.crmFinance'),
+          noCache: true,
+          activeMenu: '/crm/finance'
+        },
+        component: () => import('@/views/crm/finance/index.vue')
+      },
+      {
+        path: 'expense',
+        name: 'CrmExpense',
+        meta: {
+          title: t('router.crmExpense'),
+          noCache: true,
+          activeMenu: '/crm/expense'
+        },
+        component: () => import('@/views/crm/expense/index.vue')
+      },
+      {
+        path: 'expense/detail/:id',
+        name: 'CrmExpenseDetail',
+        meta: {
+          title: t('router.crmExpenseDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/expense'
+        },
+        component: () => import('@/views/crm/expense/detail/index.vue')
+      },
+      {
+        path: 'expense/record',
+        name: 'CrmExpenseRecord',
+        meta: {
+          title: t('router.crmExpenseRecord'),
+          noCache: true,
+          activeMenu: '/crm/expense/record'
+        },
+        component: () => import('@/views/crm/expense/record/index.vue')
       }
     ]
   },
