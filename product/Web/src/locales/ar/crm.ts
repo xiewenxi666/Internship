@@ -832,5 +832,18 @@ export default {
     count: 'العدد',
     amount: 'المبلغ',
     ratio: 'النسبة'
+  },
+  invoice: {
+    title: 'إدارة الفواتير',
+    no: 'رقم الفاتورة',
+    orderNo: 'الطلب المرتبط',
+    type: 'نوع الفاتورة',
+    invoiceDate: 'تاريخ الفاتورة',
+    price: 'مبلغ الفاتورة',
+    invoiceNo: 'رقم الفاتورة الضريبية',
+    content: 'محتوى الفاتورة',
+    handlerUserId: 'المعالج',
+    ownerUserName: 'مالك الطلب',
+    exportFileName: 'إدارة الفواتير'
   }
 }

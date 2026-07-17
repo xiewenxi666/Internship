@@ -3,5 +3,23 @@ export default {
   socialLogin: 'Social Login',
   home: 'Home',
   analysis: 'Analysis',
-  workplace: 'Workplace'
+  workplace: 'Workplace',
+  // CRM
+  crmCustomerDetail: 'Customer Detail',
+  crmClueDetail: 'Clue Detail',
+  crmBusinessDetail: 'Business Detail',
+  crmContractDetail: 'Contract Detail',
+  crmReceivableDetail: 'Receivable Detail',
+  crmReceivablePlanDetail: 'Receivable Plan Detail',
+  crmContactDetail: 'Contact Detail',
+  crmProductDetail: 'Product Detail',
+  crmReceivablePlanSummary: 'Receivable Plan Summary',
+  crmReceivablePlanReport: 'Receivable Plan Report',
+  crmReceivableSummaryReport: 'Receivable Summary Report',
+  crmReceivableApproval: 'Receivable Approval',
+  crmReceivableApprovalDetail: 'Receivable Approval Detail',
+  crmInvoice: 'Invoice Management',
+  crmInvoiceRecord: 'Invoice Records',
+  crmInvoiceReport: 'Invoice Report',
+  crmInvoiceDetail: 'Invoice Detail'
 }

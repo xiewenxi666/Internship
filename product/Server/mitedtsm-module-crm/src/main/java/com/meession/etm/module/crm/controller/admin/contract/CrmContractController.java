@@ -234,13 +234,19 @@ public class CrmContractController {
     }
 
     @GetMapping("/simple-list")
-    @Operation(summary = "获得合同精简列表", description = "只包含的合同，主要用于前端的下拉选项")
-    @Parameter(name = "customerId", description = "客户编号", required = true)
+    @Operation(summary = "获得合同精简列表", description = "只包含的合同，主要用于前端的下拉选项。customerId 可选，不传则返回全部")
+    @Parameter(name = "customerId", description = "客户编号")
     @PreAuthorize("@ss.hasPermission('crm:contract:query')")
-    public CommonResult<List<CrmContractRespVO>> getContractSimpleList(@RequestParam("customerId") Long customerId) {
-        CrmContractPageReqVO pageReqVO = new CrmContractPageReqVO().setCustomerId(customerId);
+    public CommonResult<List<CrmContractRespVO>> getContractSimpleList(@RequestParam(value = "customerId", required = false) Long customerId) {
+        CrmContractPageReqVO pageReqVO = new CrmContractPageReqVO();
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE); // 不分页
-        PageResult<CrmContractDO> pageResult = contractService.getContractPageByCustomerId(pageReqVO);
+        PageResult<CrmContractDO> pageResult;
+        if (customerId != null) {
+            pageReqVO.setCustomerId(customerId);
+            pageResult = contractService.getContractPageByCustomerId(pageReqVO);
+        } else {
+            pageResult = contractService.getContractPage(pageReqVO, getLoginUserId());
+        }
         if (CollUtil.isEmpty(pageResult.getList())) {
             return success(Collections.emptyList());
         }

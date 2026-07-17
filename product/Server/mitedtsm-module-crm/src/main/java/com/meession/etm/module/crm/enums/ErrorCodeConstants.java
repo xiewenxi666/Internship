@@ -103,6 +103,10 @@ public interface ErrorCodeConstants {
     ErrorCode FOLLOW_UP_RECORD_NOT_EXISTS = new ErrorCode(1_020_013_000, "跟进记录不存在");
     ErrorCode FOLLOW_UP_RECORD_DELETE_DENIED = new ErrorCode(1_020_013_001, "删除跟进记录失败，原因：没有权限");
 
+    // ========== 发票 1_020_015_000 ==========
+    ErrorCode INVOICE_NOT_EXISTS = new ErrorCode(1_020_015_000, "发票不存在");
+    ErrorCode INVOICE_NO_EXISTS = new ErrorCode(1_020_015_001, "生成发票序列号重复，请重试");
+
     // ========== 数据统计 1_020_014_000 ==========
 
 }

@@ -358,15 +358,6 @@ export default {
     // DIY module
     diyTemplateDecorate: 'زينة القالب',
     diyPageDecorate: 'زينة الصفحة',
-    // CRM module
-    crmClueDetail: 'تفاصيل التلميح',
-    crmCustomerDetail: 'تفاصيل العميل',
-    crmBusinessDetail: 'تفاصيل العمل',
-    crmContractDetail: 'تفاصيل العقد',
-    crmReceivablePlanDetail: 'تفاصيل الخطة المدينة',
-    crmReceivableDetail: 'تفاصيل المستحق',
-    crmContactDetail: 'تفاصيل جهة الاتصال',
-    crmProductDetail: 'تفاصيل المنتج',
     // AI module
     aiImageSquare: 'صور الذكاء الاصطناعي',
     aiKnowledgeDocument: 'مستند قاعدة المعرفة',

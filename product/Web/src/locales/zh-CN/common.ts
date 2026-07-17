@@ -361,15 +361,6 @@ export default {
     // DIY 模块
     diyTemplateDecorate: '模板装修',
     diyPageDecorate: '页面装修',
-    // CRM 模块
-    crmClueDetail: '线索详情',
-    crmCustomerDetail: '客户详情',
-    crmBusinessDetail: '商机详情',
-    crmContractDetail: '合同详情',
-    crmReceivablePlanDetail: '回款计划详情',
-    crmReceivableDetail: '回款详情',
-    crmContactDetail: '联系人详情',
-    crmProductDetail: '产品详情',
     // AI 模块
     aiImageSquare: '绘图作品',
     aiKnowledgeDocument: '知识库文档',

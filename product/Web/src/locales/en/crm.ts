@@ -832,5 +832,18 @@ export default {
     count: 'Count',
     amount: 'Amount',
     ratio: 'Ratio'
+  },
+  invoice: {
+    title: 'Invoice Management',
+    no: 'Invoice No',
+    orderNo: 'Related Order',
+    type: 'Invoice Type',
+    invoiceDate: 'Invoice Date',
+    price: 'Invoice Amount',
+    invoiceNo: 'Tax Invoice No',
+    content: 'Invoice Content',
+    handlerUserId: 'Handler',
+    ownerUserName: 'Order Owner',
+    exportFileName: 'Invoice Management'
   }
 }

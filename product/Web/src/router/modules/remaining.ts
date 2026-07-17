@@ -560,7 +560,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         path: 'receivable-plan/summary',
         name: 'CrmReceivablePlanSummary',
         meta: {
-          title: '回款计划汇总',
+          title: t('router.crmReceivablePlanSummary'),
           noCache: true,
           hidden: true,
           activeMenu: '/crm/receivable-plan'
@@ -571,7 +571,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         path: 'receivable-plan/report',
         name: 'CrmReceivablePlanReport',
         meta: {
-          title: '计划回款报表',
+          title: t('router.crmReceivablePlanReport'),
           noCache: true,
           hidden: true,
           activeMenu: '/crm/receivable-plan'
@@ -593,7 +593,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         path: 'receivable/report',
         name: 'CrmReceivableReport',
         meta: {
-          title: '回款记录报表',
+          title: t('router.crmReceivableSummaryReport'),
           noCache: true,
           hidden: true,
           activeMenu: '/crm/receivable'
@@ -604,7 +604,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         path: 'receivable/approval',
         name: 'CrmReceivableApproval',
         meta: {
-          title: '回款审批',
+          title: t('router.crmReceivableApproval'),
           noCache: true,
           activeMenu: '/crm/receivable/approval'
         },
@@ -614,7 +614,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
         path: 'receivable/approval/detail/:id',
         name: 'CrmReceivableApprovalDetail',
         meta: {
-          title: '回款审批详情',
+          title: t('router.crmReceivableApprovalDetail'),
           noCache: true,
           hidden: true,
           activeMenu: '/crm/receivable/approval'
@@ -642,6 +642,48 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/crm/product'
         },
         component: () => import('@/views/crm/product/detail/index.vue')
+      },
+      {
+        path: 'invoice',
+        name: 'CrmInvoice',
+        meta: {
+          title: t('router.crmInvoice'),
+          noCache: true,
+          activeMenu: '/crm/invoice'
+        },
+        component: () => import('@/views/crm/invoice/index.vue')
+      },
+      {
+        path: 'invoice/record',
+        name: 'CrmInvoiceRecord',
+        meta: {
+          title: t('router.crmInvoiceRecord'),
+          noCache: true,
+          activeMenu: '/crm/invoice/record'
+        },
+        component: () => import('@/views/crm/invoice/record/index.vue')
+      },
+      {
+        path: 'invoice/report',
+        name: 'CrmInvoiceReport',
+        meta: {
+          title: t('router.crmInvoiceReport'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/invoice/record'
+        },
+        component: () => import('@/views/crm/invoice/report/index.vue')
+      },
+      {
+        path: 'invoice/detail/:id',
+        name: 'CrmInvoiceDetail',
+        meta: {
+          title: t('router.crmInvoiceDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/invoice'
+        },
+        component: () => import('@/views/crm/invoice/detail/index.vue')
       }
     ]
   },

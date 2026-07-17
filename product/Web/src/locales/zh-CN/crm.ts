@@ -839,5 +839,18 @@ export default {
     count: '数量',
     amount: '金额',
     ratio: '占比'
+  },
+  invoice: {
+    title: '发票管理',
+    no: '发票编号',
+    orderNo: '关联订单',
+    type: '票据类型',
+    invoiceDate: '开票日期',
+    price: '开票金额',
+    invoiceNo: '发票号码',
+    content: '票据内容',
+    handlerUserId: '经手人员',
+    ownerUserName: '订单所属人员',
+    exportFileName: '发票管理'
   }
 }

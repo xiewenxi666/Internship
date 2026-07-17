@@ -3,5 +3,23 @@ export default {
   socialLogin: 'تسجيل الدخول الاجتماعي',
   home: 'الرئيسية',
   analysis: 'التحليل',
-  workplace: 'مكان العمل'
+  workplace: 'مكان العمل',
+  // CRM
+  crmCustomerDetail: 'تفاصيل العميل',
+  crmClueDetail: 'تفاصيل الدليل',
+  crmBusinessDetail: 'تفاصيل العمل',
+  crmContractDetail: 'تفاصيل العقد',
+  crmReceivableDetail: 'تفاصيل المستحقات',
+  crmReceivablePlanDetail: 'تفاصيل خطة المستحقات',
+  crmContactDetail: 'تفاصيل جهة الاتصال',
+  crmProductDetail: 'تفاصيل المنتج',
+  crmReceivablePlanSummary: 'ملخص خطة المستحقات',
+  crmReceivablePlanReport: 'تقرير خطة المستحقات',
+  crmReceivableSummaryReport: 'تقرير ملخص المستحقات',
+  crmReceivableApproval: 'الموافقة على المستحقات',
+  crmReceivableApprovalDetail: 'تفاصيل الموافقة على المستحقات',
+  crmInvoice: 'إدارة الفواتير',
+  crmInvoiceRecord: 'سجلات الفواتير',
+  crmInvoiceReport: 'تقرير الفواتير',
+  crmInvoiceDetail: 'تفاصيل الفاتورة'
 }

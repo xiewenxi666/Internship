@@ -358,15 +358,6 @@ export default {
     // DIY module
     diyTemplateDecorate: 'Template Decorate',
     diyPageDecorate: 'Page Decorate',
-    // CRM module
-    crmClueDetail: 'Clue Detail',
-    crmCustomerDetail: 'Customer Detail',
-    crmBusinessDetail: 'Business Detail',
-    crmContractDetail: 'Contract Detail',
-    crmReceivablePlanDetail: 'Receivable Plan Detail',
-    crmReceivableDetail: 'Receivable Detail',
-    crmContactDetail: 'Contact Detail',
-    crmProductDetail: 'Product Detail',
     // AI module
     aiImageSquare: 'Image Gallery',
     aiKnowledgeDocument: 'Knowledge Document',

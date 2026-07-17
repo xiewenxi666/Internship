@@ -3,5 +3,23 @@ export default {
   socialLogin: '社交登录',
   home: '首页',
   analysis: '分析页',
-  workplace: '工作台'
+  workplace: '工作台',
+  // CRM 模块
+  crmCustomerDetail: '客户详情',
+  crmClueDetail: '线索详情',
+  crmBusinessDetail: '商机详情',
+  crmContractDetail: '合同详情',
+  crmReceivableDetail: '回款详情',
+  crmReceivablePlanDetail: '回款计划详情',
+  crmContactDetail: '联系人详情',
+  crmProductDetail: '产品详情',
+  crmReceivablePlanSummary: '回款计划汇总',
+  crmReceivablePlanReport: '计划回款报表',
+  crmReceivableSummaryReport: '回款记录报表',
+  crmReceivableApproval: '回款审批',
+  crmReceivableApprovalDetail: '回款审批详情',
+  crmInvoice: '发票管理',
+  crmInvoiceRecord: '发票记录',
+  crmInvoiceReport: '开票记录报表',
+  crmInvoiceDetail: '发票详情'
 }

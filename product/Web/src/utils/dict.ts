@@ -204,6 +204,7 @@ export enum DICT_TYPE {
   CRM_BIZ_TYPE = 'crm_biz_type', // CRM 业务类型
   CRM_BUSINESS_END_STATUS_TYPE = 'crm_business_end_status_type', // CRM 商机结束状态类型
   CRM_RECEIVABLE_RETURN_TYPE = 'crm_receivable_return_type', // CRM 回款的还款方式
+  CRM_INVOICE_TYPE = 'crm_invoice_type', // CRM 发票票据类型
   CRM_CUSTOMER_INDUSTRY = 'crm_customer_industry', // CRM 客户所属行业
   CRM_CUSTOMER_LEVEL = 'crm_customer_level', // CRM 客户级别
   CRM_CUSTOMER_SOURCE = 'crm_customer_source', // CRM 客户来源
