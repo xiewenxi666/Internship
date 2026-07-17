@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meession.etm.module.crm.dal.mysql.statistics.CrmStatisticsDealMapper">
+
+    <!-- 汇总: endStatus=1 为成交, endStatus=null 为活跃 -->
+    <select id="selectSummaryByEndStatus" resultType="java.util.HashMap">
+        SELECT
+            COUNT(*) AS businessCount,
+            IFNULL(SUM(total_price), 0) AS totalPrice,
+            IFNULL(SUM(total_price), 0) AS probabilityPrice
+        FROM crm_business
+        WHERE deleted = 0
+          AND owner_user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        <if test="year != null">
+            AND YEAR(create_time) = #{year}
+        </if>
+        <choose>
+            <when test="endStatus != null">
+                AND end_status = #{endStatus}
+            </when>
+            <otherwise>
+                AND end_status IS NULL
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 成交商机分页 -->
+    <select id="selectDealBusinessPage" resultType="java.util.HashMap">
+        SELECT
+            b.id AS id,
+            b.name AS name,
+            IFNULL(c.name, '') AS customerName,
+            IFNULL(u.nickname, '') AS ownerUserName,
+            b.deal_time AS dealTime,
+            IFNULL(b.total_price, 0) AS totalPrice,
+            IFNULL(b.total_price, 0) AS probabilityPrice
+        FROM crm_business b
+        LEFT JOIN crm_customer c ON c.id = b.customer_id AND c.deleted = 0
+        LEFT JOIN system_users u ON u.id = b.owner_user_id
+        WHERE b.deleted = 0
+          AND b.end_status = 1
+          AND b.owner_user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        <if test="year != null">
+            AND YEAR(b.create_time) = #{year}
+        </if>
+        ORDER BY b.deal_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 成交商机总数 -->
+    <select id="countDealBusiness" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM crm_business
+        WHERE deleted = 0
+          AND end_status = 1
+          AND owner_user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        <if test="year != null">
+            AND YEAR(create_time) = #{year}
+        </if>
+    </select>
+
+    <!-- 按月统计: endStatus=1 为成交, endStatus=null 为活跃 -->
+    <select id="selectSummaryGroupByMonth" resultType="java.util.HashMap">
+        SELECT
+            DATE_FORMAT(create_time, '%Y-%m') AS month,
+            COUNT(*) AS businessCount,
+            IFNULL(SUM(total_price), 0) AS totalPrice,
+            IFNULL(SUM(total_price), 0) AS probabilityPrice
+        FROM crm_business
+        WHERE deleted = 0
+          AND owner_user_id IN
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+        <if test="year != null">
+            AND YEAR(create_time) = #{year}
+        </if>
+        <choose>
+            <when test="endStatus != null">
+                AND end_status = #{endStatus}
+            </when>
+            <otherwise>
+                AND end_status IS NULL
+            </otherwise>
+        </choose>
+        GROUP BY DATE_FORMAT(create_time, '%Y-%m')
+        ORDER BY month
+    </select>
+
+</mapper>
