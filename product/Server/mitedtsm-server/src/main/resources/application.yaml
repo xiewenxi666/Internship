@@ -310,7 +310,9 @@ mitedtsm:
   tenant: # 多租户相关配置项
     enable: true
     ignore-urls:
-      - /jmreport/* # 积木报表，无法携带租户编号
+      - /jmreport/*
+      - /admin-api/system/auth/**
+      - /admin-api/system/tenant/**
     ignore-visit-urls:
       - /admin-api/system/user/profile/**
       - /admin-api/system/auth/**

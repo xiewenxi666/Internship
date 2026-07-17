@@ -25,6 +25,10 @@ public enum CrmBizTypeEnum implements ArrayValuable<Integer> {
     CRM_PRODUCT(6, "产品"),
     CRM_RECEIVABLE(7, "回款"),
     CRM_RECEIVABLE_PLAN(8, "回款计划"),
+    CRM_CAMPAIGN(9, "营销活动"),
+    CRM_BULK_SEND(10, "群发管理"),
+    CRM_CUSTOMER_CARE(11, "客户关怀"),
+    CRM_MARKETING_ANALYSIS(12, "发送分析"),
     CRM_ORDER(16, "订单")
     ;
 

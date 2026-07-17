@@ -116,4 +116,17 @@ public interface ErrorCodeConstants {
     ErrorCode ORDER_TRANSFER_FAIL = new ErrorCode(1_020_015_007, "转移订单失败，原因：不能转移给当前负责人");
     ErrorCode ORDER_WITHDRAW_FAIL_NOT_APPROVING = new ErrorCode(1_020_015_008, "撤回订单审批失败，原因：订单不是审批中状态");
 
+    // ========== 营销活动 1_020_019_000 ==========
+    ErrorCode CAMPAIGN_NOT_EXISTS = new ErrorCode(1_020_019_000, "营销活动不存在");
+
+    // ========== 群发管理 1_020_020_000 ==========
+    ErrorCode BULK_SEND_NOT_EXISTS = new ErrorCode(1_020_020_000, "群发不存在");
+    ErrorCode BULK_SEND_SUBMIT_FAIL_NOT_DRAFT = new ErrorCode(1_020_020_001, "群发提交审核失败，原因：群发不是草稿状态");
+
+    // ========== 客户关怀 1_020_021_000 ==========
+    ErrorCode CUSTOMER_CARE_CONFIG_NOT_EXISTS = new ErrorCode(1_020_021_000, "客户关怀配置不存在");
+
+    // ========== 发送分析 1_020_022_000 ==========
+    ErrorCode MARKETING_ANALYSIS_FAILED = new ErrorCode(1_020_022_000, "发送分析失败");
+
 }

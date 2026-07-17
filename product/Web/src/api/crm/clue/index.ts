@@ -76,3 +76,13 @@ export const transformClue = async (id: number) => {
 export const getFollowClueCount = async () => {
   return await request.get({ url: '/crm/clue/follow-count' })
 }
+
+// 导入线索 Excel
+export const importClue = async (data: FormData) => {
+  return await request.upload({ url: '/crm/clue/import', data })
+}
+
+// 下载导入模板
+export const downloadClueTemplate = async () => {
+  return await request.download({ url: '/crm/clue/import-template' })
+}
