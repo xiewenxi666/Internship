@@ -67,7 +67,8 @@ public interface CrmBizNoPrefix {
      * 任务
      */
     String TASK = "RW";
-
+    /** 报价 */
+    String QUOTATION = "QT";
     /** 订单 */
     String ORDER = "DD";
 

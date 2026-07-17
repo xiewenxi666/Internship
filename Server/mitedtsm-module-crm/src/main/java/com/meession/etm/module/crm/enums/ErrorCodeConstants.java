@@ -122,4 +122,14 @@ public interface ErrorCodeConstants {
     // ========== 发送分析 1_020_018_000 ==========
     ErrorCode MARKETING_ANALYSIS_FAILED = new ErrorCode(1_020_018_000, "发送分析失败");
 
+    // ========== 报价管理 1_020_015_000 ==========
+    ErrorCode QUOTATION_NOT_EXISTS = new ErrorCode(1_020_015_000, "报价单不存在");
+    ErrorCode QUOTATION_NO_EXISTS = new ErrorCode(1_020_015_001, "报价单编号已存在");
+    ErrorCode QUOTATION_STATUS_NOT_DRAFT = new ErrorCode(1_020_015_002, "更新报价单失败，原因：报价单不是草稿状态");
+    ErrorCode QUOTATION_STATUS_NOT_PENDING = new ErrorCode(1_020_015_003, "审批报价单失败，原因：报价单不是待审批状态");
+    ErrorCode QUOTATION_STATUS_CANNOT_VOID = new ErrorCode(1_020_015_004, "作废报价单失败，原因：只有草稿或已拒绝状态的报价单可以作废");
+    ErrorCode QUOTATION_STATUS_NOT_DRAFT_FOR_SUBMIT = new ErrorCode(1_020_015_005, "提交报价单失败，原因：报价单不是草稿状态");
+
+    // ========== 数据统计 1_020_014_000 ==========
+
 }
