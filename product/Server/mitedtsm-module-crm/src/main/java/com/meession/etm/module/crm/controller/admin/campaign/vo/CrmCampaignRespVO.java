@@ -23,6 +23,10 @@ public class CrmCampaignRespVO {
     @ExcelProperty("活动标题")
     private String title;
 
+    @Schema(description = "推广产品ID列表", example = "1,2,3")
+    private String productIds;
+    private String productNames;
+
     @Schema(description = "活动类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty("活动类型")
     private Integer type;

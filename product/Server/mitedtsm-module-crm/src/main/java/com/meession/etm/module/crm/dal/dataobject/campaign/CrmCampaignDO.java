@@ -22,6 +22,7 @@ public class CrmCampaignDO extends BaseDO {
     @TableId
     private Long id;
     private String title;
+    private String productIds;
     private Integer type;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

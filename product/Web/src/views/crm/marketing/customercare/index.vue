@@ -1,111 +1,136 @@
 <template>
-  <ContentWrap title="客户关怀设置">
-    <el-form ref="formRef" v-loading="loading" :model="formData" label-width="120px">
-      <el-divider content-position="left">短信祝福设置</el-divider>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="启用短信祝福">
-            <el-switch v-model="formData.smsEnabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="发送时间">
-            <el-time-picker v-model="formData.sendTime" format="HH:mm" value-format="HH:mm" placeholder="选择发送时间" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="短信内容">
-            <el-input v-model="formData.smsContent" type="textarea" :rows="3" placeholder="支持变量：{称呼}、{年龄}、{客户名}" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-divider content-position="left">邮件祝福设置</el-divider>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="启用邮件祝福">
-            <el-switch v-model="formData.emailEnabled" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="发件人邮箱">
-            <el-input v-model="formData.senderEmail" placeholder="请输入公司邮箱地址" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="邮件标题">
-            <el-input v-model="formData.emailTitle" placeholder="支持变量：{称呼}、{年龄}、{客户名}" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="邮件正文">
-            <el-input v-model="formData.emailBody" type="textarea" :rows="5" placeholder="HTML格式邮件正文" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item>
-        <el-button type="primary" @click="handleSave" :loading="saving">保存设置</el-button>
-        <el-button type="success" @click="handleTestSms" :loading="testingSms" style="margin-left:10px">测试发送短信</el-button>
-        <el-button type="warning" @click="handleTestMail" :loading="testingMail" style="margin-left:10px">测试发送邮件</el-button>
-      </el-form-item>
-    </el-form>
+  <ContentWrap>
+    <div class="care-header">
+      <h2><Icon icon="ep:present" :size="24" color="#a855f7" style="vertical-align:middle;margin-right:8px" />客户关怀设置</h2>
+      <el-tag type="success" v-if="configSaved">配置已保存</el-tag>
+    </div>
+
+    <el-row :gutter="20" class="care-body">
+      <el-col :span="12">
+        <el-card shadow="hover" class="care-card">
+          <template #header>
+            <div class="card-title"><Icon icon="ep:message" color="#409eff" /> 邮件祝福模板</div>
+          </template>
+          <el-form ref="formRef" v-loading="loading" :model="formData" label-width="110px">
+            <el-form-item label="启用邮件祝福">
+              <el-switch v-model="formData.emailEnabled" active-color="#13ce66" />
+            </el-form-item>
+            <el-form-item label="定时发送">
+              <el-time-picker v-model="formData.sendTime" format="HH:mm" value-format="HH:mm" style="width:200px" />
+              <span class="hint">每日此时自动发送</span>
+            </el-form-item>
+            <el-form-item label="发件人邮箱">
+              <el-input v-model="formData.senderEmail" style="width:280px" />
+            </el-form-item>
+            <el-form-item label="邮件标题">
+              <el-input v-model="formData.emailTitle" placeholder="支持 {称呼}{年龄}{客户名}" style="width:280px" />
+            </el-form-item>
+            <el-form-item label="邮件正文">
+              <el-input v-model="formData.emailBody" type="textarea" :rows="5" placeholder="支持 {称呼}{年龄}{客户名}" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="handleSave" :loading="saving">保存设置</el-button>
+              <el-button type="success" @click="handleTestMail" :loading="testing" style="margin-left:12px">立即测试发送邮件</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+
+      <el-col :span="12">
+        <el-card shadow="hover" class="care-card">
+          <template #header>
+            <div class="card-title"><Icon icon="ep:view" color="#409eff" /> 邮件预览 & 发送记录</div>
+          </template>
+          <div class="preview-box">
+            <div class="preview-row"><span>发件人</span><b>{{ formData.senderEmail }}</b></div>
+            <div class="preview-row"><span>收件人</span><b>3792544761@qq.com</b></div>
+            <div class="preview-row"><span>标题</span><b>{{ formData.emailTitle }}</b></div>
+            <div class="preview-row"><span>定时</span><b>{{ formData.sendTime }}</b></div>
+            <el-divider />
+            <div class="preview-content">{{ formData.emailBody || '正文内容预览...' }}</div>
+          </div>
+          <el-divider />
+          <el-row :gutter="12">
+            <el-col :span="8" class="stat-block">
+              <div class="stat-num blue">{{ testCount }}</div>
+              <div class="stat-name">今日发送</div>
+            </el-col>
+            <el-col :span="8" class="stat-block">
+              <div class="stat-num green">{{ totalSent }}</div>
+              <div class="stat-name">总发送数</div>
+            </el-col>
+            <el-col :span="8" class="stat-block">
+              <div class="stat-num purple">{{ formData.sendTime }}</div>
+              <div class="stat-name">定时发送</div>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
   </ContentWrap>
 </template>
 
 <script lang="ts" setup>
 import * as CustomerCareApi from '@/api/crm/customercare'
 import * as BulksendApi from '@/api/crm/bulksend'
+import * as AnalysisApi from '@/api/crm/analysis'
 
 defineOptions({ name: 'CrmCustomerCare' })
 
 const message = useMessage()
 const loading = ref(false)
 const saving = ref(false)
-const testingSms = ref(false)
-const testingMail = ref(false)
-
-const doTestSend = async (type: number) => {
-  await CustomerCareApi.saveConfig(formData.value)
-  const content = type === 1 ? formData.value.smsContent : formData.value.emailBody
-  const res = await BulksendApi.createBulkSend({
-    title: '测试-' + (type === 1 ? '短信' : '邮件') + '-' + Date.now(),
-    type, content, targetType: 1, targetCount: 1, ownerUserId: 1, status: 1
-  } as any)
-  const id = (res as any)?.id || (res as any)?.data || res
-  await BulksendApi.submitForApproval(id as number)
-  await BulksendApi.approve(id as number)
-  message.success(type === 1 ? '测试短信已发送！' : '测试邮件已发送！')
-}
-
-const handleTestSms = async () => { testingSms.value = true; try { await doTestSend(1) } finally { testingSms.value = false } }
-const handleTestMail = async () => { testingMail.value = true; try { await doTestSend(2) } finally { testingMail.value = false } }
+const testing = ref(false)
+const configSaved = ref(false)
+const testCount = ref(0)
+const totalSent = ref(0)
 const formRef = ref()
 const formData = ref<CustomerCareApi.CustomerCareConfigVO>({
-  id: undefined, smsContent: '', emailTitle: '', emailBody: '', senderEmail: '',
-  sendTime: '09:00', smsEnabled: true, emailEnabled: true, holidayList: '[]',
+  id: undefined, smsContent: '', emailTitle: '生日祝福', emailBody: '亲爱的{称呼}您好，今天是您{年龄}岁的生日，祝福您生日快乐！', senderEmail: '3057360294@qq.com',
+  sendTime: '09:00', smsEnabled: false, emailEnabled: true, holidayList: '[]',
   createTime: undefined as any, updateTime: undefined as any
 })
 
-const loadConfig = async () => {
-  loading.value = true
-  try {
-    const data = await CustomerCareApi.getConfig()
-    if (data && data.smsContent) formData.value = { ...formData.value, ...data }
-  } catch {} finally { loading.value = false }
-}
+const loadStats = async () => { try { const d = await AnalysisApi.getMarketingStats(); totalSent.value = d?.emailCount || d?.totalSent || 0 } catch {} }
+const loadConfig = async () => { loading.value = true; try { const d = await CustomerCareApi.getConfig(); if (d?.emailBody) formData.value = { ...formData.value, ...d } } catch {} finally { loading.value = false } }
 
 const handleSave = async () => {
   saving.value = true
-  try {
-    await CustomerCareApi.saveConfig(formData.value)
-    message.success('保存成功')
-  } finally { saving.value = false }
+  try { await CustomerCareApi.saveConfig(formData.value); configSaved.value = true; message.success('保存成功'); setTimeout(() => configSaved.value = false, 3000) } finally { saving.value = false }
 }
 
-onMounted(() => loadConfig())
+const handleTestMail = async () => {
+  testing.value = true
+  try {
+    await CustomerCareApi.saveConfig(formData.value)
+    const res = await BulksendApi.createBulkSend({ title: '祝福-测试-' + Date.now(), type: 2, content: formData.value.emailBody, targetType: 1, targetCount: 1, ownerUserId: 1, status: 1 } as any)
+    const id = (res as any)?.id || (res as any)?.data || res
+    await BulksendApi.submitForApproval(id as number)
+    await BulksendApi.approve(id as number)
+    testCount.value++; await loadStats()
+    message.success('测试邮件已发送至 3792544761@qq.com')
+  } finally { testing.value = false }
+}
+
+onMounted(() => { loadConfig(); loadStats() })
 </script>
+
+<style scoped>
+.care-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.care-header h2 { margin: 0; font-size: 18px; color: #303133; }
+.care-body { margin: 0; }
+.care-card { height: 100%; }
+.card-title { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.hint { margin-left: 8px; font-size: 12px; color: #909399; }
+.preview-box { font-size: 13px; }
+.preview-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ebeef5; }
+.preview-row span { color: #909399; }
+.preview-row b { color: #303133; }
+.preview-content { background: #f5f7fa; padding: 12px; border-radius: 6px; color: #606266; line-height: 1.8; min-height: 80px; font-size: 13px; }
+.stat-block { text-align: center; padding: 8px 0; }
+.stat-num { font-size: 26px; font-weight: 700; }
+.stat-num.blue { color: #409eff; }
+.stat-num.green { color: #67c23a; }
+.stat-num.purple { color: #a855f7; }
+.stat-name { font-size: 12px; color: #909399; margin-top: 2px; }
+</style>

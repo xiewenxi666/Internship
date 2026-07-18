@@ -21,6 +21,7 @@ public class CrmBulkSendDO extends BaseDO {
     @TableId
     private Long id;
     private String title;
+    private String productIds;
     private Long campaignId;
     private Integer type;
     private Long templateId;

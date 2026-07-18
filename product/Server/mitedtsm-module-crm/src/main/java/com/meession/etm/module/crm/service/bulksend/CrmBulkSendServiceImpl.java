@@ -7,8 +7,6 @@ import com.meession.etm.module.crm.controller.admin.bulksend.vo.CrmBulkSendPageR
 import com.meession.etm.module.crm.controller.admin.bulksend.vo.CrmBulkSendSaveReqVO;
 import com.meession.etm.module.crm.dal.dataobject.bulksend.CrmBulkSendDO;
 import com.meession.etm.module.crm.dal.mysql.bulksend.CrmBulkSendMapper;
-import com.meession.etm.module.system.api.mail.MailSendApi;
-import com.meession.etm.module.system.api.mail.dto.MailSendSingleToUserReqDTO;
 import com.meession.etm.module.system.api.sms.SmsSendApi;
 import com.meession.etm.module.system.api.sms.dto.send.SmsSendSingleToUserReqDTO;
 import com.meession.etm.module.system.api.user.AdminUserApi;
@@ -17,6 +15,8 @@ import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.annotation.LogRecord;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +50,7 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
     private SmsSendApi smsSendApi;
 
     @Resource
-    private MailSendApi mailSendApi;
+    private JavaMailSender mailSender;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -155,14 +155,18 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
                     smsReq.setTemplateParams(new HashMap<>());
                     smsSendApi.sendSingleSmsToAdmin(smsReq);
                 } else {
-                    MailSendSingleToUserReqDTO mailReq = new MailSendSingleToUserReqDTO();
-                    mailReq.setUserId(bulkSend.getOwnerUserId());
-                    mailReq.setTemplateCode("PROMOTION");
-                    mailReq.setTemplateParams(new HashMap<>());
-                    mailSendApi.sendSingleMailToAdmin(mailReq);
+                    SimpleMailMessage msg = new SimpleMailMessage();
+                    msg.setFrom("3057360294@qq.com");
+                    msg.setTo("3792544761@qq.com");
+                    msg.setSubject("营销活动邮件");
+                    String body = bulkSend.getContent();
+                    msg.setText(body != null && !body.trim().isEmpty() ? body : "感谢您的关注！");
+                    mailSender.send(msg);
+                    log.info("[approve][群发({})邮件真实发送成功]", id);
                 }
                 success++;
             } catch (Exception e) {
+                log.warn("[approve][群发({})第{}次发送失败]", id, i+1, e);
                 fail++;
             }
         }

@@ -21,6 +21,9 @@ public class CrmBulkSendSaveReqVO {
     @NotEmpty(message = "群发标题不能为空")
     private String title;
 
+    @Schema(description = "推广产品ID列表", example = "1,2,3")
+    private String productIds;
+
     @Schema(description = "关联活动ID", example = "1")
     private Long campaignId;
 
