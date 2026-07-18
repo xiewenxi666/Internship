@@ -495,18 +495,7 @@
         </el-form>
       </div>
     </el-popover>
-    <!-- 【再次提交】 按钮-->
-    <div
-      @click="handleReCreate()"
-      class="hover-bg-gray-100 rounded-xl p-6px"
-      v-if="
-        userId === processInstance?.startUser?.id &&
-        isEndProcessStatus(processInstance?.status) &&
-        processDefinition?.formType === 10
-      "
-    >
-      <Icon :size="14" icon="ep:refresh" />&nbsp; {{ t('approval.submitAgain') }}
-    </div>
+
   </div>
 
   <!-- 签名弹窗 -->
@@ -532,7 +521,6 @@ import { isEmpty } from '@/utils/is'
 
 defineOptions({ name: 'ProcessInstanceBtnContainer' })
 
-const router = useRouter() // 路由
 const message = useMessage() // 消息弹窗
 const { t } = useI18n('bpm') // 国际化
 
@@ -985,15 +973,6 @@ const handleCancel = async () => {
   } finally {
     formLoading.value = false
   }
-}
-
-/** 处理再次提交 */
-const handleReCreate = async () => {
-  // 跳转发起流程界面
-  await router.push({
-    name: 'BpmProcessInstanceCreate',
-    query: { processInstanceId: props.processInstance?.id }
-  })
 }
 
 /** 获取减签人员标签 */

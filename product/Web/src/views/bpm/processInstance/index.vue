@@ -201,9 +201,7 @@
           >
             {{ t('process.instance.cancelProcess') }}
           </el-button>
-          <el-button link type="primary" v-else @click="handleCreate(scope.row)">
-            {{ t('process.instance.restart') }}
-          </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -271,30 +269,6 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryFormRef.value.resetFields()
   handleQuery()
-}
-
-/** 发起流程操作 **/
-const handleCreate = async (row?: ProcessInstanceVO) => {
-  if (row?.id) {
-    const processDefinitionDetail = await DefinitionApi.getProcessDefinition(
-      row.processDefinitionId
-    )
-    // 如果是【业务表单】，跳转到对应的发起界面
-    if (processDefinitionDetail.formType === 20) {
-      await router.push({
-        path: processDefinitionDetail.formCustomCreatePath,
-        query: {
-          id: row.businessKey
-        }
-      })
-    } else if (processDefinitionDetail.formType === 10) {
-      //如果是【流程表单】，跳转到流程发起界面
-      await router.push({
-        name: 'BpmProcessInstanceCreate',
-        query: { processInstanceId: row.id }
-      })
-    }
-  }
 }
 
 /** 查看详情 */
