@@ -46,6 +46,7 @@ export default {
     dealStatus: '成交状态',
     dealStatusNo: '未成交',
     dealStatusYes: '已成交',
+    tradeOverviewTab: '交易概覽',
     lockStatus: '锁定状态',
     lockStatusNo: '未锁定',
     lockStatusYes: '已锁定',

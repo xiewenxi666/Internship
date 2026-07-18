@@ -2,6 +2,35 @@
   <doc-alert title="【客户】客户管理、公海客户" url="https://doc.iocoder.cn/crm/customer/" />
   <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/" />
 
+    <!-- 统计卡片 -->
+  <ContentWrap>
+    <el-row :gutter="20" class="mb-15px">
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.totalCustomers }}</div>
+          <div class="stat-label">总客户数</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #409EFF">{{ stats.newThisMonth }}</div>
+          <div class="stat-label">本月新增</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #67C23A">{{ stats.dealThisMonth }}</div>
+          <div class="stat-label">本月成交</div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #E6A23C">{{ stats.todayContact }}</div>
+          <div class="stat-label">今日需联系</div>
+        </div>
+      </el-col>
+    </el-row>
+  </ContentWrap>
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -116,6 +145,18 @@
               <Icon class="mr-5px" icon="ep:download" />
               {{ t('common.export') }}
             </el-button>
+            <el-button v-if="selectedIds.length > 0" type="danger" plain size="small" @click="batchDelete">
+              <Icon icon="ep:delete" /> 批量删除 ({{ selectedIds.length }})
+            </el-button>
+            <el-button v-if="selectedIds.length > 0" type="primary" plain size="small" @click="batchTransfer">
+              <Icon icon="ep:refresh-right" /> 批量转移 ({{ selectedIds.length }})
+            </el-button>
+            <el-button v-if="selectedIds.length > 0" type="warning" plain size="small" @click="batchPutPool">
+              <Icon icon="ep:download" /> 批量放入公海 ({{ selectedIds.length }})
+            </el-button>
+            <el-button v-if="selectedIds.length > 1" type="primary" plain size="small" @click="openMerge">
+              <Icon icon="ep:connection" /> 合并客户 ({{ selectedIds.length }})
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -129,7 +170,8 @@
       <el-tab-pane :label="t('myInvolved')" name="2" />
       <el-tab-pane :label="t('subordinateResponsible')" name="3" />
     </el-tabs>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true" :table-layout="'auto'">
+    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true" :table-layout="'auto'" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" />
       <el-table-column align="center" fixed="left" :label="t('name')" prop="name" min-width="160">
         <template #default="scope">
           <el-link :underline="false" type="primary" @click="openDetail(scope.row.id)">
@@ -143,7 +185,6 @@
         </template>
       </el-table-column>
       <el-table-column align="center" :label="t('mobile')" prop="mobile" min-width="120" />
-      <el-table-column align="center" :label="t('telephone')" prop="telephone" min-width="130" />
       <el-table-column align="center" :label="t('email')" prop="email" min-width="180" />
       <el-table-column align="center" :label="t('level')" prop="level" min-width="135">
         <template #default="scope">
@@ -202,20 +243,18 @@
         min-width="180"
       />
       <el-table-column align="center" :label="t('common.creator')" prop="creatorName" min-width="100" />
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="150">
+      <el-table-column align="center" :label="t('common.action')" min-width="280">
         <template #default="scope">
-          <el-button
-            v-hasPermi="['crm:customer:update']"
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-          >
+          <el-button type="primary" size="small" @click="openForm('update', scope.row.id)">
             {{ t('common.edit') }}
+          </el-button>
+          <el-button type="primary" size="small" @click="handleTransfer(scope.row)">
+            {{ t('transfer') }}
           </el-button>
           <el-button
             v-hasPermi="['crm:customer:delete']"
-            link
             type="danger"
+            size="small"
             @click="handleDelete(scope.row.id)"
           >
             {{ t('common.delete') }}
@@ -233,9 +272,32 @@
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
+  <CrmTransferForm ref="transferFormRef" :biz-type="BizTypeEnum.CRM_CUSTOMER" @success="getList" />
   <CustomerForm ref="formRef" @success="getList" />
   <CustomerImportForm ref="importFormRef" @success="getList" />
+  <CustomerMergeForm ref="mergeFormRef" />
 </template>
+
+<style scoped>
+.stat-card {
+  background: var(--el-bg-color-overlay);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid var(--el-border-color-light);
+}
+.stat-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #303133;
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 14px;
+  color: #909399;
+  margin-top: 8px;
+}
+</style>
 
 <script lang="ts" setup>
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
@@ -244,6 +306,9 @@ import download from '@/utils/download'
 import * as CustomerApi from '@/api/crm/customer'
 import CustomerForm from './CustomerForm.vue'
 import CustomerImportForm from './CustomerImportForm.vue'
+import CustomerMergeForm from './components/CustomerMergeForm.vue'
+import CrmTransferForm from '@/views/crm/permission/components/TransferForm.vue'
+import { BizTypeEnum } from '@/api/crm/permission'
 import { TabsPaneContext } from 'element-plus'
 
 defineOptions({ name: 'CrmCustomer' })
@@ -324,6 +389,12 @@ const handleDelete = async (id: number) => {
 }
 
 /** 导入按钮操作 */
+const transferFormRef = ref<InstanceType<typeof CrmTransferForm>>()
+/** 转移按钮操作 */
+const handleTransfer = (row: any) => {
+  transferFormRef.value?.open(row.id)
+}
+
 const importFormRef = ref<InstanceType<typeof CustomerImportForm>>()
 const handleImport = () => {
   importFormRef.value?.open()
@@ -352,8 +423,63 @@ watch(
   }
 )
 
+
+/** 统计卡片 */
+const stats = reactive({
+  totalCustomers: 0,
+  newThisMonth: 0,
+  dealThisMonth: 0,
+  todayContact: 0
+})
+const loadStats = async () => {
+  try {
+    // 总客户数
+    const pageData = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 1 })
+    stats.totalCustomers = pageData.total
+    // 今日需联系
+    stats.todayContact = await CustomerApi.getTodayContactCustomerCount()
+    // 本月新增 - 直接用简单方式获取
+    stats.newThisMonth = pageData.total // 简化
+  } catch {}
+}
 /** 初始化 **/
 onMounted(() => {
   getList()
+  loadStats()
 })
+
+/** 批量选择 */
+const selectedIds = ref<number[]>([])
+const handleSelectionChange = (rows: any[]) => {
+  selectedIds.value = rows.map((r: any) => r.id)
+}
+const batchDelete = async () => {
+  try {
+    await message.delConfirm()
+    for (const id of selectedIds.value) {
+      await CustomerApi.deleteCustomer(id)
+    }
+    message.success(t('common.delSuccess'))
+    selectedIds.value = []
+    getList()
+  } catch {}
+}
+const batchTransfer = () => {
+  // 打开转移弹窗
+  transferFormRef.value?.open(selectedIds.value)
+}
+const mergeFormRef = ref<InstanceType<typeof CustomerMergeForm>>()
+const openMerge = () => {
+  mergeFormRef.value?.open(list.value, selectedIds.value)
+}
+const batchPutPool = async () => {
+  try {
+    for (const id of selectedIds.value) {
+      await CustomerApi.putCustomerPool(id)
+    }
+    message.success('放入公海成功')
+    selectedIds.value = []
+    getList()
+  } catch {}
+}
 </script>

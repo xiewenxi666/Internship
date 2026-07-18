@@ -195,4 +195,13 @@ public interface CrmCustomerService {
      */
     int autoPutCustomerPool();
 
+/**
+     * 检查客户名称/手机号是否重复
+     *
+     * @param name 客户名称
+     * @param mobile 手机号
+     * @param id 排除的客户编号（编辑时用）
+     * @return true=重复 false=不重复
+     */
+    Boolean checkDuplicate(String name, String mobile, Long id);
 }

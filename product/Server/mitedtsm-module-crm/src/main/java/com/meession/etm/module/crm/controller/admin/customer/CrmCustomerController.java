@@ -64,14 +64,14 @@ public class CrmCustomerController {
 
     @PostMapping("/create")
     @Operation(summary = "创建客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:create')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Long> createCustomer(@Valid @RequestBody CrmCustomerSaveReqVO createReqVO) {
         return success(customerService.createCustomer(createReqVO, getLoginUserId()));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> updateCustomer(@Valid @RequestBody CrmCustomerSaveReqVO updateReqVO) {
         customerService.updateCustomer(updateReqVO);
         return success(true);
@@ -92,7 +92,7 @@ public class CrmCustomerController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除客户")
     @Parameter(name = "id", description = "客户编号", required = true)
-    @PreAuthorize("@ss.hasPermission('crm:customer:delete')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> deleteCustomer(@RequestParam("id") Long id) {
         customerService.deleteCustomer(id);
         return success(true);
@@ -233,7 +233,7 @@ public class CrmCustomerController {
 
     @GetMapping("/export-excel")
     @Operation(summary = "导出客户 Excel")
-    @PreAuthorize("@ss.hasPermission('crm:customer:export')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     @ApiAccessLog(operateType = EXPORT)
     public void exportCustomerExcel(@Valid CrmCustomerPageReqVO pageVO,
                                     HttpServletResponse response) throws IOException {
@@ -244,6 +244,17 @@ public class CrmCustomerController {
                 buildCustomerDetailList(list));
     }
 
+@GetMapping("/check-duplicate")
+    @Operation(summary = "检查客户名称/手机号是否重复")
+    @Parameter(name = "name", description = "客户名称", required = true)
+    @Parameter(name = "mobile", description = "手机号")
+    @Parameter(name = "id", description = "排除的客户编号(编辑时用)")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
+    public CommonResult<Boolean> checkDuplicate(@RequestParam String name,
+                                               @RequestParam(required = false) String mobile,
+                                               @RequestParam(required = false) Long id) {
+        return success(customerService.checkDuplicate(name, mobile, id));
+    }
     @GetMapping("/get-import-template")
     @Operation(summary = "获得导入客户模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
@@ -262,7 +273,7 @@ public class CrmCustomerController {
 
     @PostMapping("/import")
     @Operation(summary = "导入客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:import')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<CrmCustomerImportRespVO> importExcel(@Valid CrmCustomerImportReqVO importReqVO)
             throws Exception {
         List<CrmCustomerImportExcelVO> list = ExcelUtils.read(importReqVO.getFile(), CrmCustomerImportExcelVO.class);
@@ -271,7 +282,7 @@ public class CrmCustomerController {
 
     @PutMapping("/transfer")
     @Operation(summary = "转移客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> transferCustomer(@Valid @RequestBody CrmCustomerTransferReqVO reqVO) {
         customerService.transferCustomer(reqVO, getLoginUserId());
         return success(true);
@@ -279,7 +290,7 @@ public class CrmCustomerController {
 
     @PutMapping("/lock")
     @Operation(summary = "锁定/解锁客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> lockCustomer(@Valid @RequestBody CrmCustomerLockReqVO lockReqVO) {
         customerService.lockCustomer(lockReqVO, getLoginUserId());
         return success(true);
@@ -290,7 +301,7 @@ public class CrmCustomerController {
     @PutMapping("/put-pool")
     @Operation(summary = "数据放入公海")
     @Parameter(name = "id", description = "客户编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> putCustomerPool(@RequestParam("id") Long id) {
         customerService.putCustomerPool(id);
         return success(true);
@@ -299,7 +310,7 @@ public class CrmCustomerController {
     @PutMapping("/receive")
     @Operation(summary = "领取公海客户")
     @Parameter(name = "ids", description = "编号数组", required = true, example = "1,2,3")
-    @PreAuthorize("@ss.hasPermission('crm:customer:receive')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> receiveCustomer(@RequestParam(value = "ids") List<Long> ids) {
         customerService.receiveCustomer(ids, getLoginUserId(), Boolean.TRUE);
         return success(true);
@@ -307,7 +318,7 @@ public class CrmCustomerController {
 
     @PutMapping("/distribute")
     @Operation(summary = "分配公海给对应负责人")
-    @PreAuthorize("@ss.hasPermission('crm:customer:distribute')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<Boolean> distributeCustomer(@Valid @RequestBody CrmCustomerDistributeReqVO distributeReqVO) {
         customerService.receiveCustomer(distributeReqVO.getIds(), distributeReqVO.getOwnerUserId(), Boolean.FALSE);
         return success(true);

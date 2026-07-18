@@ -44,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.*;
 
 import static com.meession.etm.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -652,6 +653,21 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
      */
     private CrmCustomerServiceImpl getSelf() {
         return SpringUtil.getBean(getClass());
+    }
+
+@Override
+    public Boolean checkDuplicate(String name, String mobile, Long id) {
+        CrmCustomerDO byName = customerMapper.selectByCustomerName(name);
+        if (byName != null && (id == null || !byName.getId().equals(id))) {
+            return true;
+        }
+        if (mobile != null && !mobile.isEmpty()) {
+            CrmCustomerDO byMobile = customerMapper.selectOne(CrmCustomerDO::getMobile, mobile);
+            if (byMobile != null && (id == null || !byMobile.getId().equals(id))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

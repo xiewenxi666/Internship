@@ -10,7 +10,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item :label="t('name')" prop="name">
-            <el-input v-model="formData.name" :placeholder="t('namePlaceholder')" />
+            <el-input v-model="formData.name" :placeholder="t('namePlaceholder')" @input="checkNameDuplicate(formData.name)" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -182,6 +182,21 @@ const formRules = reactive({
   name: [{ required: true, message: t('nameRequired'), trigger: 'blur' }],
   ownerUserId: [{ required: true, message: t('ownerUserRequired'), trigger: 'blur' }]
 })
+/** 查重 */
+let checkTimer: ReturnType<typeof setTimeout> | null = null
+const checkNameDuplicate = async (name: string) => {
+  if (!name || formType.value === 'update') return
+  if (checkTimer) clearTimeout(checkTimer)
+  checkTimer = setTimeout(async () => {
+    try {
+      const isDuplicate = await CustomerApi.checkDuplicate(name)
+      if (isDuplicate) {
+        message.warning('客户名称已存在，请检查是否重复')
+      }
+    } catch {}
+  }, 500)
+}
+
 const formRef = ref() // 表单 Ref
 
 /** 打开弹窗 */
