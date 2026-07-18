@@ -1,3 +1,0 @@
-com.meession.etm.framework.security.config.MitedtsmSecurityAutoConfiguration
-com.meession.etm.framework.security.config.MitedtsmWebSecurityConfigurerAdapter
-com.meession.etm.framework.operatelog.config.MitedtsmOperateLogConfiguration
