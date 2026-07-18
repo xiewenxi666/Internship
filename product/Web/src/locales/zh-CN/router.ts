@@ -19,5 +19,5 @@ export default {
   oaVisitCreate: '新建拜访',
   oaVisitDetail: '拜访详情',
   oaRequestCreate: '新建请示',
-  oaRequestDetail: '请示详情'
+  oaRequestDetail: '请示详情',
 }

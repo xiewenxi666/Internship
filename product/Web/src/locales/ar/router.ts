@@ -3,5 +3,5 @@ export default {
   socialLogin: 'تسجيل الدخول الاجتماعي',
   home: 'الرئيسية',
   analysis: 'التحليل',
-  workplace: 'مكان العمل'
+  workplace: 'مكان العمل',
 }

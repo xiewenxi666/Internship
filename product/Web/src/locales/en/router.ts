@@ -19,5 +19,5 @@ export default {
   oaVisitCreate: 'Create Visit',
   oaVisitDetail: 'Visit Detail',
   oaRequestCreate: 'Create Request',
-  oaRequestDetail: 'Request Detail'
+  oaRequestDetail: 'Request Detail',
 }

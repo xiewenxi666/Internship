@@ -60,8 +60,20 @@ export const getRawRoute = (route: RouteLocationNormalized): RouteLocationNormal
   }
 }
 
+// 根据 parentPath 生成唯一的 route name，避免不同层级路由因 path 相同导致 name 冲突
+const generateRouteName = (route: AppCustomRouteRecordRaw, parentPath?: string): string => {
+  if (route.componentName && route.componentName.length > 0) {
+    return route.componentName
+  }
+  if (parentPath) {
+    const pathContext = parentPath.replace(/^\//, '').replace(/\//g, '-')
+    return toCamelCase(pathContext + '-' + route.path, true)
+  }
+  return toCamelCase(route.path, true)
+}
+
 // 后端控制路由生成
-export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecordRaw[] => {
+export const generateRoute = (routes: AppCustomRouteRecordRaw[], parentPath?: string): AppRouteRecordRaw[] => {
   const res: AppRouteRecordRaw[] = []
   const modulesRoutesKeys = Object.keys(modules)
   for (const route of routes) {
@@ -90,10 +102,7 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
     let data: AppRouteRecordRaw = {
       path:
         route.path.indexOf('?') > -1 && !isUrl(route.path) ? route.path.split('?')[0] : route.path, // 注意，需要排除 http 这种 url，避免它带 ? 参数被截取掉
-      name:
-        route.componentName && route.componentName.length > 0
-          ? route.componentName
-          : toCamelCase(route.path, true),
+      name: generateRouteName(route, parentPath),
       redirect: route.redirect,
       meta: meta
     }
@@ -103,15 +112,12 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
       data.meta = {
         hidden: meta.hidden
       }
-      data.name = toCamelCase(route.path, true) + 'Parent'
+      data.name = generateRouteName(route, parentPath) + 'Parent'
       data.redirect = ''
       meta.alwaysShow = true
       const childrenData: AppRouteRecordRaw = {
         path: '',
-        name:
-          route.componentName && route.componentName.length > 0
-            ? route.componentName
-            : toCamelCase(route.path, true),
+        name: generateRouteName(route, parentPath),
         redirect: route.redirect,
         meta: meta
       }
@@ -144,7 +150,7 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
         data.component = modules[modulesRoutesKeys[index]]
       }
       if (route.children) {
-        data.children = generateRoute(route.children)
+        data.children = generateRoute(route.children, parentPath ? parentPath + '/' + route.path : route.path)
       }
     }
     res.push(data as AppRouteRecordRaw)
@@ -225,20 +231,31 @@ const promoteRouteLevel = (route: AppRouteRecordRaw) => {
 const addToChildren = (
   routes: RouteRecordNormalized[],
   children: AppRouteRecordRaw[],
-  routeModule: AppRouteRecordRaw
+  routeModule: AppRouteRecordRaw,
+  basePath?: string
 ) => {
+  basePath = basePath ?? routeModule.path
+  const parentPrefix = routeModule.path.endsWith('/') ? routeModule.path : routeModule.path + '/'
   for (let index = 0; index < children.length; index++) {
     const child = children[index]
-    const route = routes.find((item) => item.name === child.name)
+    const childFullPath = basePath.endsWith('/') ? basePath + child.path : basePath + '/' + child.path
+    // 用路径查找取代名称查找——避免不同层级路由 path 相同导致 name 冲突（如审批中心与任务管理都叫 'Task'）
+    const route = routes.find((item) => item.path === childFullPath)
     if (!route) {
       continue
     }
     routeModule.children = routeModule.children || []
-    if (!routeModule.children.find((item) => item.name === route.name)) {
-      routeModule.children?.push(route as unknown as AppRouteRecordRaw)
+    const relativePath = childFullPath.startsWith(parentPrefix)
+      ? childFullPath.slice(parentPrefix.length)
+      : childFullPath
+    if (!routeModule.children.find((item) => item.path === relativePath)) {
+      routeModule.children?.push({
+        ...(route as unknown as AppRouteRecordRaw),
+        path: relativePath
+      })
     }
     if (child.children?.length) {
-      addToChildren(routes, child.children, routeModule)
+      addToChildren(routes, child.children, routeModule, childFullPath)
     }
   }
 }
