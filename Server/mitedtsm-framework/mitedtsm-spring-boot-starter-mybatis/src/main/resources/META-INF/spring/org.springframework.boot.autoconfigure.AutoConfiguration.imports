@@ -1,3 +1,0 @@
-com.meession.etm.framework.datasource.config.MitedtsmDataSourceAutoConfiguration
-com.meession.etm.framework.mybatis.config.MitedtsmMybatisAutoConfiguration
-com.meession.etm.framework.translate.config.MitedtsmTranslateAutoConfiguration
