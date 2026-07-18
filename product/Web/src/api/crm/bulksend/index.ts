@@ -5,6 +5,7 @@ export interface BulkSendVO {
   title: string
   campaignId: number
   campaignName: string
+  productIds: string
   type: number
   templateId: number
   content: string

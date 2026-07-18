@@ -46,7 +46,9 @@ public class MarketingAnalysisController {
             if (b.getCreateTime() != null) {
                 String month = b.getCreateTime().format(fmt);
                 long[] counts = monthly.computeIfAbsent(month, k -> new long[4]);
-                counts[0] += (b.getTargetCount() != null ? b.getTargetCount() : 0) + (b.getSuccessCount() != null ? b.getSuccessCount() : 0) + (b.getFailCount() != null ? b.getFailCount() : 0);
+                long t = b.getTargetCount() != null ? b.getTargetCount() : 0;
+                if (t == 0) t = (b.getSuccessCount() != null ? b.getSuccessCount() : 0) + (b.getFailCount() != null ? b.getFailCount() : 0);
+                counts[0] += t;
                 counts[1] += (b.getSuccessCount() != null ? b.getSuccessCount() : 0);
                 counts[2] += (b.getFailCount() != null ? b.getFailCount() : 0);
             }
@@ -63,6 +65,8 @@ public class MarketingAnalysisController {
             row.put("conversionRate", c[0] > 0 ? Math.round(c[1] * 10000.0 / c[0]) / 100.0 : 0);
             monthlyData.add(row);
         }
+        stats.put("smsCount", all.stream().filter(b -> b.getType() != null && b.getType() == 1).count());
+        stats.put("emailCount", all.stream().filter(b -> b.getType() != null && b.getType() == 2).count());
         stats.put("monthlyData", monthlyData);
         return success(stats);
     }

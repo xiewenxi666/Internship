@@ -33,6 +33,15 @@
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="24">
+          <el-form-item label="推广产品">
+            <el-select v-model="selectedProductIds" multiple filterable placeholder="搜索并选择推广产品" class="w-1/1" @change="onProductChange">
+              <el-option v-for="p in productOptions" :key="p.id" :label="p.name + ' (¥' + (p.price || 0) + ')'" :value="p.id" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="12">
           <el-form-item label="目标类型" prop="targetType">
             <el-select v-model="formData.targetType" class="w-1/1">
@@ -74,6 +83,7 @@
 import * as BulkSendApi from '@/api/crm/bulksend'
 import * as CampaignApi from '@/api/crm/campaign'
 import * as CustomerApi from '@/api/crm/customer'
+import * as ProductApi from '@/api/crm/product'
 import * as UserApi from '@/api/system/user'
 
 defineOptions({ name: 'CrmBulkSendForm' })
@@ -86,13 +96,19 @@ const formType = ref('')
 const userOptions = ref<UserApi.UserVO[]>([])
 const campaignOptions = ref<CampaignApi.CampaignVO[]>([])
 const customerOptions = ref<any[]>([])
+const productOptions = ref<any[]>([])
 const selectedCustomerIds = ref<number[]>([])
+const selectedProductIds = ref<number[]>([])
 const formRef = ref()
 const formData = ref({ id: undefined, title: undefined, campaignId: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 })
 
 const onCustomerChange = (ids: number[]) => {
   formData.value.targetIds = ids.join(',')
   formData.value.targetCount = ids.length
+}
+
+const onProductChange = (ids: number[]) => {
+  formData.value.productIds = ids.join(',')
 }
 const formRules = reactive({
   title: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -112,6 +128,8 @@ const open = async (type: string, id?: number) => {
   campaignOptions.value = campaignData?.list || []
   const cdata = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 100 })
   customerOptions.value = cdata?.list || []
+  const pdata = await ProductApi.getProductPage({ pageNo: 1, pageSize: 100 })
+  productOptions.value = pdata?.list || []
   if (id) { formLoading.value = true; try { const d = await BulkSendApi.getBulkSend(id); formData.value = { ...d } } finally { formLoading.value = false } }
   else resetForm()
 }
@@ -128,5 +146,5 @@ const submitForm = async () => {
 }
 
 const emits = defineEmits(['success'])
-const resetForm = () => { formData.value = { id: undefined, title: undefined, campaignId: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 }; selectedCustomerIds.value = [] }
+const resetForm = () => { formData.value = { id: undefined, title: undefined, campaignId: undefined, productIds: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 }; selectedCustomerIds.value = []; selectedProductIds.value = [] }
 </script>

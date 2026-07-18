@@ -3,6 +3,20 @@ server:
 
 --- #################### 数据库相关配置 ####################
 spring:
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 3057360294@qq.com
+    password: sjsnvdsiozfyddgb
+    default-encoding: utf-8
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
   autoconfigure:
     # noinspection SpringBootApplicationYaml
     exclude:

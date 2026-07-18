@@ -22,6 +22,9 @@ public class CrmCampaignSaveReqVO {
     @NotEmpty(message = "活动标题不能为空")
     private String title;
 
+    @Schema(description = "推广产品ID列表", example = "1,2,3")
+    private String productIds;
+
     @Schema(description = "活动类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotNull(message = "活动类型不能为空")
     private Integer type;
