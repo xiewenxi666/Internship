@@ -10,7 +10,7 @@
           <el-descriptions-item label="客户名称">
             {{ refund.customerName }}
           </el-descriptions-item>
-          <el-descriptions-item label="合同编号">
+          <el-descriptions-item label="关联订单">
             {{ refund.contract?.no }}
           </el-descriptions-item>
           <el-descriptions-item label="退款类型">

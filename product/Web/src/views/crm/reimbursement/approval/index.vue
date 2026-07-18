@@ -53,12 +53,6 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="客户名称" prop="customerName" min-width="120" />
-      <el-table-column align="center" label="合同编号" prop="contractNo" min-width="180">
-        <template #default="scope">
-          {{ scope.row.contract?.no }}
-        </template>
-      </el-table-column>
       <el-table-column
         align="center"
         label="报销金额（元）"
@@ -66,11 +60,6 @@
         min-width="140"
         :formatter="erpPriceTableColumnFormatter"
       />
-      <el-table-column align="center" label="报销类型" prop="type" min-width="130">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_REIMBURSEMENT_TYPE" :value="scope.row.type" />
-        </template>
-      </el-table-column>
       <el-table-column
         :formatter="dateFormatter2"
         align="center"
@@ -78,6 +67,11 @@
         prop="applyDate"
         min-width="150"
       />
+      <el-table-column align="center" label="审批状态" prop="auditStatus" min-width="120">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="负责人" prop="ownerUserName" min-width="120" />
       <el-table-column
         :formatter="dateFormatter"
@@ -86,11 +80,6 @@
         prop="createTime"
         min-width="180"
       />
-      <el-table-column align="center" label="审批状态" prop="auditStatus" min-width="120">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
-        </template>
-      </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" min-width="100">
         <template #default="scope">
           <el-button
@@ -129,7 +118,6 @@ const list = ref([])
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  sceneType: '1',
   auditStatus: 10,
   no: undefined
 })

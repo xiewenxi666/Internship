@@ -208,6 +208,7 @@ export enum DICT_TYPE {
   CRM_REIMBURSEMENT_TYPE = 'crm_reimbursement_type', // CRM 报销类型
   CRM_INVOICE_TYPE = 'crm_invoice_type', // CRM 发票票据类型
   CRM_EXPENSE_TYPE = 'crm_expense_type', // CRM 费用类型
+  CRM_EXPENSE_REIMBURSE_STATUS = 'crm_expense_reimburse_status', // CRM 费用报销状态
   CRM_CUSTOMER_INDUSTRY = 'crm_customer_industry', // CRM 客户所属行业
   CRM_CUSTOMER_LEVEL = 'crm_customer_level', // CRM 客户级别
   CRM_CUSTOMER_SOURCE = 'crm_customer_source', // CRM 客户来源

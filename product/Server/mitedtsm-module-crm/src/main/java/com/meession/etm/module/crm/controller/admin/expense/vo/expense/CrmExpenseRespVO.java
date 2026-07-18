@@ -66,6 +66,9 @@ public class CrmExpenseRespVO {
     @ExcelProperty("备注")
     private String remark;
 
+    @Schema(description = "报销状态", example = "0")
+    private Integer reimburseStatus;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;

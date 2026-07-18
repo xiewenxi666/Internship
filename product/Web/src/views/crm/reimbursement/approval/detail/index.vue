@@ -37,12 +37,6 @@
     </div>
     <ContentWrap class="mt-10px">
       <el-descriptions :column="5" direction="vertical">
-        <el-descriptions-item :label="t('reimbursement.customerName')">
-          {{ reimbursement.customerName }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('reimbursement.contractNo')">
-          {{ reimbursement.contract?.no }}
-        </el-descriptions-item>
         <el-descriptions-item :label="t('reimbursement.applyDate')">
           {{ formatDate(reimbursement.applyDate) }}
         </el-descriptions-item>

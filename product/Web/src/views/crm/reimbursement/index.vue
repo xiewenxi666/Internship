@@ -20,23 +20,6 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item :label="t('reimbursement.customerName')" prop="customerId">
-            <el-select
-              v-model="queryParams.customerId"
-              class="!w-240px"
-              :placeholder="t('customer.ownerUserPlaceholder')"
-              @keyup.enter="handleQuery"
-            >
-              <el-option
-                v-for="item in customerList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
       </el-row>
       <el-row>
         <el-col :span="24">
@@ -88,28 +71,6 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="t('reimbursement.customerName')" prop="customerName" min-width="120">
-        <template #default="scope">
-          <el-link
-            :underline="false"
-            type="primary"
-            @click="openCustomerDetail(scope.row.customerId)"
-          >
-            {{ scope.row.customerName }}
-          </el-link>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :label="t('reimbursement.contractNo')" prop="contractNo" min-width="180">
-        <template #default="scope">
-          <el-link
-            :underline="false"
-            type="primary"
-            @click="openContractDetail(scope.row.contractId)"
-          >
-            {{ scope.row.contract?.no }}
-          </el-link>
-        </template>
-      </el-table-column>
       <el-table-column
         align="center"
         :label="t('reimbursement.price') + '（元）'"
@@ -117,11 +78,6 @@
         min-width="140"
         :formatter="erpPriceTableColumnFormatter"
       />
-      <el-table-column align="center" :label="t('reimbursement.type')" prop="type" min-width="130">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.CRM_REIMBURSEMENT_TYPE" :value="scope.row.type" />
-        </template>
-      </el-table-column>
       <el-table-column
         :formatter="dateFormatter2"
         align="center"
@@ -129,13 +85,12 @@
         prop="applyDate"
         min-width="150"
       />
-      <el-table-column align="center" :label="t('reimbursement.remark')" prop="remark" min-width="200" />
-      <el-table-column align="center" :label="t('reimbursement.ownerUserName')" prop="ownerUserName" min-width="120" />
       <el-table-column align="center" :label="t('reimbursement.auditStatus')" prop="auditStatus" min-width="120">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
         </template>
       </el-table-column>
+      <el-table-column align="center" :label="t('reimbursement.ownerUserName')" prop="ownerUserName" min-width="120" />
       <el-table-column
         :formatter="dateFormatter"
         align="center"
@@ -180,7 +135,6 @@ import { dateFormatter, dateFormatter2 } from '@/utils/formatTime'
 import download from '@/utils/download'
 import * as ReimbursementApi from '@/api/crm/reimbursement'
 import ReimbursementForm from './ReimbursementForm.vue'
-import * as CustomerApi from '@/api/crm/customer'
 import { TabsPaneContext } from 'element-plus'
 import { erpPriceTableColumnFormatter } from '@/utils'
 
@@ -195,13 +149,11 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   sceneType: '1',
-  no: undefined,
-  customerId: undefined
+  no: undefined
 })
 const queryFormRef = ref()
 const exportLoading = ref(false)
 const activeName = ref('1')
-const customerList = ref<CustomerApi.CustomerVO[]>([])
 
 const handleTabClick = (tab: TabsPaneContext) => {
   queryParams.sceneType = tab.paneName
@@ -248,14 +200,6 @@ const openDetail = (id: number) => {
   push({ name: 'CrmReimbursementDetail', params: { id } })
 }
 
-const openCustomerDetail = (id: number) => {
-  push({ name: 'CrmCustomerDetail', params: { id } })
-}
-
-const openContractDetail = (id: number) => {
-  push({ name: 'CrmContractDetail', params: { id } })
-}
-
 const handleExport = async () => {
   try {
     await message.exportConfirm()
@@ -270,6 +214,5 @@ const handleExport = async () => {
 
 onMounted(async () => {
   await getList()
-  customerList.value = await CustomerApi.getCustomerSimpleList()
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog v-model="dialogVisible" :title="dialogTitle" width="900px">
     <el-form
       ref="formRef"
       v-loading="formLoading"
@@ -32,71 +32,6 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item :label="t('reimbursement.customerName')" prop="customerId">
-            <el-select
-              v-model="formData.customerId"
-              :disabled="formType !== 'create'"
-              class="w-1/1"
-              filterable
-              :placeholder="t('customer.ownerUserPlaceholder')"
-              @change="handleCustomerChange"
-            >
-              <el-option
-                v-for="item in customerList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="t('reimbursement.contractName')" prop="contractId">
-            <el-select
-              v-model="formData.contractId"
-              :disabled="formType !== 'create' || !formData.customerId"
-              class="w-1/1"
-              filterable
-              :placeholder="t('contract.namePlaceholder')"
-            >
-              <el-option
-                v-for="data in contractList"
-                :key="data.id"
-                :label="data.name"
-                :value="data.id!"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item :label="t('reimbursement.type')" prop="type">
-            <el-select v-model="formData.type" class="w-1/1" :placeholder="t('common.selectPlaceholder')">
-              <el-option
-                v-for="dict in getIntDictOptions(DICT_TYPE.CRM_REIMBURSEMENT_TYPE)"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item :label="t('reimbursement.price')" prop="price">
-            <el-input-number
-              v-model="formData.price"
-              :min="0.01"
-              :precision="2"
-              class="!w-100%"
-              controls-position="right"
-              :placeholder="t('reimbursement.pricePlaceholder')"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
           <el-form-item :label="t('reimbursement.applyDate')" prop="applyDate">
             <el-date-picker
               v-model="formData.applyDate"
@@ -110,16 +45,109 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item :label="t('reimbursement.content')" prop="content">
-            <el-input v-model="formData.content" :placeholder="t('reimbursement.contentPlaceholder')" type="textarea" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
           <el-form-item :label="t('reimbursement.remark')" prop="remark">
             <el-input v-model="formData.remark" :placeholder="t('customer.remarkPlaceholder')" type="textarea" />
           </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-divider content-position="left">{{ t('reimbursement.expenseInfo') }}</el-divider>
+
+      <el-row>
+        <el-col :span="24">
+          <el-button type="primary" @click="getExpenseList">
+            <Icon class="mr-5px" icon="ep:search" />
+            {{ t('common.search') }}
+          </el-button>
+        </el-col>
+      </el-row>
+
+      <el-row class="mt-10px">
+        <el-col :span="24">
+          <span class="text-sm font-medium">{{ t('reimbursement.availableExpense') }}</span>
+          <el-table
+            ref="expenseTableRef"
+            v-loading="expenseLoading"
+            :data="expenseList"
+            :show-overflow-tooltip="true"
+            :stripe="true"
+            :table-layout="'auto'"
+            max-height="240"
+            class="mt-5px"
+            @selection-change="handleExpenseSelectionChange"
+          >
+            <el-table-column type="selection" width="45" />
+            <el-table-column align="center" :label="t('reimbursement.expenseNo')" prop="no" min-width="150" />
+            <el-table-column align="center" :label="t('reimbursement.expenseContent')" prop="content" min-width="150" />
+            <el-table-column align="center" :label="t('reimbursement.expenseType')" prop="type" min-width="130">
+              <template #default="scope">
+                <dict-tag :type="DICT_TYPE.CRM_EXPENSE_TYPE" :value="scope.row.type" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              :label="t('reimbursement.expensePrice') + '（元）'"
+              prop="price"
+              min-width="120"
+              :formatter="erpPriceTableColumnFormatter"
+            />
+            <el-table-column
+              :formatter="dateFormatter2"
+              align="center"
+              :label="t('reimbursement.expenseApplyDate')"
+              prop="applyDate"
+              min-width="130"
+            />
+          </el-table>
+        </el-col>
+      </el-row>
+
+      <el-row class="mt-10px">
+        <el-col :span="24">
+          <span class="text-sm font-medium">{{ t('reimbursement.selectedExpense') }}</span>
+          <el-table
+            :data="selectedExpenses"
+            :show-overflow-tooltip="true"
+            :stripe="true"
+            :table-layout="'auto'"
+            max-height="200"
+            class="mt-5px"
+          >
+            <el-table-column align="center" :label="t('reimbursement.expenseNo')" prop="no" min-width="150" />
+            <el-table-column align="center" :label="t('reimbursement.expenseContent')" prop="content" min-width="150" />
+            <el-table-column align="center" :label="t('reimbursement.expenseType')" prop="type" min-width="130">
+              <template #default="scope">
+                <dict-tag :type="DICT_TYPE.CRM_EXPENSE_TYPE" :value="scope.row.type" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              :label="t('reimbursement.expensePrice') + '（元）'"
+              prop="price"
+              min-width="120"
+              :formatter="erpPriceTableColumnFormatter"
+            />
+            <el-table-column
+              :formatter="dateFormatter2"
+              align="center"
+              :label="t('reimbursement.expenseApplyDate')"
+              prop="applyDate"
+              min-width="130"
+            />
+            <el-table-column align="center" :label="t('common.action')" width="80">
+              <template #default="scope">
+                <el-button link type="danger" @click="removeExpense(scope.$index)">
+                  {{ t('common.delete') }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+
+      <el-row class="mt-10px">
+        <el-col :span="24" class="text-right">
+          <span class="text-base font-bold">{{ t('reimbursement.price') }}（{{ t('reimbursement.expenseTotal') }}）：¥ {{ erpPriceInputFormatter(totalPrice) }}</span>
         </el-col>
       </el-row>
     </el-form>
@@ -132,11 +160,13 @@
 <script lang="ts" setup>
 import * as ReimbursementApi from '@/api/crm/reimbursement'
 import { ReimbursementVO } from '@/api/crm/reimbursement'
+import * as ExpenseApi from '@/api/crm/expense'
+import { ExpenseVO } from '@/api/crm/expense'
 import * as UserApi from '@/api/system/user'
-import * as CustomerApi from '@/api/crm/customer'
-import * as ContractApi from '@/api/crm/contract'
 import { useUserStore } from '@/store/modules/user'
-import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
+import { DICT_TYPE } from '@/utils/dict'
+import { dateFormatter2 } from '@/utils/formatTime'
+import { erpPriceTableColumnFormatter, erpPriceInputFormatter } from '@/utils'
 
 const { t } = useI18n('crm')
 const message = useMessage()
@@ -147,15 +177,53 @@ const formLoading = ref(false)
 const formType = ref('')
 const formData = ref<ReimbursementApi.ReimbursementVO>({} as ReimbursementApi.ReimbursementVO)
 const formRules = reactive({
-  customerId: [{ required: true, message: t('reimbursement.customerIdRequired'), trigger: 'blur' }],
-  contractId: [{ required: true, message: t('reimbursement.contractIdRequired'), trigger: 'blur' }],
-  type: [{ required: true, message: t('reimbursement.typeRequired'), trigger: 'blur' }],
-  price: [{ required: true, message: t('reimbursement.priceRequired'), trigger: 'blur' }],
+  ownerUserId: [{ required: true, message: t('reimbursement.ownerUserIdRequired'), trigger: 'blur' }],
   applyDate: [{ required: true, message: t('reimbursement.applyDateRequired'), trigger: 'blur' }]
 })
 const formRef = ref()
-const customerList = ref<CustomerApi.CustomerVO[]>([])
-const contractList = ref<ContractApi.ContractVO[]>([])
+
+const expenseTableRef = ref()
+const expenseLoading = ref(false)
+const expenseList = ref<ExpenseVO[]>([])
+const selectedExpenses = ref<ExpenseVO[]>([])
+const expenseQueryParams = reactive({
+  pageNo: 1,
+  pageSize: 100
+})
+
+const totalPrice = computed(() => {
+  return selectedExpenses.value.reduce((sum, item) => sum + (item.price || 0), 0)
+})
+
+const getExpenseList = async () => {
+  expenseLoading.value = true
+  try {
+    const data = await ExpenseApi.getExpensePage(expenseQueryParams)
+    expenseList.value = data.list
+  } finally {
+    expenseLoading.value = false
+  }
+}
+
+const handleExpenseSelectionChange = (rows: ExpenseVO[]) => {
+  const existingIds = new Set(selectedExpenses.value.map(e => e.id))
+  const selectedIds = new Set(rows.map(e => e.id))
+  
+  selectedExpenses.value = selectedExpenses.value.filter(e => selectedIds.has(e.id))
+  rows.forEach(row => {
+    if (!existingIds.has(row.id)) {
+      selectedExpenses.value.push(row)
+    }
+  })
+}
+
+const removeExpense = (index: number) => {
+  const removed = selectedExpenses.value[index]
+  selectedExpenses.value.splice(index, 1)
+  if (expenseTableRef.value) {
+    expenseTableRef.value.toggleRowSelection(removed, false)
+  }
+}
 
 const open = async (type: string, id?: number) => {
   dialogVisible.value = true
@@ -167,16 +235,26 @@ const open = async (type: string, id?: number) => {
     try {
       const data = (await ReimbursementApi.getReimbursement(id)) as ReimbursementVO
       formData.value = data
-      await handleCustomerChange(data.customerId!)
-      formData.value.contractId = data?.contract?.id
+      if (data.expenses) {
+        selectedExpenses.value = data.expenses
+      }
     } finally {
       formLoading.value = false
     }
   }
   userOptions.value = await UserApi.getSimpleUserList()
-  customerList.value = await CustomerApi.getCustomerSimpleList()
   if (formType.value === 'create') {
     formData.value.ownerUserId = useUserStore().getUser.id
+  }
+  await getExpenseList()
+  await nextTick()
+  if (selectedExpenses.value.length && expenseTableRef.value) {
+    const selectedIds = new Set(selectedExpenses.value.map(e => e.id))
+    expenseList.value.forEach(row => {
+      if (selectedIds.has(row.id)) {
+        expenseTableRef.value.toggleRowSelection(row, true)
+      }
+    })
   }
 }
 defineExpose({ open })
@@ -189,6 +267,8 @@ const submitForm = async () => {
   formLoading.value = true
   try {
     const data = formData.value as unknown as ReimbursementApi.ReimbursementVO
+    data.expenseIds = selectedExpenses.value.map(e => e.id)
+    data.price = totalPrice.value
     if (formType.value === 'create') {
       await ReimbursementApi.createReimbursement(data)
       message.success(t('common.createSuccess'))
@@ -205,14 +285,8 @@ const submitForm = async () => {
 
 const resetForm = () => {
   formData.value = {} as ReimbursementApi.ReimbursementVO
+  selectedExpenses.value = []
+  expenseList.value = []
   formRef.value?.resetFields()
-}
-
-const handleCustomerChange = async (customerId: number) => {
-  formData.value.contractId = undefined
-  if (customerId) {
-    contractList.value = []
-    contractList.value = await ContractApi.getContractSimpleList(customerId)
-  }
 }
 </script>

@@ -32,4 +32,6 @@ public interface CrmExpenseService {
 
     List<CrmExpenseDO> getExpenseListForExport(CrmExpensePageReqVO pageReqVO, Long userId);
 
+    List<CrmExpenseDO> getExpenseListByReimbursementId(Long reimbursementId);
+
 }

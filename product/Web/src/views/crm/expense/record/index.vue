@@ -36,11 +36,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="申请日期" prop="applyDate">
+          <el-form-item label="发生时间" prop="applyDate">
             <el-date-picker
               v-model="queryParams.applyDate"
               class="!w-240px"
-              placeholder="请选择申请日期"
+              placeholder="请选择发生时间"
               type="date"
               value-format="x"
             />
@@ -83,9 +83,15 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="客户名称" prop="customerName" min-width="180" />
       <el-table-column align="center" label="费用类型" prop="type" min-width="130">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.CRM_EXPENSE_TYPE" :value="scope.row.type" />
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="报销状态" prop="reimburseStatus" min-width="110">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.CRM_EXPENSE_REIMBURSE_STATUS" :value="scope.row.reimburseStatus" />
         </template>
       </el-table-column>
       <el-table-column
@@ -98,11 +104,10 @@
       <el-table-column
         :formatter="dateFormatter2"
         align="center"
-        label="申请日期"
+        label="发生时间"
         prop="applyDate"
         min-width="150"
       />
-      <el-table-column align="center" label="客户名称" prop="customerName" min-width="180" />
       <el-table-column align="center" label="负责人" prop="ownerUserName" min-width="120" />
       <el-table-column align="center" fixed="right" label="操作" min-width="100">
         <template #default="scope">

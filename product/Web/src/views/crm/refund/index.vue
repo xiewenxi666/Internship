@@ -99,7 +99,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="合同编号" prop="contractNo" min-width="180">
+      <el-table-column align="center" label="关联订单" prop="contractNo" min-width="180">
         <template #default="scope">
           <el-link
             :underline="false"

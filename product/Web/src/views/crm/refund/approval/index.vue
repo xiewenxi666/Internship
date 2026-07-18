@@ -54,7 +54,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" label="客户名称" prop="customerName" min-width="120" />
-      <el-table-column align="center" label="合同编号" prop="contractNo" min-width="180">
+      <el-table-column align="center" label="关联订单" prop="contractNo" min-width="180">
         <template #default="scope">
           {{ scope.row.contract?.no }}
         </template>

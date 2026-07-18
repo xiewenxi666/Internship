@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.meession.etm.framework.common.pojo.PageResult;
+import com.meession.etm.framework.common.util.collection.CollectionUtils;
 import com.meession.etm.framework.common.util.object.BeanUtils;
 import com.meession.etm.framework.common.util.object.ObjectUtils;
 import com.meession.etm.module.bpm.api.task.BpmProcessInstanceApi;
@@ -13,8 +13,9 @@ import com.meession.etm.module.bpm.api.task.dto.BpmProcessInstanceCreateReqDTO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementPageReqVO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementSaveReqVO;
-import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
+import com.meession.etm.module.crm.dal.dataobject.expense.CrmExpenseDO;
 import com.meession.etm.module.crm.dal.dataobject.reimbursement.CrmReimbursementDO;
+import com.meession.etm.module.crm.dal.mysql.expense.CrmExpenseMapper;
 import com.meession.etm.module.crm.dal.mysql.reimbursement.CrmReimbursementMapper;
 import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
@@ -22,7 +23,6 @@ import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
 import com.meession.etm.module.crm.framework.permission.core.annotations.CrmPermission;
-import com.meession.etm.module.crm.service.contract.CrmContractService;
 import com.meession.etm.module.crm.service.permission.CrmPermissionService;
 import com.meession.etm.module.crm.service.permission.bo.CrmPermissionCreateReqBO;
 import com.meession.etm.module.system.api.user.AdminUserApi;
@@ -35,6 +35,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
     private CrmNoRedisDAO noRedisDAO;
 
     @Resource
-    private CrmContractService contractService;
+    private CrmExpenseMapper expenseMapper;
     @Resource
     private CrmPermissionService permissionService;
 
@@ -84,7 +86,13 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
 
         CrmReimbursementDO reimbursement = BeanUtils.toBean(createReqVO, CrmReimbursementDO.class)
                 .setNo(no).setAuditStatus(CrmAuditStatusEnum.DRAFT.getStatus());
+        // 计算费用单合计金额
+        BigDecimal totalPrice = linkExpenses(createReqVO.getExpenseIds(), null);
+        reimbursement.setPrice(totalPrice);
         reimbursementMapper.insert(reimbursement);
+
+        // 关联费用单到报销
+        linkExpenses(createReqVO.getExpenseIds(), reimbursement.getId());
 
         permissionService.createPermission(new CrmPermissionCreateReqBO().setBizType(CrmBizTypeEnum.CRM_REIMBURSEMENT.getType())
                 .setBizId(reimbursement.getId()).setUserId(createReqVO.getOwnerUserId())
@@ -94,16 +102,24 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         return reimbursement.getId();
     }
 
+    private BigDecimal linkExpenses(List<Long> expenseIds, Long reimbursementId) {
+        if (CollUtil.isEmpty(expenseIds)) {
+            return BigDecimal.ZERO;
+        }
+        List<CrmExpenseDO> expenses = expenseMapper.selectByIds(expenseIds);
+        BigDecimal total = expenses.stream()
+                .filter(e -> e.getPrice() != null)
+                .map(CrmExpenseDO::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (CrmExpenseDO expense : expenses) {
+            expenseMapper.updateById(new CrmExpenseDO().setId(expense.getId()).setReimbursementId(reimbursementId));
+        }
+        return total;
+    }
+
     private void validateRelationDataExists(CrmReimbursementSaveReqVO reqVO) {
         if (reqVO.getOwnerUserId() != null) {
             adminUserApi.validateUser(reqVO.getOwnerUserId());
-        }
-        if (reqVO.getContractId() != null) {
-            CrmContractDO contract = contractService.validateContract(reqVO.getContractId());
-            if (ObjectUtil.notEqual(contract.getAuditStatus(), CrmAuditStatusEnum.APPROVE.getStatus())) {
-                throw exception(REIMBURSEMENT_CREATE_FAIL_CONTRACT_NOT_APPROVE);
-            }
-            reqVO.setCustomerId(contract.getCustomerId());
         }
     }
 
@@ -114,10 +130,8 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_REIMBURSEMENT, bizId = "#updateReqVO.id", level = CrmPermissionLevelEnum.WRITE)
     public void updateReimbursement(CrmReimbursementSaveReqVO updateReqVO) {
         Assert.notNull(updateReqVO.getId(), "报销编号不能为空");
-        updateReqVO.setOwnerUserId(null).setCustomerId(null).setContractId(null);
         CrmReimbursementDO oldReimbursement = validateReimbursementExists(updateReqVO.getId());
-        updateReqVO.setOwnerUserId(oldReimbursement.getOwnerUserId()).setCustomerId(oldReimbursement.getCustomerId())
-                .setContractId(oldReimbursement.getContractId());
+        updateReqVO.setOwnerUserId(oldReimbursement.getOwnerUserId());
 
         if (!ObjectUtils.equalsAny(oldReimbursement.getAuditStatus(), CrmAuditStatusEnum.DRAFT.getStatus(),
                 CrmAuditStatusEnum.REJECT.getStatus(),
@@ -125,7 +139,11 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
             throw exception(REIMBURSEMENT_UPDATE_FAIL_EDITING_PROHIBITED);
         }
 
-        CrmReimbursementDO updateObj = BeanUtils.toBean(updateReqVO, CrmReimbursementDO.class);
+        // 先取消旧费用关联，再关联新费用
+        clearExpenseLinks(oldReimbursement.getId());
+        BigDecimal totalPrice = linkExpenses(updateReqVO.getExpenseIds(), oldReimbursement.getId());
+
+        CrmReimbursementDO updateObj = BeanUtils.toBean(updateReqVO, CrmReimbursementDO.class).setPrice(totalPrice);
         reimbursementMapper.updateById(updateObj);
 
         updateReqVO.setOwnerUserId(oldReimbursement.getOwnerUserId());
@@ -157,10 +175,29 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
             throw exception(REIMBURSEMENT_DELETE_FAIL_IS_APPROVE);
         }
 
+        // 取消关联费用单
+        clearExpenseLinks(id);
         reimbursementMapper.deleteById(id);
         permissionService.deletePermission(CrmBizTypeEnum.CRM_REIMBURSEMENT.getType(), id);
-
         LogRecordContext.putVariable("reimbursement", reimbursement);
+    }
+
+    private void clearExpenseLinks(Long reimbursementId) {
+        List<CrmExpenseDO> expenses = expenseMapper.selectList(
+                new LambdaQueryWrapper<CrmExpenseDO>()
+                        .eq(CrmExpenseDO::getReimbursementId, reimbursementId));
+        for (CrmExpenseDO e : expenses) {
+            expenseMapper.updateById(new CrmExpenseDO().setId(e.getId()).setReimbursementId(null).setReimburseStatus(0));
+        }
+    }
+
+    private void updateExpenseReimburseStatus(Long reimbursementId, Integer status) {
+        List<CrmExpenseDO> expenses = expenseMapper.selectList(
+                new LambdaQueryWrapper<CrmExpenseDO>()
+                        .eq(CrmExpenseDO::getReimbursementId, reimbursementId));
+        for (CrmExpenseDO e : expenses) {
+            expenseMapper.updateById(new CrmExpenseDO().setId(e.getId()).setReimburseStatus(status));
+        }
     }
 
     @Override
@@ -233,6 +270,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         }
         reimbursementMapper.updateById(new CrmReimbursementDO().setId(id).setAuditStatus(CrmAuditStatusEnum.CANCEL.getStatus())
                 .setProcessInstanceId(null));
+        updateExpenseReimburseStatus(id, 0); // 撤销→费用单回到未报销
         LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
         LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
     }
@@ -252,6 +290,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         }
         reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
                 .setAuditStatus(CrmAuditStatusEnum.APPROVE.getStatus()));
+        updateExpenseReimburseStatus(id, 1); // 审批通过→费用单标记为已报销
         LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
         LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
     }
@@ -266,6 +305,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         }
         reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
                 .setAuditStatus(CrmAuditStatusEnum.REJECT.getStatus()));
+        updateExpenseReimburseStatus(id, 0); // 驳回→费用单回到未报销
         LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
         LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
     }
@@ -280,6 +320,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         }
         reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
                 .setAuditStatus(CrmAuditStatusEnum.VETO.getStatus()));
+        updateExpenseReimburseStatus(id, 0); // 否决→费用单回到未报销
         LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
         LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
     }

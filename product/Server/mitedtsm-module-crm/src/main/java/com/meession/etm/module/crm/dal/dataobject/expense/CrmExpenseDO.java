@@ -40,4 +40,8 @@ public class CrmExpenseDO extends BaseDO {
 
     private String remark;
 
+    private Long reimbursementId;
+
+    private Integer reimburseStatus;
+
 }

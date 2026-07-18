@@ -51,13 +51,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="合同名称" prop="contractId">
+          <el-form-item label="关联订单" prop="contractId">
             <el-select
               v-model="formData.contractId"
               :disabled="formType !== 'create' || !formData.customerId"
               class="w-1/1"
               filterable
-              placeholder="请选择合同"
+              placeholder="请选择订单"
             >
               <el-option
                 v-for="data in contractList"
@@ -149,7 +149,7 @@ const formType = ref('')
 const formData = ref<RefundApi.RefundVO>({} as RefundApi.RefundVO)
 const formRules = reactive({
   customerId: [{ required: true, message: '请选择客户', trigger: 'blur' }],
-  contractId: [{ required: true, message: '请选择合同', trigger: 'blur' }],
+  contractId: [{ required: true, message: '请选择订单', trigger: 'blur' }],
   refundDate: [{ required: true, message: '请选择退款日期', trigger: 'blur' }],
   price: [{ required: true, message: '请输入退款金额', trigger: 'blur' }]
 })

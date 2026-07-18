@@ -83,6 +83,7 @@
           </el-link>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="客户名称" prop="customerName" min-width="120" />
       <el-table-column align="center" label="关联订单" prop="contractNo" min-width="180">
         <template #default="scope">
           {{ scope.row.contract?.no }}
@@ -107,7 +108,6 @@
         prop="refundDate"
         min-width="150"
       />
-      <el-table-column align="center" label="客户名称" prop="customerName" min-width="120" />
       <el-table-column align="center" label="负责人" prop="ownerUserName" min-width="120" />
       <el-table-column
         :formatter="dateFormatter"

@@ -11,13 +11,11 @@ import com.meession.etm.framework.excel.core.util.ExcelUtils;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementPageReqVO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementRespVO;
+import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementExpenseVO;
 import com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursement.CrmReimbursementSaveReqVO;
-import com.meession.etm.module.crm.controller.admin.contract.vo.contract.CrmContractRespVO;
-import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
-import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import com.meession.etm.module.crm.dal.dataobject.expense.CrmExpenseDO;
 import com.meession.etm.module.crm.dal.dataobject.reimbursement.CrmReimbursementDO;
-import com.meession.etm.module.crm.service.contract.CrmContractService;
-import com.meession.etm.module.crm.service.customer.CrmCustomerService;
+import com.meession.etm.module.crm.service.expense.CrmExpenseService;
 import com.meession.etm.module.crm.service.reimbursement.CrmReimbursementService;
 import com.meession.etm.module.system.api.dept.DeptApi;
 import com.meession.etm.module.system.api.dept.dto.DeptRespDTO;
@@ -56,9 +54,7 @@ public class CrmReimbursementController {
     @Resource
     private CrmReimbursementService reimbursementService;
     @Resource
-    private CrmContractService contractService;
-    @Resource
-    private CrmCustomerService customerService;
+    private CrmExpenseService expenseService;
 
     @Resource
     private AdminUserApi adminUserApi;
@@ -137,23 +133,19 @@ public class CrmReimbursementController {
         if (CollUtil.isEmpty(reimbursementList)) {
             return Collections.emptyList();
         }
-        Map<Long, CrmCustomerDO> customerMap = customerService.getCustomerMap(
-                convertSet(reimbursementList, CrmReimbursementDO::getCustomerId));
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(convertListByFlatMap(reimbursementList,
                 contact -> Stream.of(NumberUtils.parseLong(contact.getCreator()), contact.getOwnerUserId())));
         Map<Long, DeptRespDTO> deptMap = deptApi.getDeptMap(convertSet(userMap.values(), AdminUserRespDTO::getDeptId));
-        Map<Long, CrmContractDO> contractMap = contractService.getContractMap(
-                convertSet(reimbursementList, CrmReimbursementDO::getContractId));
         return BeanUtils.toBean(reimbursementList, CrmReimbursementRespVO.class, (reimbursementVO) -> {
-            findAndThen(customerMap, reimbursementVO.getCustomerId(), customer -> reimbursementVO.setCustomerName(customer.getName()));
             MapUtils.findAndThen(userMap, NumberUtils.parseLong(reimbursementVO.getCreator()),
                     user -> reimbursementVO.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(userMap, reimbursementVO.getOwnerUserId(), user -> {
                 reimbursementVO.setOwnerUserName(user.getNickname());
                 MapUtils.findAndThen(deptMap, user.getDeptId(), dept -> reimbursementVO.setOwnerUserDeptName(dept.getName()));
             });
-            findAndThen(contractMap, reimbursementVO.getContractId(), contract ->
-                    reimbursementVO.setContract(BeanUtils.toBean(contract, CrmContractRespVO.class)));
+            // 加载关联费用单
+            List<CrmExpenseDO> expenses = expenseService.getExpenseListByReimbursementId(reimbursementVO.getId());
+            reimbursementVO.setExpenses(BeanUtils.toBean(expenses, CrmReimbursementExpenseVO.class));
         });
     }
 

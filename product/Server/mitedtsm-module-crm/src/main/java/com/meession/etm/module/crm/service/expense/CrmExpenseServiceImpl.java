@@ -94,6 +94,9 @@ public class CrmExpenseServiceImpl implements CrmExpenseService {
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_EXPENSE, bizId = "#id", level = CrmPermissionLevelEnum.OWNER)
     public void deleteExpense(Long id) {
         CrmExpenseDO expense = validateExpenseExists(id);
+        if (expense.getReimbursementId() != null) {
+            throw exception(EXPENSE_DELETE_FAIL_HAS_REIMBURSEMENT);
+        }
         expenseMapper.deleteById(id);
         permissionService.deletePermission(CrmBizTypeEnum.CRM_EXPENSE.getType(), id);
         LogRecordContext.putVariable("expense", expense);
@@ -129,6 +132,14 @@ public class CrmExpenseServiceImpl implements CrmExpenseService {
     @Override
     public List<CrmExpenseDO> getExpenseListForExport(CrmExpensePageReqVO pageReqVO, Long userId) {
         return getExpensePage(pageReqVO, userId).getList();
+    }
+
+    @Override
+    public List<CrmExpenseDO> getExpenseListByReimbursementId(Long reimbursementId) {
+        if (reimbursementId == null) return java.util.Collections.emptyList();
+        return expenseMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<CrmExpenseDO>()
+                        .eq(CrmExpenseDO::getReimbursementId, reimbursementId));
     }
 
 }

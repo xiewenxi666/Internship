@@ -14,20 +14,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="客户" prop="customerId">
+          <el-form-item label="负责人" prop="ownerUserId">
             <el-select
-              v-model="formData.customerId"
-              :disabled="formType !== 'create'"
+              v-model="formData.ownerUserId"
               class="w-1/1"
               filterable
-              placeholder="请选择客户"
-              @change="handleCustomerChange"
+              placeholder="请选择负责人"
             >
               <el-option
-                v-for="item in customerList"
+                v-for="item in userList"
                 :key="item.id"
-                :label="item.name"
-                :value="item.id!"
+                :label="item.nickname"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -35,19 +33,19 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="合同" prop="contractId">
+          <el-form-item label="客户" prop="customerId">
             <el-select
-              v-model="formData.contractId"
+              v-model="formData.customerId"
               :disabled="formType !== 'create'"
               class="w-1/1"
               filterable
-              placeholder="请选择合同"
+              placeholder="请选择客户"
             >
               <el-option
-                v-for="data in contractList"
-                :key="data.id"
-                :label="data.name"
-                :value="data.id!"
+                v-for="item in customerList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id!"
               />
             </el-select>
           </el-form-item>
@@ -79,10 +77,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="申请日期" prop="applyDate">
+          <el-form-item label="发生时间" prop="applyDate">
             <el-date-picker
               v-model="formData.applyDate"
-              placeholder="选择申请日期"
+              placeholder="选择发生时间"
               type="date"
               value-format="x"
               class="!w-100%"
@@ -115,8 +113,7 @@
 import * as ExpenseApi from '@/api/crm/expense'
 import { ExpenseVO } from '@/api/crm/expense'
 import * as CustomerApi from '@/api/crm/customer'
-import * as ContractApi from '@/api/crm/contract'
-import { useUserStore } from '@/store/modules/user'
+import * as UserApi from '@/api/system/user'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
 defineOptions({ name: 'ExpenseForm' })
@@ -128,14 +125,14 @@ const formType = ref('')
 const formData = ref<ExpenseApi.ExpenseVO>({} as ExpenseApi.ExpenseVO)
 const formRules = reactive({
   customerId: [{ required: true, message: '客户不能为空', trigger: 'blur' }],
-  contractId: [{ required: true, message: '合同不能为空', trigger: 'blur' }],
+  ownerUserId: [{ required: true, message: '负责人不能为空', trigger: 'blur' }],
   type: [{ required: true, message: '费用类型不能为空', trigger: 'blur' }],
   price: [{ required: true, message: '费用金额不能为空', trigger: 'blur' }],
-  applyDate: [{ required: true, message: '申请日期不能为空', trigger: 'blur' }]
+  applyDate: [{ required: true, message: '发生时间不能为空', trigger: 'blur' }]
 })
 const formRef = ref()
 const customerList = ref<CustomerApi.CustomerVO[]>([])
-const contractList = ref<ContractApi.ContractVO[]>([])
+const userList = ref<UserApi.UserVO[]>([])
 
 const handleCustomerChange = async (customerId: number) => {
   if (customerId) {
@@ -158,20 +155,12 @@ const open = async (
     try {
       const data = (await ExpenseApi.getExpense(id)) as ExpenseVO
       formData.value = data
-      customerList.value = await CustomerApi.getCustomerSimpleList()
-      if (data.customerId) {
-        contractList.value = await ContractApi.getContractSimpleList(data.customerId)
-      }
     } finally {
       formLoading.value = false
     }
-  } else {
-    customerList.value = await CustomerApi.getCustomerSimpleList()
-    contractList.value = []
   }
-  if (formType.value === 'create') {
-    formData.value.ownerUserId = useUserStore().getUser.id
-  }
+  customerList.value = await CustomerApi.getCustomerSimpleList()
+  userList.value = await UserApi.getSimpleUserList()
 }
 defineExpose({ open })
 

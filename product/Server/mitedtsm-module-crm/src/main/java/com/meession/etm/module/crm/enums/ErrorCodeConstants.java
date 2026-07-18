@@ -128,6 +128,7 @@ public interface ErrorCodeConstants {
     // ========== 费用 1_020_018_000 ==========
     ErrorCode EXPENSE_NOT_EXISTS = new ErrorCode(1_020_018_000, "费用不存在");
     ErrorCode EXPENSE_NO_EXISTS = new ErrorCode(1_020_018_001, "生成费用序列号重复，请重试");
+    ErrorCode EXPENSE_DELETE_FAIL_HAS_REIMBURSEMENT = new ErrorCode(1_020_018_002, "费用单已关联报销单，无法删除");
 
     // ========== 数据统计 1_020_014_000 ==========
 

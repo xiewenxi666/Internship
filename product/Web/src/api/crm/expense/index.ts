@@ -17,6 +17,7 @@ export interface ExpenseVO {
   price?: number
   type?: number
   applyDate?: Date
+  reimburseStatus?: number
   remark?: string
   creator?: string
   creatorName?: string

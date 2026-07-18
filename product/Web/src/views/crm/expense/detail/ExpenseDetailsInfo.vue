@@ -7,11 +7,14 @@
       <el-descriptions-item label="客户名称">
         {{ expense.customerName }}
       </el-descriptions-item>
-      <el-descriptions-item label="合同编号">
-        {{ expense.contract?.no }}
+      <el-descriptions-item label="负责人员">
+        {{ expense.ownerUserName }}
       </el-descriptions-item>
       <el-descriptions-item label="费用类型">
         <dict-tag :type="DICT_TYPE.CRM_EXPENSE_TYPE" :value="expense.type" />
+      </el-descriptions-item>
+      <el-descriptions-item label="报销状态">
+        <dict-tag :type="DICT_TYPE.CRM_EXPENSE_REIMBURSE_STATUS" :value="expense.reimburseStatus" />
       </el-descriptions-item>
       <el-descriptions-item label="费用金额">
         {{ erpPriceInputFormatter(expense.price) }}
@@ -28,12 +31,12 @@
         <el-descriptions :column="4">
           <el-descriptions-item label="费用编号">{{ expense.no }}</el-descriptions-item>
           <el-descriptions-item label="客户名称">{{ expense.customerName }}</el-descriptions-item>
-          <el-descriptions-item label="合同编号">{{ expense.contract?.no }}</el-descriptions-item>
+          <el-descriptions-item label="负责人员">{{ expense.ownerUserName }}</el-descriptions-item>
           <el-descriptions-item label="费用类型">
             <dict-tag :type="DICT_TYPE.CRM_EXPENSE_TYPE" :value="expense.type" />
           </el-descriptions-item>
           <el-descriptions-item label="费用金额">{{ erpPriceInputFormatter(expense.price) }}</el-descriptions-item>
-          <el-descriptions-item label="申请日期">{{ formatDate(expense.applyDate, 'YYYY-MM-DD') }}</el-descriptions-item>
+          <el-descriptions-item label="发生时间">{{ formatDate(expense.applyDate, 'YYYY-MM-DD') }}</el-descriptions-item>
           <el-descriptions-item label="费用内容">{{ expense.content }}</el-descriptions-item>
           <el-descriptions-item label="备注">{{ expense.remark }}</el-descriptions-item>
         </el-descriptions>

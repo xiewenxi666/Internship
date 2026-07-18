@@ -1,22 +1,17 @@
 import request from '@/config/axios'
 
+export interface ExpenseItemVO {
+  id: number; no: string; content: string; price: number; type: number; applyDate: Date; reimburseStatus?: number
+}
+
 export interface ReimbursementVO {
   id: number
   no: string
-  customerId?: number
-  customerName?: string
-  contractId?: number
-  contract?: {
-    id?: number
-    name?: string
-    no: string
-    totalPrice: number
-  }
+  expenseIds?: number[]
+  expenses?: ExpenseItemVO[]
   ownerUserId: number
   ownerUserName?: string
-  content: string
   price: number
-  type: number
   applyDate: Date
   remark: string
   auditStatus: number

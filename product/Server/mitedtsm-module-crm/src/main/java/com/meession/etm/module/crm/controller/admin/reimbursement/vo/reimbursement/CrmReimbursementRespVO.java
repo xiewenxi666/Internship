@@ -3,7 +3,6 @@ package com.meession.etm.module.crm.controller.admin.reimbursement.vo.reimbursem
 import com.meession.etm.framework.excel.core.annotations.DictFormat;
 import com.meession.etm.framework.excel.core.convert.DictConvert;
 import com.meession.etm.module.crm.enums.DictTypeConstants;
-import com.meession.etm.module.crm.controller.admin.contract.vo.contract.CrmContractRespVO;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,6 +10,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "管理后台 - CRM 报销 Response VO")
 @Data
@@ -25,34 +25,13 @@ public class CrmReimbursementRespVO {
     @ExcelProperty("报销编号")
     private String no;
 
-    @Schema(description = "报销内容", example = "差旅报销")
-    @ExcelProperty("报销内容")
-    private String content;
-
-    @Schema(description = "报销金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "9000")
+    @Schema(description = "报销金额（费用单合计）", requiredMode = Schema.RequiredMode.REQUIRED, example = "9000")
     @ExcelProperty("报销金额")
     private BigDecimal price;
-
-    @Schema(description = "报销类型", example = "1")
-    @ExcelProperty(value = "报销类型", converter = DictConvert.class)
-    @DictFormat(DictTypeConstants.CRM_REIMBURSEMENT_TYPE)
-    private Integer type;
 
     @Schema(description = "申请日期", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024-02-02")
     @ExcelProperty("申请日期")
     private LocalDateTime applyDate;
-
-    @Schema(description = "客户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    private Long customerId;
-    @Schema(description = "客户名字", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
-    @ExcelProperty("客户名字")
-    private String customerName;
-
-    @Schema(description = "合同编号", example = "2")
-    @ExcelProperty("合同编号")
-    private Long contractId;
-    @Schema(description = "合同信息")
-    private CrmContractRespVO contract;
 
     @Schema(description = "负责人的用户编号", example = "25682")
     private Long ownerUserId;
@@ -75,6 +54,9 @@ public class CrmReimbursementRespVO {
     @Schema(description = "备注", example = "备注")
     @ExcelProperty("备注")
     private String remark;
+
+    @Schema(description = "关联费用单列表")
+    private List<CrmReimbursementExpenseVO> expenses;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
