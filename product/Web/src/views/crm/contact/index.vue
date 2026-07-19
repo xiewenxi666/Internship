@@ -55,17 +55,7 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item :label="t('crm.contact.telephone')" prop="telephone">
-            <el-input
-              v-model="queryParams.telephone"
-              class="!w-240px"
-              clearable
-              :placeholder="t('crm.contact.telephonePlaceholder')"
-              @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-        </el-col>
+        <el-col :span="8" />
         <el-col :span="8">
           <el-form-item :label="t('crm.contact.wechat')" prop="wechat">
             <el-input
@@ -147,7 +137,6 @@
         </template>
       </el-table-column>
       <el-table-column align="center" :label="t('crm.contact.mobile')" prop="mobile" min-width="120" />
-      <el-table-column align="center" :label="t('crm.contact.telephone')" prop="telephone" min-width="130" />
       <el-table-column align="center" :label="t('crm.contact.email')" prop="email" min-width="180" />
       <el-table-column align="center" :label="t('crm.contact.post')" prop="post" min-width="120" />
       <el-table-column align="center" :label="t('crm.contact.detailAddress')" prop="detailAddress" min-width="120" />
@@ -201,22 +190,12 @@
         min-width="180"
       />
       <el-table-column align="center" :label="t('crm.contact.creatorName')" prop="creatorName" min-width="120" />
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="200">
+      <el-table-column align="center" :label="t('common.action')" min-width="220">
         <template #default="scope">
-          <el-button
-            v-hasPermi="['crm:contact:update']"
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-          >
+          <el-button type="primary" size="small" @click="openForm('update', scope.row.id)">
             {{ t('common.edit') }}
           </el-button>
-          <el-button
-            v-hasPermi="['crm:contact:delete']"
-            link
-            type="danger"
-            @click="handleDelete(scope.row.id)"
-          >
+          <el-button type="danger" size="small" @click="handleDelete(scope.row.id)">
             {{ t('common.del') }}
           </el-button>
         </template>
@@ -256,7 +235,6 @@ const queryParams = reactive({
   pageSize: 10,
   sceneType: '1', // 默认与 activeName 相等
   mobile: undefined,
-  telephone: undefined,
   email: undefined,
   customerId: undefined,
   name: undefined,

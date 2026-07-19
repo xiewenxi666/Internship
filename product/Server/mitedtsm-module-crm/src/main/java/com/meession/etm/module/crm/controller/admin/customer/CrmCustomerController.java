@@ -291,11 +291,17 @@ public class CrmCustomerController {
                 buildCustomerDetailList(list));
     }
 
-    // ==================== 客户导入 ====================
-
-    /**
-     * 获得导入客户模板
-     */
+@GetMapping("/check-duplicate")
+    @Operation(summary = "检查客户名称/手机号是否重复")
+    @Parameter(name = "name", description = "客户名称", required = true)
+    @Parameter(name = "mobile", description = "手机号")
+    @Parameter(name = "id", description = "排除的客户编号(编辑时用)")
+    @PreAuthorize("@ss.hasPermission('crm:customer:query')")
+    public CommonResult<Boolean> checkDuplicate(@RequestParam String name,
+                                               @RequestParam(required = false) String mobile,
+                                               @RequestParam(required = false) Long id) {
+        return success(customerService.checkDuplicate(name, mobile, id));
+    }
     @GetMapping("/get-import-template")
     @Operation(summary = "获得导入客户模板")
     public void importTemplate(HttpServletResponse response) throws IOException {
@@ -317,11 +323,25 @@ public class CrmCustomerController {
      */
     @PostMapping("/import")
     @Operation(summary = "导入客户")
-    @PreAuthorize("@ss.hasPermission('crm:customer:import')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:create')")
     public CommonResult<CrmCustomerImportRespVO> importExcel(@Valid CrmCustomerImportReqVO importReqVO)
             throws Exception {
         List<CrmCustomerImportExcelVO> list = ExcelUtils.read(importReqVO.getFile(), CrmCustomerImportExcelVO.class);
         return success(customerService.importCustomerList(list, importReqVO));
+    }
+
+    // ==================== 客户合并 ====================
+
+    /**
+     * 合并客户
+     */
+    @PutMapping("/merge")
+    @Operation(summary = "合并客户")
+    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    public CommonResult<Boolean> mergeCustomer(@RequestParam("mainId") Long mainId,
+                                               @RequestParam("mergeIds") List<Long> mergeIds) {
+        customerService.mergeCustomer(mainId, mergeIds, getLoginUserId());
+        return success(true);
     }
 
     // ==================== 客户转移 ====================
@@ -368,7 +388,7 @@ public class CrmCustomerController {
     @PutMapping("/receive")
     @Operation(summary = "领取公海客户")
     @Parameter(name = "ids", description = "编号数组", required = true, example = "1,2,3")
-    @PreAuthorize("@ss.hasPermission('crm:customer:receive')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
     public CommonResult<Boolean> receiveCustomer(@RequestParam(value = "ids") List<Long> ids) {
         customerService.receiveCustomer(ids, getLoginUserId(), Boolean.TRUE);
         return success(true);
@@ -379,7 +399,7 @@ public class CrmCustomerController {
      */
     @PutMapping("/distribute")
     @Operation(summary = "分配公海给对应负责人")
-    @PreAuthorize("@ss.hasPermission('crm:customer:distribute')")
+    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
     public CommonResult<Boolean> distributeCustomer(@Valid @RequestBody CrmCustomerDistributeReqVO distributeReqVO) {
         customerService.receiveCustomer(distributeReqVO.getIds(), distributeReqVO.getOwnerUserId(), Boolean.FALSE);
         return success(true);

@@ -2,6 +2,47 @@
   <doc-alert title="【客户】客户管理、公海客户" url="https://doc.iocoder.cn/crm/customer/" />
   <doc-alert title="【通用】数据权限" url="https://doc.iocoder.cn/crm/permission/" />
 
+    <!-- 公海统计卡片 -->
+  <ContentWrap>
+    <el-row :gutter="20" class="mb-15px">
+      <el-col :span="6">
+        <div class="pool-stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <div class="pool-stat-icon"><Icon icon="ep:user-filled" /></div>
+          <div class="pool-stat-body">
+            <div class="pool-stat-value">{{ stats.totalPool }}</div>
+            <div class="pool-stat-label">公海客户数</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="pool-stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+          <div class="pool-stat-icon"><Icon icon="ep:alarm-clock" /></div>
+          <div class="pool-stat-body">
+            <div class="pool-stat-value">{{ stats.remindCount }}</div>
+            <div class="pool-stat-label">即将掉入</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="pool-stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+          <div class="pool-stat-icon"><Icon icon="ep:hand" /></div>
+          <div class="pool-stat-body">
+            <div class="pool-stat-value">{{ stats.canClaim }}</div>
+            <div class="pool-stat-label">可领取</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="pool-stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+          <div class="pool-stat-icon"><Icon icon="ep:check" /></div>
+          <div class="pool-stat-body">
+            <div class="pool-stat-value">{{ stats.myClaimed }}</div>
+            <div class="pool-stat-label">我已领取</div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </ContentWrap>
   <ContentWrap>
     <!-- 搜索工作栏 -->
     <el-form
@@ -130,7 +171,6 @@
         </template>
       </el-table-column>
       <el-table-column :label="t('mobile')" align="center" prop="mobile" min-width="120" />
-      <el-table-column :label="t('telephone')" align="center" prop="telephone" min-width="130" />
       <el-table-column :label="t('email')" align="center" prop="email" min-width="180" />
       <el-table-column align="center" :label="t('level')" prop="level" min-width="135">
         <template #default="scope">
@@ -218,6 +258,7 @@ const exportLoading = ref(false) // 导出的加载中
 
 /** 查询列表 */
 const getList = async () => {
+  loadPoolStats()
   loading.value = true
   try {
     const data = await CustomerApi.getCustomerPage(queryParams.value)
@@ -284,4 +325,57 @@ watch(
 onMounted(() => {
   getList()
 })
-</script>
+onActivated(() => {
+  getList()
+})
+
+/** 公海统计卡片 */
+const stats = reactive({
+  totalPool: 0,
+  remindCount: 0,
+  canClaim: 0,
+  myClaimed: 0
+})
+const loadPoolStats = async () => {
+  try {
+    const poolData = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 1, pool: true })
+    stats.totalPool = poolData.total
+    stats.remindCount = await CustomerApi.getPutPoolRemindCustomerCount()
+    stats.canClaim = poolData.total
+    const myData = await CustomerApi.getCustomerPage({ pageNo: 1, pageSize: 1, sceneType: '1' })
+    stats.myClaimed = myData.total
+  } catch {}
+}</script>
+<style lang="scss" scoped>
+.pool-stat-card {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 20px 24px;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transition: transform 0.2s, box-shadow 0.2s;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+}
+.pool-stat-icon {
+  font-size: 36px;
+  margin-right: 16px;
+  opacity: 0.9;
+}
+.pool-stat-body {
+  flex: 1;
+}
+.pool-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.pool-stat-label {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+</style>

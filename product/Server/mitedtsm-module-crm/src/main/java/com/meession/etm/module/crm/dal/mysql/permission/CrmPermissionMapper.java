@@ -20,7 +20,8 @@ public interface CrmPermissionMapper extends BaseMapperX<CrmPermissionDO> {
         return selectOne(new LambdaQueryWrapperX<CrmPermissionDO>()
                 .eq(CrmPermissionDO::getBizType, bizType)
                 .eq(CrmPermissionDO::getBizId, bizId)
-                .eq(CrmPermissionDO::getUserId, userId));
+                .eq(CrmPermissionDO::getUserId, userId)
+                .last("LIMIT 1"));
     }
 
     default List<CrmPermissionDO> selectByBizTypeAndBizId(Integer bizType, Long bizId) {

@@ -69,6 +69,9 @@ public class CrmPermissionAspect {
                 crmPermission.bizType()[0].getType() : (Integer) expressionValues.get(crmPermission.bizTypeValue()); // 模块类型
         // 1.2 处理兼容多个 bizId 的情况
         Object object = expressionValues.get(crmPermission.bizId()); // 模块数据编号
+        if (object == null) {
+            throw exception(CRM_PERMISSION_DENIED, CrmBizTypeEnum.getNameByType(bizType));
+        }
         Set<Long> bizIds = new HashSet<>();
         if (object instanceof Collection<?>) {
             bizIds.addAll(convertSet((Collection<?>) object, item -> Long.parseLong(item.toString())));

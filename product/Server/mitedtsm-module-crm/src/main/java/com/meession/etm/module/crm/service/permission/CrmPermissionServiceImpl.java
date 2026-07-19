@@ -236,11 +236,13 @@ public class CrmPermissionServiceImpl implements CrmPermissionService {
         }
 
         // 3. 修改老负责人的权限
-        if (transferReqBO.getOldOwnerPermissionLevel() != null) {
-            permissionMapper.updateById(new CrmPermissionDO().setId(oldPermission.getId())
-                    .setLevel(transferReqBO.getOldOwnerPermissionLevel()));
-        } else {
-            permissionMapper.deleteById(oldPermission.getId());
+        if (oldPermission != null) {
+            if (transferReqBO.getOldOwnerPermissionLevel() != null) {
+                permissionMapper.updateById(new CrmPermissionDO().setId(oldPermission.getId())
+                        .setLevel(transferReqBO.getOldOwnerPermissionLevel()));
+            } else {
+                permissionMapper.deleteById(oldPermission.getId());
+            }
         }
     }
 

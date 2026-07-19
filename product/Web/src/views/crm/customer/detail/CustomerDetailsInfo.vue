@@ -54,6 +54,15 @@
           </el-descriptions-item>
         </el-descriptions>
       </el-collapse-item>
+      <el-collapse-item name="tradeOverview">
+        <template #title><span class="text-base font-bold">交易概览</span></template>
+        <el-row :gutter="20">
+          <el-col :span="6"><div class="trade-stat-card"><div class="trade-stat-value" style="color:#409EFF">{{ tradeStats.totalAmount }}</div><div class="trade-stat-label">累计消费(元)</div></div></el-col>
+          <el-col :span="6"><div class="trade-stat-card"><div class="trade-stat-value" style="color:#67C23A">{{ tradeStats.firstDealDate || '-' }}</div><div class="trade-stat-label">首次成交</div></div></el-col>
+          <el-col :span="6"><div class="trade-stat-card"><div class="trade-stat-value" style="color:#E6A23C">{{ tradeStats.lastDealDate || '-' }}</div><div class="trade-stat-label">最近交易</div></div></el-col>
+          <el-col :span="6"><div class="trade-stat-card"><div class="trade-stat-value" style="color:#F56C6C">{{ tradeStats.unsettledCount }}</div><div class="trade-stat-label">未结合同</div></div></el-col>
+        </el-row>
+      </el-collapse-item>
     </el-collapse>
   </ContentWrap>
 </template>
@@ -61,6 +70,7 @@
 import * as CustomerApi from '@/api/crm/customer'
 import { DICT_TYPE } from '@/utils/dict'
 import { formatDate } from '@/utils/formatTime'
+import { reactive, watch } from 'vue'
 
 defineOptions({ name: 'CrmCustomerDetailsInfo' })
 const { t } = useI18n('crm.customer') // 国际化
@@ -68,6 +78,33 @@ const { customer } = defineProps<{
   customer: CustomerApi.CustomerVO // 客户明细
 }>()
 
-const activeNames = ref(['basicInfo', 'systemInfo']) // 展示的折叠面板
+const activeNames = ref(['basicInfo', 'systemInfo', 'tradeOverview']) // 展示的折叠面板
+
+const tradeStats = reactive({
+  totalAmount: 0, firstDealDate: '', lastDealDate: '', unsettledCount: 0
+})
+const loadTradeStats = async () => {
+  if (!customer?.id) return
+  try {
+    const { getReceivablePageByCustomer } = await import('@/api/crm/receivable')
+    const rData = await getReceivablePageByCustomer({ customerId: customer.id, pageSize: 100 })
+    if (rData.list?.length) {
+      tradeStats.totalAmount = rData.list.reduce((s, r) => s + (r.price || 0), 0)
+      tradeStats.firstDealDate = rData.list[rData.list.length-1]?.returnTime ? new Date(rData.list[rData.list.length-1].returnTime).toISOString().slice(0,10) : '-'
+      tradeStats.lastDealDate = rData.list[0]?.returnTime ? new Date(rData.list[0].returnTime).toISOString().slice(0,10) : '-'
+    }
+    const { getContractPageByCustomer } = await import('@/api/crm/contract')
+    const cData = await getContractPageByCustomer({ customerId: customer.id, pageSize: 1 })
+    tradeStats.unsettledCount = cData.total || 0
+  } catch {}
+}
+watch(() => customer?.id, (val) => {
+  if (val) loadTradeStats()
+})
+
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.trade-stat-card { background: var(--el-bg-color-overlay); border-radius: 8px; padding: 16px; text-align: center; border: 1px solid var(--el-border-color-light); }
+.trade-stat-value { font-size: 24px; font-weight: bold; }
+.trade-stat-label { font-size: 13px; color: #909399; margin-top: 6px; }
+</style>

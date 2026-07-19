@@ -75,6 +75,7 @@ const formLoading = ref(false) // 表单的加载中：1）修改时的数据加
 const userOptions = ref<UserApi.UserVO[]>([]) // 用户列表
 const oldOwnerHandler = ref(false) // 老负责人的处理方式
 const formData = ref<TransferReqVO>({} as TransferReqVO)
+const bizIds = ref<number[]>([])
 const formRules = reactive({
   newOwnerUserId: [{ required: true, message: t('permission.newOwnerRequired'), trigger: 'blur' }],
   oldOwnerPermissionLevel: [
@@ -84,11 +85,11 @@ const formRules = reactive({
 const formRef = ref() // 表单 Ref
 
 /** 打开弹窗 */
-const open = async (bizId: number) => {
+const open = async (bizId: number | number[]) => {
   dialogVisible.value = true
   dialogTitle.value = getDialogTitle()
   resetForm()
-  formData.value.id = bizId
+  bizIds.value = Array.isArray(bizId) ? bizId : [bizId]
 }
 defineExpose({ open }) // 提供 open 方法，用于打开弹窗
 // 老负责人负责方式
@@ -108,8 +109,10 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    const data = formData.value
-    await transfer(unref(data))
+    const data = unref(formData)
+    for (const id of bizIds.value) {
+      await transfer({ ...data, id })
+    }
     message.success(dialogTitle.value + t('common.success'))
     dialogVisible.value = false
     // 发送操作成功的事件

@@ -19,7 +19,16 @@ import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerLimitConfigDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerPoolConfigDO;
+import com.meession.etm.module.crm.dal.mysql.business.CrmBusinessMapper;
+import com.meession.etm.module.crm.dal.mysql.contact.CrmContactMapper;
+import com.meession.etm.module.crm.dal.mysql.contract.CrmContractMapper;
 import com.meession.etm.module.crm.dal.mysql.customer.CrmCustomerMapper;
+import com.meession.etm.module.crm.dal.mysql.followup.CrmFollowUpRecordMapper;
+import com.meession.etm.module.crm.dal.mysql.permission.CrmPermissionMapper;
+import com.meession.etm.module.crm.dal.mysql.receivable.CrmReceivableMapper;
+import com.meession.etm.module.crm.dal.dataobject.followup.CrmFollowUpRecordDO;
+import com.meession.etm.module.crm.dal.dataobject.permission.CrmPermissionDO;
+import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.common.CrmSceneTypeEnum;
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
@@ -43,7 +52,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.*;
 
 import static com.meession.etm.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -86,6 +97,18 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
 
     @Resource
     private AdminUserApi adminUserApi;
+    @Resource
+    private CrmContactMapper contactMapper;
+    @Resource
+    private CrmBusinessMapper businessMapper;
+    @Resource
+    private CrmContractMapper contractMapper;
+    @Resource
+    private CrmReceivableMapper receivableMapper;
+    @Resource
+    private CrmFollowUpRecordMapper followUpRecordMapper;
+    @Resource
+    private CrmPermissionMapper crmPermissionMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -652,6 +675,65 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
      */
     private CrmCustomerServiceImpl getSelf() {
         return SpringUtil.getBean(getClass());
+    }
+
+@Override
+    public Boolean checkDuplicate(String name, String mobile, Long id) {
+        CrmCustomerDO byName = customerMapper.selectByCustomerName(name);
+        if (byName != null && (id == null || !byName.getId().equals(id))) {
+            return true;
+        }
+        if (mobile != null && !mobile.isEmpty()) {
+            CrmCustomerDO byMobile = customerMapper.selectOne(CrmCustomerDO::getMobile, mobile);
+            if (byMobile != null && (id == null || !byMobile.getId().equals(id))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void mergeCustomer(Long mainId, List<Long> mergeIds, Long userId) {
+        // 1. 校验主客户存在
+        validateCustomerExists(mainId);
+        // 2. 校验被合并客户存在
+        for (Long id : mergeIds) {
+            if (id.equals(mainId)) continue;
+            validateCustomerExists(id);
+        }
+        // 3. 转移关联数据
+        for (Long id : mergeIds) {
+            if (id.equals(mainId)) continue;
+            // 3.1 转移联系人
+            contactMapper.update(null, new LambdaUpdateWrapper<CrmContactDO>()
+                    .eq(CrmContactDO::getCustomerId, id)
+                    .set(CrmContactDO::getCustomerId, mainId));
+            // 3.2 转移商机
+            businessMapper.update(null, new LambdaUpdateWrapper<CrmBusinessDO>()
+                    .eq(CrmBusinessDO::getCustomerId, id)
+                    .set(CrmBusinessDO::getCustomerId, mainId));
+            // 3.3 转移合同
+            contractMapper.update(null, new LambdaUpdateWrapper<CrmContractDO>()
+                    .eq(CrmContractDO::getCustomerId, id)
+                    .set(CrmContractDO::getCustomerId, mainId));
+            // 3.4 转移回款
+            receivableMapper.update(null, new LambdaUpdateWrapper<CrmReceivableDO>()
+                    .eq(CrmReceivableDO::getCustomerId, id)
+                    .set(CrmReceivableDO::getCustomerId, mainId));
+            // 3.5 转移跟进记录
+            followUpRecordMapper.update(null, new LambdaUpdateWrapper<CrmFollowUpRecordDO>()
+                    .eq(CrmFollowUpRecordDO::getBizType, CrmBizTypeEnum.CRM_CUSTOMER.getType())
+                    .eq(CrmFollowUpRecordDO::getBizId, id)
+                    .set(CrmFollowUpRecordDO::getBizId, mainId));
+            // 3.6 转移权限
+            crmPermissionMapper.update(null, new LambdaUpdateWrapper<CrmPermissionDO>()
+                    .eq(CrmPermissionDO::getBizType, CrmBizTypeEnum.CRM_CUSTOMER.getType())
+                    .eq(CrmPermissionDO::getBizId, id)
+                    .set(CrmPermissionDO::getBizId, mainId));
+            // 3.7 删除被合并的客户
+            customerMapper.deleteById(id);
+        }
     }
 
 }
