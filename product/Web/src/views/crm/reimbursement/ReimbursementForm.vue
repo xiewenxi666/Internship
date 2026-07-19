@@ -199,7 +199,8 @@ const getExpenseList = async () => {
   expenseLoading.value = true
   try {
     const data = await ExpenseApi.getExpensePage(expenseQueryParams)
-    expenseList.value = data.list
+    // 过滤：只显示未报销且未被其他报销单关联的费用单
+    expenseList.value = data.list.filter(item => !item.reimburseStatus && !item.reimbursementId)
   } finally {
     expenseLoading.value = false
   }

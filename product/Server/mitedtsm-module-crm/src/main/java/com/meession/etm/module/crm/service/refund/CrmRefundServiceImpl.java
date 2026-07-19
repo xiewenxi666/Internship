@@ -215,7 +215,6 @@ public class CrmRefundServiceImpl implements CrmRefundService {
     }
 
     @Override
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_REFUND, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmRefundDO getRefund(Long id) {
         return refundMapper.selectById(id);
     }
@@ -275,46 +274,7 @@ public class CrmRefundServiceImpl implements CrmRefundService {
         return refundMapper.selectPageForApproval(pageReqVO, userId);
     }
 
-    @Override
-    @LogRecord(type = CRM_REFUND_TYPE, subType = CRM_REFUND_APPROVE_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REFUND_APPROVE_SUCCESS)
-    public void approveRefund(Long id, String reason) {
-        CrmRefundDO refund = validateRefundExists(id);
-        if (ObjUtil.notEqual(refund.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REFUND_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        refundMapper.updateById(new CrmRefundDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.APPROVE.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("refundNo", refund.getNo());
-    }
 
-    @Override
-    @LogRecord(type = CRM_REFUND_TYPE, subType = CRM_REFUND_REJECT_AUDIT_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REFUND_REJECT_AUDIT_SUCCESS)
-    public void rejectRefund(Long id, String reason) {
-        CrmRefundDO refund = validateRefundExists(id);
-        if (ObjUtil.notEqual(refund.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REFUND_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        refundMapper.updateById(new CrmRefundDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.REJECT.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("refundNo", refund.getNo());
-    }
 
-    @Override
-    @LogRecord(type = CRM_REFUND_TYPE, subType = CRM_REFUND_VETO_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REFUND_VETO_SUCCESS)
-    public void vetoRefund(Long id, String reason) {
-        CrmRefundDO refund = validateRefundExists(id);
-        if (ObjUtil.notEqual(refund.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REFUND_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        refundMapper.updateById(new CrmRefundDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.VETO.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("refundNo", refund.getNo());
-    }
 
 }

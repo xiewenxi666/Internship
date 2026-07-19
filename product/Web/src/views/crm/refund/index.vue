@@ -142,7 +142,7 @@
         prop="createTime"
         min-width="180"
       />
-      <el-table-column align="center" fixed="right" label="操作" min-width="150">
+      <el-table-column align="center" fixed="right" label="操作" min-width="220">
         <template #default="scope">
           <el-button
             v-hasPermi="['crm:refund:query']"
@@ -153,6 +153,34 @@
             详情
           </el-button>
           <el-button
+            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
+            v-hasPermi="['crm:refund:update']"
+            link
+            type="primary"
+            @click="openForm('update', scope.row.id)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
+            v-hasPermi="['crm:refund:update']"
+            link
+            type="success"
+            @click="handleSubmit(scope.row.id)"
+          >
+            提交审核
+          </el-button>
+          <el-button
+            v-if="scope.row.auditStatus === 10"
+            v-hasPermi="['crm:refund:update']"
+            link
+            type="danger"
+            @click="handleCancel(scope.row.id)"
+          >
+            撤销审批
+          </el-button>
+          <el-button
+            v-if="scope.row.auditStatus !== 10 && scope.row.auditStatus !== 20"
             v-hasPermi="['crm:refund:delete']"
             link
             type="danger"
@@ -238,6 +266,31 @@ const handleDelete = async (id: number) => {
     await message.delConfirm()
     await RefundApi.deleteRefund(id)
     message.success(t('common.delSuccess'))
+    await getList()
+  } catch {}
+}
+
+/** 提交审核 */
+const handleSubmit = async (id: number) => {
+  try {
+    await message.confirm('确定提交该退款审核吗？')
+    await RefundApi.submitRefund(id)
+    message.success('提交审核成功')
+    await getList()
+  } catch {}
+}
+
+/** 撤销审批 */
+const handleCancel = async (id: number) => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt('请输入撤销原因（可不填）：', '撤销审批', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPlaceholder: '请输入原因',
+      inputType: 'textarea'
+    })
+    await RefundApi.cancelRefund(id, reason || undefined)
+    message.success('撤销审批成功')
     await getList()
   } catch {}
 }

@@ -1,30 +1,5 @@
 <template>
-  <RefundDetailsHeader v-loading="loading" :refund="refund">
-    <el-button
-      v-if="refund.auditStatus === 10"
-      v-hasPermi="['crm:refund:update']"
-      type="success"
-      @click="handleApprove"
-    >
-      审批通过
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 10"
-      v-hasPermi="['crm:refund:update']"
-      type="warning"
-      @click="handleReject"
-    >
-      驳回审批
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 10"
-      v-hasPermi="['crm:refund:update']"
-      type="danger"
-      @click="handleVeto"
-    >
-      审批否决
-    </el-button>
-  </RefundDetailsHeader>
+  <RefundDetailsHeader v-loading="loading" :refund="refund" />
   <el-col>
     <el-tabs>
       <el-tab-pane label="基本信息">
@@ -56,7 +31,7 @@ import { OperateLogVO } from '@/api/system/operatelog'
 import { getOperateLogPage } from '@/api/crm/operateLog'
 
 defineOptions({ name: 'CrmRefundApprovalDetail' })
-const props = defineProps<{ id?: number }>()
+const props = defineProps<{ id?: number | string }>()
 
 const { t } = useI18n('crm')
 const route = useRoute()
@@ -145,7 +120,7 @@ const close = () => {
 }
 
 onMounted(async () => {
-  const id = props.id || route.params.id
+  const id = Number(props.id || route.params.id)
   if (!id) {
     message.warning('参数错误，缺少退款编号')
     close()

@@ -1,45 +1,12 @@
 <template>
   <RefundDetailsHeader v-loading="loading" :refund="refund">
     <el-button
-      v-if="refund.auditStatus === 0"
+      v-if="refund.auditStatus === 0 || refund.auditStatus === 30 || refund.auditStatus === 40 || refund.auditStatus === 50"
       v-hasPermi="['crm:refund:update']"
       type="primary"
       @click="openForm('update', refund.id)"
     >
-      {{ t('common.edit') }}
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 0"
-      v-hasPermi="['crm:refund:update']"
-      type="primary"
-      @click="handleSubmit"
-    >
-      提交审核
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 30 || refund.auditStatus === 40 || refund.auditStatus === 50"
-      v-hasPermi="['crm:refund:update']"
-      type="primary"
-      @click="openForm('update', refund.id)"
-    >
-      重新编辑
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 30 || refund.auditStatus === 40 || refund.auditStatus === 50"
-      v-hasPermi="['crm:refund:update']"
-      type="primary"
-      @click="handleResubmit"
-    >
-      再次提交
-    </el-button>
-    <el-button
-      v-if="refund.auditStatus === 10"
-      v-hasPermi="['crm:refund:update']"
-      type="danger"
-      plain
-      @click="handleCancel"
-    >
-      撤销审批
+      编辑
     </el-button>
   </RefundDetailsHeader>
   <el-col>

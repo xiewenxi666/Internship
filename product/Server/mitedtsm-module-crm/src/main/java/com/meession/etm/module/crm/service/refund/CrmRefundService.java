@@ -127,28 +127,4 @@ public interface CrmRefundService {
      */
     PageResult<CrmRefundDO> getRefundApprovalPage(CrmRefundApprovalPageReqVO pageReqVO, Long userId);
 
-    /**
-     * 审批通过退款
-     *
-     * @param id     退款编号
-     * @param reason 审批意见
-     */
-    void approveRefund(Long id, String reason);
-
-    /**
-     * 审批驳回退款
-     *
-     * @param id     退款编号
-     * @param reason 驳回原因
-     */
-    void rejectRefund(Long id, String reason);
-
-    /**
-     * 审批否决退款
-     *
-     * @param id     退款编号
-     * @param reason 否决原因
-     */
-    void vetoRefund(Long id, String reason);
-
 }

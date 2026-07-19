@@ -157,28 +157,4 @@ public interface CrmReceivableService {
      */
     PageResult<CrmReceivableDO> getReceivableApprovalPage(CrmReceivableApprovalPageReqVO pageReqVO, Long userId);
 
-    /**
-     * 审批通过回款
-     *
-     * @param id     回款编号
-     * @param reason 审批意见
-     */
-    void approveReceivable(Long id, String reason);
-
-    /**
-     * 审批驳回回款
-     *
-     * @param id     回款编号
-     * @param reason 驳回原因
-     */
-    void rejectReceivable(Long id, String reason);
-
-    /**
-     * 审批否决回款
-     *
-     * @param id     回款编号
-     * @param reason 否决原因
-     */
-    void vetoReceivable(Long id, String reason);
-
 }

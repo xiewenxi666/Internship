@@ -10,45 +10,12 @@
       </div>
       <div>
         <el-button
-          v-if="reimbursement.auditStatus === 0"
+          v-if="reimbursement.auditStatus === 0 || reimbursement.auditStatus === 30 || reimbursement.auditStatus === 40 || reimbursement.auditStatus === 50"
           v-hasPermi="['crm:reimbursement:update']"
           type="primary"
           @click="openForm('update', reimbursement.id)"
         >
-          {{ t('common.edit') }}
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 0"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="primary"
-          @click="handleSubmit"
-        >
-          {{ t('contract.submitAudit') }}
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 30 || reimbursement.auditStatus === 40 || reimbursement.auditStatus === 50"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="primary"
-          @click="openForm('update', reimbursement.id)"
-        >
-          重新编辑
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 30 || reimbursement.auditStatus === 40 || reimbursement.auditStatus === 50"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="primary"
-          @click="handleResubmit"
-        >
-          再次提交
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 10"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="danger"
-          plain
-          @click="handleCancel"
-        >
-          撤销审批
+          编辑
         </el-button>
       </div>
     </div>

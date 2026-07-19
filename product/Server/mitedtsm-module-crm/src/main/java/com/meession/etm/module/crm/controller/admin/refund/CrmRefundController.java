@@ -205,28 +205,4 @@ public class CrmRefundController {
         return success(new PageResult<>(buildRefundDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    @PutMapping("/approve")
-    @Operation(summary = "审批通过退款")
-    @PreAuthorize("@ss.hasPermission('crm:refund:update')")
-    public CommonResult<Boolean> approveRefund(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        refundService.approveRefund(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/reject")
-    @Operation(summary = "驳回退款审批")
-    @PreAuthorize("@ss.hasPermission('crm:refund:update')")
-    public CommonResult<Boolean> rejectRefund(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        refundService.rejectRefund(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/veto")
-    @Operation(summary = "否决退款审批")
-    @PreAuthorize("@ss.hasPermission('crm:refund:update')")
-    public CommonResult<Boolean> vetoRefund(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        refundService.vetoRefund(id, reason);
-        return success(true);
-    }
-
 }

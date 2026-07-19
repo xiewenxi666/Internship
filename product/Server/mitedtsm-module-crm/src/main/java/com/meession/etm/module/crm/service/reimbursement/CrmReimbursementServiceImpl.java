@@ -162,6 +162,8 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
 
         Integer auditStatus = convertBpmResultToAuditStatus(bpmResult);
         reimbursementMapper.updateById(new CrmReimbursementDO().setId(id).setAuditStatus(auditStatus));
+        int expenseStatus = CrmAuditStatusEnum.APPROVE.getStatus().equals(auditStatus) ? 1 : 0;
+        updateExpenseReimburseStatus(id, expenseStatus);
     }
 
     @Override
@@ -231,7 +233,6 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
     }
 
     @Override
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_REIMBURSEMENT, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmReimbursementDO getReimbursement(Long id) {
         return reimbursementMapper.selectById(id);
     }
@@ -280,49 +281,7 @@ public class CrmReimbursementServiceImpl implements CrmReimbursementService {
         return reimbursementMapper.selectPageForApproval(pageReqVO, userId);
     }
 
-    @Override
-    @LogRecord(type = CRM_REIMBURSEMENT_TYPE, subType = CRM_REIMBURSEMENT_APPROVE_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REIMBURSEMENT_APPROVE_SUCCESS)
-    public void approveReimbursement(Long id, String reason) {
-        CrmReimbursementDO reimbursement = validateReimbursementExists(id);
-        if (ObjUtil.notEqual(reimbursement.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REIMBURSEMENT_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.APPROVE.getStatus()));
-        updateExpenseReimburseStatus(id, 1); // 审批通过→费用单标记为已报销
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
-    }
 
-    @Override
-    @LogRecord(type = CRM_REIMBURSEMENT_TYPE, subType = CRM_REIMBURSEMENT_REJECT_AUDIT_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REIMBURSEMENT_REJECT_AUDIT_SUCCESS)
-    public void rejectReimbursement(Long id, String reason) {
-        CrmReimbursementDO reimbursement = validateReimbursementExists(id);
-        if (ObjUtil.notEqual(reimbursement.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REIMBURSEMENT_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.REJECT.getStatus()));
-        updateExpenseReimburseStatus(id, 0); // 驳回→费用单回到未报销
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
-    }
 
-    @Override
-    @LogRecord(type = CRM_REIMBURSEMENT_TYPE, subType = CRM_REIMBURSEMENT_VETO_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_REIMBURSEMENT_VETO_SUCCESS)
-    public void vetoReimbursement(Long id, String reason) {
-        CrmReimbursementDO reimbursement = validateReimbursementExists(id);
-        if (ObjUtil.notEqual(reimbursement.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(REIMBURSEMENT_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        reimbursementMapper.updateById(new CrmReimbursementDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.VETO.getStatus()));
-        updateExpenseReimburseStatus(id, 0); // 否决→费用单回到未报销
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("reimbursementNo", reimbursement.getNo());
-    }
 
 }

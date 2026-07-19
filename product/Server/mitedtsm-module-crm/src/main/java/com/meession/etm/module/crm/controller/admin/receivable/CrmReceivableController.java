@@ -206,28 +206,4 @@ public class CrmReceivableController {
         return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    @PutMapping("/approve")
-    @Operation(summary = "审批通过回款")
-    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
-    public CommonResult<Boolean> approveReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        receivableService.approveReceivable(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/reject")
-    @Operation(summary = "驳回回款审批")
-    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
-    public CommonResult<Boolean> rejectReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        receivableService.rejectReceivable(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/veto")
-    @Operation(summary = "否决回款审批")
-    @PreAuthorize("@ss.hasPermission('crm:receivable:update')")
-    public CommonResult<Boolean> vetoReceivable(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        receivableService.vetoReceivable(id, reason);
-        return success(true);
-    }
-
 }

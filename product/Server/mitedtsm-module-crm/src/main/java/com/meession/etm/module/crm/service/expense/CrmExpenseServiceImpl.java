@@ -59,7 +59,7 @@ public class CrmExpenseServiceImpl implements CrmExpenseService {
         if (expenseMapper.selectByNo(no) != null) {
             throw exception(EXPENSE_NO_EXISTS);
         }
-        CrmExpenseDO expense = BeanUtils.toBean(createReqVO, CrmExpenseDO.class).setNo(no);
+        CrmExpenseDO expense = BeanUtils.toBean(createReqVO, CrmExpenseDO.class).setNo(no).setReimburseStatus(0);
         expenseMapper.insert(expense);
         permissionService.createPermission(new CrmPermissionCreateReqBO().setBizType(CrmBizTypeEnum.CRM_EXPENSE.getType())
                 .setBizId(expense.getId()).setUserId(createReqVO.getOwnerUserId())

@@ -271,7 +271,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
     }
 
     @Override
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_RECEIVABLE, bizId = "#id", level = CrmPermissionLevelEnum.READ)
     public CrmReceivableDO getReceivable(Long id) {
         return receivableMapper.selectById(id);
     }
@@ -339,48 +338,6 @@ public class CrmReceivableServiceImpl implements CrmReceivableService {
     @Override
     public PageResult<CrmReceivableDO> getReceivableApprovalPage(CrmReceivableApprovalPageReqVO pageReqVO, Long userId) {
         return receivableMapper.selectPageForApproval(pageReqVO, userId);
-    }
-
-    @Override
-    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_APPROVE_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_RECEIVABLE_APPROVE_SUCCESS)
-    public void approveReceivable(Long id, String reason) {
-        CrmReceivableDO receivable = validateReceivableExists(id);
-        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        receivableMapper.updateById(new CrmReceivableDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.APPROVE.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("receivableNo", receivable.getNo());
-    }
-
-    @Override
-    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_REJECT_AUDIT_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_RECEIVABLE_REJECT_AUDIT_SUCCESS)
-    public void rejectReceivable(Long id, String reason) {
-        CrmReceivableDO receivable = validateReceivableExists(id);
-        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        receivableMapper.updateById(new CrmReceivableDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.REJECT.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("receivableNo", receivable.getNo());
-    }
-
-    @Override
-    @LogRecord(type = CRM_RECEIVABLE_TYPE, subType = CRM_RECEIVABLE_VETO_SUB_TYPE, bizNo = "{{#id}}",
-            success = CRM_RECEIVABLE_VETO_SUCCESS)
-    public void vetoReceivable(Long id, String reason) {
-        CrmReceivableDO receivable = validateReceivableExists(id);
-        if (ObjUtil.notEqual(receivable.getAuditStatus(), CrmAuditStatusEnum.PROCESS.getStatus())) {
-            throw exception(RECEIVABLE_UPDATE_AUDIT_STATUS_FAIL_NOT_PROCESS);
-        }
-        receivableMapper.updateById(new CrmReceivableDO().setId(id)
-                .setAuditStatus(CrmAuditStatusEnum.VETO.getStatus()));
-        LogRecordContext.putVariable("reason", reason != null && !reason.isEmpty() ? reason : null);
-        LogRecordContext.putVariable("receivableNo", receivable.getNo());
     }
 
 }

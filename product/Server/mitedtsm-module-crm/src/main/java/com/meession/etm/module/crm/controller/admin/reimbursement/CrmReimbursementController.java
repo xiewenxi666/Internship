@@ -180,28 +180,4 @@ public class CrmReimbursementController {
         return success(new PageResult<>(buildReimbursementDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    @PutMapping("/approve")
-    @Operation(summary = "审批通过报销")
-    @PreAuthorize("@ss.hasPermission('crm:reimbursement:update')")
-    public CommonResult<Boolean> approveReimbursement(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        reimbursementService.approveReimbursement(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/reject")
-    @Operation(summary = "驳回报销审批")
-    @PreAuthorize("@ss.hasPermission('crm:reimbursement:update')")
-    public CommonResult<Boolean> rejectReimbursement(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        reimbursementService.rejectReimbursement(id, reason);
-        return success(true);
-    }
-
-    @PutMapping("/veto")
-    @Operation(summary = "否决报销审批")
-    @PreAuthorize("@ss.hasPermission('crm:reimbursement:update')")
-    public CommonResult<Boolean> vetoReimbursement(@RequestParam("id") Long id, @RequestParam(value = "reason", required = false) String reason) {
-        reimbursementService.vetoReimbursement(id, reason);
-        return success(true);
-    }
-
 }

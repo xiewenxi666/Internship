@@ -131,28 +131,4 @@ public interface CrmReimbursementService {
      */
     PageResult<CrmReimbursementDO> getReimbursementApprovalPage(CrmReimbursementApprovalPageReqVO pageReqVO, Long userId);
 
-    /**
-     * 审批通过报销
-     *
-     * @param id     报销编号
-     * @param reason 审批意见
-     */
-    void approveReimbursement(Long id, String reason);
-
-    /**
-     * 审批驳回报销
-     *
-     * @param id     报销编号
-     * @param reason 驳回原因
-     */
-    void rejectReimbursement(Long id, String reason);
-
-    /**
-     * 审批否决报销
-     *
-     * @param id     报销编号
-     * @param reason 否决原因
-     */
-    void vetoReimbursement(Long id, String reason);
-
 }

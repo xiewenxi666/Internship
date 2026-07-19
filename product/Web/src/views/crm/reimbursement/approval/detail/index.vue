@@ -9,31 +9,7 @@
         </el-col>
       </div>
       <div>
-        <el-button
-          v-if="reimbursement.auditStatus === 10"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="success"
-          @click="handleApprove"
-        >
-          审批通过
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 10"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="warning"
-          @click="handleReject"
-        >
-          驳回审批
-        </el-button>
-        <el-button
-          v-if="reimbursement.auditStatus === 10"
-          v-hasPermi="['crm:reimbursement:update']"
-          type="danger"
-          @click="handleVeto"
-        >
-          审批否决
-        </el-button>
-      </div>
+                              </div>
     </div>
     <ContentWrap class="mt-10px">
       <el-descriptions :column="5" direction="vertical">
@@ -85,7 +61,7 @@ import { formatDate } from '@/utils/formatTime'
 import { erpPriceInputFormatter } from '@/utils'
 
 defineOptions({ name: 'CrmReimbursementApprovalDetail' })
-const props = defineProps<{ id?: number }>()
+const props = defineProps<{ id?: number | string }>()
 
 const { t } = useI18n('crm')
 const route = useRoute()
@@ -174,7 +150,7 @@ const close = () => {
 }
 
 onMounted(async () => {
-  const id = props.id || route.params.id
+  const id = Number(props.id || route.params.id)
   if (!id) {
     message.warning(t('reimbursement.paramError'))
     close()
