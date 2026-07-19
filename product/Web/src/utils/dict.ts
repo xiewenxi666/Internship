@@ -250,5 +250,20 @@ export enum DICT_TYPE {
   IOT_OTA_TASK_STATUS = 'iot_ota_task_status', // IoT OTA 任务状态
   IOT_OTA_TASK_RECORD_STATUS = 'iot_ota_task_record_status', // IoT OTA 记录状态
   IOT_MODBUS_MODE = 'iot_modbus_mode', // IoT Modbus 工作模式
-  IOT_MODBUS_FRAME_FORMAT = 'iot_modbus_frame_format' // IoT Modbus 帧格式
+  IOT_MODBUS_FRAME_FORMAT = 'iot_modbus_frame_format', // IoT Modbus 帧格式
+
+  // ========== OA - 办公模块 ==========
+  OA_LEAVE_TYPE = 'oa_leave_type', // 请假类型
+  OA_LEAVE_STATUS = 'oa_leave_status', // 请假状态
+  OA_BUSINESS_TRIP_STATUS = 'oa_business_trip_status', // 出差状态
+  OA_LOAN_STATUS = 'oa_loan_status', // 借款状态
+  OA_VISIT_STATUS = 'oa_visit_status', // 拜访状态
+  OA_REQUEST_TYPE = 'oa_request_type', // 请示类型
+  OA_REQUEST_STATUS = 'oa_request_status', // 请示状态
+  OA_SCHEDULE_TYPE = 'oa_schedule_type', // 日程类型
+  OA_TASK_STATUS = 'oa_task_status', // 任务状态
+  OA_MESSAGE_STATUS = 'oa_message_status', // 消息状态
+  OA_WORK_REPORT_TYPE = 'oa_work_report_type', // 报告类型
+  OA_WORK_REPORT_STATUS = 'oa_work_report_status', // 报告状态
+  OA_DOCUMENT_DIR_TYPE = 'oa_document_dir_type' // 文档目录类型
 }

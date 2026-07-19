@@ -1,4 +1,5 @@
 import { Layout } from '@/utils/routerHelper'
+import oaRoutes from './oa'
 
 const { t } = useI18n()
 /**
@@ -296,18 +297,6 @@ const remainingRouter: AppRouteRecordRaw[] = [
         }
       },
       {
-        path: 'oa/leave/create',
-        component: () => import('@/views/bpm/oa/leave/create.vue'),
-        name: 'OALeaveCreate',
-        meta: {
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          title: t('router.oaLeaveCreate'),
-          activeMenu: '/bpm/oa/leave'
-        }
-      },
-      {
         path: 'oa/leave/detail',
         component: () => import('@/views/bpm/oa/leave/detail.vue'),
         name: 'OALeaveDetail',
@@ -317,6 +306,54 @@ const remainingRouter: AppRouteRecordRaw[] = [
           canTo: true,
           title: t('router.oaLeaveDetail'),
           activeMenu: '/bpm/oa/leave'
+        }
+      },
+      {
+        path: 'oa/businessTrip/detail',
+        component: () => import('@/views/bpm/oa/businessTrip/detail.vue'),
+        name: 'OABusinessTripDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaBusinessTripDetail'),
+          activeMenu: '/bpm/oa/businessTrip'
+        }
+      },
+      {
+        path: 'oa/loan/detail',
+        component: () => import('@/views/bpm/oa/loan/detail.vue'),
+        name: 'OALoanDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaLoanDetail'),
+          activeMenu: '/bpm/oa/loan'
+        }
+      },
+      {
+        path: 'oa/visit/detail',
+        component: () => import('@/views/bpm/oa/visit/detail.vue'),
+        name: 'OAVisitDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaVisitDetail'),
+          activeMenu: '/bpm/oa/visit'
+        }
+      },
+      {
+        path: 'oa/request/detail',
+        component: () => import('@/views/bpm/oa/request/detail.vue'),
+        name: 'OARequestDetail',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: t('router.oaRequestDetail'),
+          activeMenu: '/bpm/oa/request'
         }
       },
       {
@@ -345,6 +382,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
       }
     ]
   },
+  ...oaRoutes,
   {
     path: '/mall/product', // 商品中心
     component: Layout,

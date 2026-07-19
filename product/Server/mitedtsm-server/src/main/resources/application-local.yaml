@@ -47,7 +47,7 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci # MySQL Connector/J 8.X 连接的示例
+          url: jdbc:mysql://127.0.0.1:3307/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci # MySQL Connector/J 8.X 连接的示例
           #          url: jdbc:mysql://127.0.0.1:3306/mitedtsm_database?useSSL=true&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true # MySQL Connector/J 5.X 连接的示例
           #          url: jdbc:postgresql://127.0.0.1:5432/mitedtsm_database # PostgreSQL 连接的示例
           #          url: jdbc:oracle:thin:@127.0.0.1:1521:xe # Oracle 连接的示例
@@ -65,17 +65,17 @@ spring:
           #          password: Mitedtsm@2024 # OpenGauss 连接的示例
         slave: # 模拟从库，可根据自己需要修改
           lazy: true # 开启懒加载，保证启动速度
-          url: jdbc:mysql://127.0.0.1:3306/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true
+          url: jdbc:mysql://127.0.0.1:3307/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true
           username: root
-          password: 123456
-        tdengine: # IoT 数据库（需要 IoT 物联网再开启噢！）
-          lazy: true # 开启懒加载，保证启动速度
-          url: jdbc:TAOS-WS://localhost:6041/mitedtsm_database?varcharAsString=true
-          driver-class-name: com.taosdata.jdbc.ws.WebSocketDriver
-          username: root
-          password: taosdata
-          druid:
-            validation-query: SELECT SERVER_STATUS() # TDengine 数据源的有效性检查 SQL
+          password: 1234
+        #        tdengine: # IoT 数据库（已注释，本地调试 OA 模块不需要）
+#          lazy: true
+#          url: jdbc:TAOS-RS://localhost:6041/mitedtsm_database?varcharAsString=true
+#          driver-class-name: com.taosdata.jdbc.rs.RestfulDriver
+#          username: root
+#          password: taosdata
+#          druid:
+#            validation-query: SELECT SERVER_STATUS()
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   data:
@@ -190,6 +190,7 @@ logging:
     com.meession.etm.module.iot.dal.tdengine: DEBUG
     com.meession.etm.module.iot.service.rule: debug
     com.meession.etm.module.ai.dal.mysql: debug
+    com.meession.etm.module.oa.dal.mysql: debug
     org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 芋艿：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
 debug: false

@@ -1105,6 +1105,43 @@ INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `st
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3051, 1, 'Modbus TCP', '1', 'iot_modbus_frame_format', 0, 'default', '', 'MBAP 头部格式', '1', '2025-06-12 22:56:06', '1', '2025-06-12 22:56:06', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3052, 2, 'Modbus RTU', '2', 'iot_modbus_frame_format', 0, 'warning', '', 'CRC16 校验格式', '1', '2025-06-12 22:56:06', '1', '2025-06-12 22:56:06', b'0');
 INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES (3053, 1, '云端轮询', '1', 'iot_modbus_mode', 0, 'primary', '', '网关主动轮询读取设备寄存器', '1', '2025-06-12 22:56:06', '1', '2025-06-12 22:56:06', b'0');
+INSERT INTO `system_dict_data` (`id`, `sort`, `label`, `value`, `dict_type`, `status`, `color_type`, `css_class`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`) VALUES
+    (3060, 1, '年假',   '1', 'oa_leave_type', 0, 'primary',   '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3061, 2, '调休',   '2', 'oa_leave_type', 0, 'success',   '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3062, 3, '病假',   '3', 'oa_leave_type', 0, 'warning',   '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3063, 4, '事假',   '4', 'oa_leave_type', 0, 'info',      '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3064, 5, '婚假',   '5', 'oa_leave_type', 0, 'danger',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3065, 6, '产假',   '6', 'oa_leave_type', 0, 'primary',   '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3066, 7, '丧假',   '7', 'oa_leave_type', 0, 'info',      '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3070, 1, '待提交', '1', 'oa_leave_status', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3071, 2, '审批中', '2', 'oa_leave_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3072, 3, '已通过', '3', 'oa_leave_status', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3073, 4, '未通过', '4', 'oa_leave_status', 0, 'danger',  '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3074, 5, '已取消', '5', 'oa_leave_status', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3080, 1, '待提交', '1', 'oa_business_trip_status', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3081, 2, '审批中', '2', 'oa_business_trip_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3082, 3, '已通过', '3', 'oa_business_trip_status', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3083, 4, '未通过', '4', 'oa_business_trip_status', 0, 'danger',  '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3084, 5, '已取消', '5', 'oa_business_trip_status', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3090, 1, '待提交', '1', 'oa_loan_status', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3091, 2, '审批中', '2', 'oa_loan_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3092, 3, '已通过', '3', 'oa_loan_status', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3093, 4, '未通过', '4', 'oa_loan_status', 0, 'danger',  '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3094, 5, '已还款', '5', 'oa_loan_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3095, 6, '已取消', '6', 'oa_loan_status', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3100, 1, '待拜访', '1', 'oa_visit_status', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3101, 2, '拜访中', '2', 'oa_visit_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3102, 3, '已完成', '3', 'oa_visit_status', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3103, 4, '已取消', '4', 'oa_visit_status', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3110, 1, '经费请示', '1', 'oa_request_type', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3111, 2, '人事请示', '2', 'oa_request_type', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3112, 3, '物资请示', '3', 'oa_request_type', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3113, 4, '其他请示', '4', 'oa_request_type', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3120, 1, '待提交', '1', 'oa_request_status', 0, 'info',    '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3121, 2, '审批中', '2', 'oa_request_status', 0, 'primary', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3122, 3, '已通过', '3', 'oa_request_status', 0, 'success', '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3123, 4, '未通过', '4', 'oa_request_status', 0, 'danger',  '', NULL, '1', NOW(), '1', NOW(), b'0'),
+    (3124, 5, '已取消', '5', 'oa_request_status', 0, 'warning', '', NULL, '1', NOW(), '1', NOW(), b'0');
 COMMIT;
 
 -- ----------------------------
@@ -1243,6 +1280,13 @@ INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creat
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2009, 'IoT 序列化类型', 'iot_serialize_type', 0, 'IoT 设备消息序列化类型', '1', '2026-02-04 00:33:16', '1', '2026-02-04 00:33:16', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2010, 'IoT Modbus 工作模式', 'iot_modbus_mode', 0, 'Modbus 设备数据采集模式', '1', '2025-06-12 22:55:46', '1', '2025-06-12 22:55:46', b'0', '1970-01-01 00:00:00');
 INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2011, 'IoT Modbus 帧格式', 'iot_modbus_frame_format', 0, 'Modbus 数据帧协议格式', '1', '2025-06-12 22:55:46', '1', '2025-06-12 22:55:46', b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2012, 'OA 请假类型', 'oa_leave_type', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2013, 'OA 请假状态', 'oa_leave_status', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2014, 'OA 出差状态', 'oa_business_trip_status', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2015, 'OA 借款状态', 'oa_loan_status', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2016, 'OA 拜访状态', 'oa_visit_status', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2017, 'OA 请示类型', 'oa_request_type', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
+INSERT INTO `system_dict_type` (`id`, `name`, `type`, `status`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `deleted_time`) VALUES (2018, 'OA 请示状态', 'oa_request_status', 0, '', '1', NOW(), '1', NOW(), b'0', '1970-01-01 00:00:00');
 COMMIT;
 
 -- ----------------------------

@@ -14,8 +14,7 @@ docker-compose/
 │   ├── web.conf          # Web管理后台的Nginx配置
 │   └── mall.conf         # Mall商城前端的Nginx配置
 ├── init/
-│   ├── init-mysql.sh     # MySQL数据库初始化脚本
-│   └── init-tdengine.sh  # TDengine数据库初始化脚本
+│   └── init-mysql.sh     # MySQL数据库初始化脚本
 └── Dockerfile.server     # Server后端服务的Dockerfile
 ```
 
@@ -27,7 +26,9 @@ docker-compose/
 |--------|--------|------|------|------|
 | mysql | mitedtsm-mysql | mysql:8 | 3306 | MySQL数据库 |
 | redis | mitedtsm-redis | redis:6-alpine | 6379 | Redis缓存 |
+| rabbitmq | mitedtsm-rabbitmq | rabbitmq:3-management-alpine | 5672 | RabbitMQ消息队列 |
 | tdengine | mitedtsm-tdengine | tdengine/tdengine:3.3.6.0 | 6041 | TDengine时序数据库 |
+| init-service | mitedtsm-init-service | 自建 | - | 初始化服务(创建TDengine数据库) |
 | server | mitedtsm-server | 自建 | 8080 | Spring Boot后端服务 |
 | web | mitedtsm-web | nginx:alpine | 80 | 管理后台前端(Vue3) |
 | mall | mitedtsm-mall | nginx:alpine | 81 | 商城H5前端(uni-app) |
@@ -54,11 +55,11 @@ docker-compose/
 ```bash
 # MySQL
 MYSQL_ROOT_PASSWORD=1234          # MySQL root密码
-MYSQL_DATABASE=ruoyi-vue-pro      # 数据库名
+MYSQL_DATABASE=mitedtsm_database      # 数据库名
 
 # TDengine
 TDENGINE_PASSWORD=taosdata        # TDengine密码
-TDENGINE_DATABASE=ruoyi_vue_pro   # TDengine数据库名
+TDENGINE_DATABASE=mitedtsm_database   # TDengine数据库名
 
 # Server
 JAVA_OPTS=-Xms512m -Xmx512m       # JVM内存配置
@@ -103,18 +104,21 @@ MALL_PORT=81
 
 **注意**: 仅在首次启动且数据库为空时执行。
 
-### 6. init/init-tdengine.sh
+### 6. InitService 初始化服务
 
-**作用**: TDengine 容器启动时自动执行的初始化脚本。
+**作用**: 作为独立容器运行，负责在 TDengine 中创建数据库。
 
 **功能**:
-- 创建 `ruoyi_vue_pro` 数据库
+- 通过 JDBC REST API 连接 TDengine
+- 创建 `mitedtsm_database` 数据库
+- 验证数据库创建成功
+- 执行完毕自动退出
 
 ### 7. Dockerfile.server
 
 **作用**: 构建 Server 后端服务的 Docker 镜像。
 
-**基础镜像**: `eclipse-temurin:21-jre`
+**基础镜像**: `eclipse-temurin:17-jdk`
 
 **构建要求**: 需要先在 Server 目录执行 Maven 打包
 
@@ -140,7 +144,7 @@ MALL_PORT=81
 
 **不需要打包**，直接使用官方镜像 `tdengine/tdengine:3.3.6.0`。
 
-**初始化**: 通过 `init/init-tdengine.sh` 自动创建数据库。
+**初始化**: 通过 `init-service` 容器（Java InitService）自动创建数据库。
 
 ### 4. Server 后端服务
 
@@ -284,6 +288,7 @@ docker-compose up -d web mall
 |--------|------|
 | mysql_data | MySQL 数据文件 |
 | redis_data | Redis 数据文件 |
+| rabbitmq_data | RabbitMQ 数据文件 |
 | tdengine_data | TDengine 数据文件 |
 
 **备份数据**:

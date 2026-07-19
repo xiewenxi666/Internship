@@ -7,7 +7,6 @@
 # (2).如何跑起来：（docker-compose一键生产部署）
     1. 打包Server
         --【cd Server】
-        --【mvn install】
         --【mvn clean package -DskipTests】
     2. 打包Web
         --【cd Web】
@@ -41,13 +40,14 @@
     2. 启动开发环境（只启动基础环境，不包含前后端）
         --【cd dev】
         --【docker-compose up -d】
-        -- 如果本地已经有部分环境（如 MySQL），可以按需启动，只启没有的：
-            docker-compose up -d redis rabbitmq tdengine init-service     （跳过 MySQL）
-            docker-compose up -d rabbitmq tdengine init-service           （跳过 MySQL 和 Redis）
-            docker-compose up -d tdengine init-service                    （只启动 TDengine + 初始化）
-            ……以此类推，缺什么启什么
+-- 如果本地已经有部分环境（如 MySQL），可以按需启动，只启没有的：
+             docker-compose up -d redis rabbitmq tdengine init-service     （跳过 MySQL）
+             docker-compose up -d rabbitmq tdengine init-service           （跳过 MySQL 和 Redis）
+             docker-compose up -d tdengine init-service                    （只启动 TDengine + 初始化）
+             ……以此类推，缺什么启什么
         -- ⚠ 注意：只要启动了 tdengine，就必须带上 init-service
            init-service 负责在 TDengine 中创建初始数据库，执行完会自动退出
+           （dev/docker-compose.yml 已包含所有服务的完整定义）
     3. 本地运行 Server
         -- 找到【Server】->【mitedtsm-server】->【src】-> …… ->【MitedtsmServerApplication】
         -- 然后点击IDEA右上角的小绿箭头

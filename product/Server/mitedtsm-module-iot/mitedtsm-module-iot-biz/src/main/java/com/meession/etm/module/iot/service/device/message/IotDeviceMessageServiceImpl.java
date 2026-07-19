@@ -41,6 +41,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -345,30 +346,38 @@ public class IotDeviceMessageServiceImpl implements IotDeviceMessageService {
 
     @Override
     public Long getDeviceMessageCount(LocalDateTime createTime) {
+        if (createTime == null) {
+            createTime = LocalDateTime.now().minus(7, ChronoUnit.DAYS);
+        }
         return deviceMessageMapper.selectCountByCreateTime(
-                createTime != null ? LocalDateTimeUtil.toEpochMilli(createTime) : null);
+                LocalDateTimeUtil.toEpochMilli(createTime));
     }
 
     @Override
     public List<IotStatisticsDeviceMessageSummaryByDateRespVO> getDeviceMessageSummaryByDate(
             IotStatisticsDeviceMessageReqVO reqVO) {
         // 1. 按小时统计，获取分项统计数据
+        LocalDateTime[] times = reqVO.getTimes();
+        if (times == null || times.length < 2) {
+            LocalDateTime now = LocalDateTime.now();
+            times = new LocalDateTime[]{now.minus(7, ChronoUnit.DAYS), now};
+        }
         List<Map<String, Object>> countList = deviceMessageMapper.selectDeviceMessageCountGroupByDate(
-                LocalDateTimeUtil.toEpochMilli(reqVO.getTimes()[0]),
-                LocalDateTimeUtil.toEpochMilli(reqVO.getTimes()[1]));
+                LocalDateTimeUtil.toEpochMilli(times[0]),
+                LocalDateTimeUtil.toEpochMilli(times[1]));
 
         // 2. 按照日期间隔，合并数据
-        List<LocalDateTime[]> timeRanges = LocalDateTimeUtils.getDateRangeList(reqVO.getTimes()[0], reqVO.getTimes()[1],
+        List<LocalDateTime[]> timeRanges = LocalDateTimeUtils.getDateRangeList(times[0], times[1],
                 reqVO.getInterval());
-        return convertList(timeRanges, times -> {
+        return convertList(timeRanges, timeRange -> {
             Integer upstreamCount = countList.stream()
-                    .filter(vo -> LocalDateTimeUtils.isBetween(times[0], times[1], (Timestamp) vo.get("time")))
+                    .filter(vo -> LocalDateTimeUtils.isBetween(timeRange[0], timeRange[1], (Timestamp) vo.get("time")))
                     .mapToInt(value -> MapUtil.getInt(value, "upstream_count")).sum();
             Integer downstreamCount = countList.stream()
-                    .filter(vo -> LocalDateTimeUtils.isBetween(times[0], times[1], (Timestamp) vo.get("time")))
+                    .filter(vo -> LocalDateTimeUtils.isBetween(timeRange[0], timeRange[1], (Timestamp) vo.get("time")))
                     .mapToInt(value -> MapUtil.getInt(value, "downstream_count")).sum();
             return new IotStatisticsDeviceMessageSummaryByDateRespVO()
-                    .setTime(LocalDateTimeUtils.formatDateRange(times[0], times[1], reqVO.getInterval()))
+                    .setTime(LocalDateTimeUtils.formatDateRange(timeRange[0], timeRange[1], reqVO.getInterval()))
                     .setUpstreamCount(upstreamCount).setDownstreamCount(downstreamCount);
         });
     }

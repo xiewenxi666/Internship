@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="http://flowable.org/bpmn">
+  <process id="oa_loan" name="借款审批" isExecutable="true">
+    <documentation>借款审批流程</documentation>
+    <startEvent id="startEvent" flowable:formFieldValidation="true"/>
+    <sequenceFlow id="flow_start_approve" sourceRef="startEvent" targetRef="approveTask"/>
+    <userTask id="approveTask" name="审批" flowable:assignee="${initiator}"/>
+    <sequenceFlow id="flow_approve_end" sourceRef="approveTask" targetRef="endEvent"/>
+    <endEvent id="endEvent"/>
+  </process>
+</definitions>

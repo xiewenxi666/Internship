@@ -31,6 +31,7 @@ import mp from './mp'
 import infra from './infra'
 // 字典翻译
 import dict from './dict'
+import oa from './oa'
 
 export default {
   common,
@@ -66,6 +67,8 @@ export default {
   infra,
   // 字典翻译
   dict,
+  // OA 办公模块
+  oa,
   // 避免菜单名是 OAuth 2.0 时，一直 warn 报错
   'OAuth 2.0': 'OAuth 2.0'
 }

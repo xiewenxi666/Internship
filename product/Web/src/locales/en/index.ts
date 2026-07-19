@@ -31,6 +31,7 @@ import mp from './mp'
 import infra from './infra'
 // Dictionary translations
 import dict from './dict'
+import oa from './oa'
 
 export default {
   common,
@@ -66,6 +67,8 @@ export default {
   infra,
   // Dictionary translations
   dict,
+  // OA module
+  oa,
   // Avoid warning when menu name is OAuth 2.0
   'OAuth 2.0': 'OAuth 2.0'
 }

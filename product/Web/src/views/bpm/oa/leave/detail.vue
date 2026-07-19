@@ -2,7 +2,7 @@
   <ContentWrap>
     <el-descriptions :column="1" border>
       <el-descriptions-item :label="t('oa.leave.type')">
-        <dict-tag :type="DICT_TYPE.BPM_OA_LEAVE_TYPE" :value="detailData.type" />
+        <dict-tag :type="DICT_TYPE.OA_LEAVE_TYPE" :value="detailData.type" />
       </el-descriptions-item>
       <el-descriptions-item :label="t('oa.leave.startTime')">
         {{ formatDate(detailData.startTime, 'YYYY-MM-DD') }}
@@ -13,6 +13,12 @@
       <el-descriptions-item :label="t('oa.leave.reason')">
         {{ detailData.reason }}
       </el-descriptions-item>
+      <el-descriptions-item :label="t('oa.leave.day')">
+        {{ detailData.day }}
+      </el-descriptions-item>
+      <el-descriptions-item :label="t('oa.leave.status')">
+        <dict-tag :type="DICT_TYPE.OA_LEAVE_STATUS" :value="detailData.status" />
+      </el-descriptions-item>
     </el-descriptions>
   </ContentWrap>
 </template>
@@ -20,21 +26,16 @@
 import { DICT_TYPE } from '@/utils/dict'
 import { formatDate } from '@/utils/formatTime'
 import { propTypes } from '@/utils/propTypes'
-import * as LeaveApi from '@/api/bpm/leave'
+import * as LeaveApi from '@/api/oa/leave'
 
 defineOptions({ name: 'BpmOALeaveDetail' })
+const { t } = useI18n('bpm')
+const { query } = useRoute()
+const props = defineProps({ id: propTypes.number.def(undefined) })
+const detailLoading = ref(false)
+const detailData = ref<any>({})
+const queryId = query.id as unknown as number
 
-const { t } = useI18n('bpm') // 国际化
-const { query } = useRoute() // 查询参数
-
-const props = defineProps({
-  id: propTypes.number.def(undefined)
-})
-const detailLoading = ref(false) // 表单的加载中
-const detailData = ref<any>({}) // 详情数据
-const queryId = query.id as unknown as number // 从 URL 传递过来的 id 编号
-
-/** 获得数据 */
 const getInfo = async () => {
   detailLoading.value = true
   try {
@@ -43,10 +44,6 @@ const getInfo = async () => {
     detailLoading.value = false
   }
 }
-defineExpose({ open: getInfo }) // 提供 open 方法，用于打开弹窗
-
-/** 初始化 **/
-onMounted(() => {
-  getInfo()
-})
+defineExpose({ open: getInfo })
+onMounted(() => { getInfo() })
 </script>

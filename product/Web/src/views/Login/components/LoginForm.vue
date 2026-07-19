@@ -203,8 +203,15 @@ const getCode = async () => {
 // 获取租户 ID
 const getTenantId = async () => {
   if (loginData.tenantEnable === 'true') {
-    const res = await LoginApi.getTenantIdByName(loginData.loginForm.tenantName)
-    authUtil.setTenantId(res)
+    try {
+      const res = await LoginApi.getTenantIdByName(loginData.loginForm.tenantName)
+      if (res) {
+        authUtil.setTenantId(res)
+      }
+    } catch (error) {
+      console.warn('获取租户 ID 失败，使用默认租户 1', error)
+      authUtil.setTenantId(1)
+    }
   }
 }
 // 记住我

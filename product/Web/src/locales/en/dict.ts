@@ -239,6 +239,65 @@ export default {
     '2': 'Personal Leave',
     '3': 'Marriage Leave'
   },
+  // ==================== OA Module ====================
+  // OA Leave Type
+  oa_leave_type: {
+    '1': 'Annual Leave',
+    '2': 'Compensatory Leave',
+    '3': 'Sick Leave',
+    '4': 'Personal Leave',
+    '5': 'Marriage Leave',
+    '6': 'Maternity Leave',
+    '7': 'Bereavement Leave'
+  },
+  // OA Leave Status
+  oa_leave_status: {
+    '-1': 'Not Started',
+    '1': 'In Approval',
+    '2': 'Approved',
+    '3': 'Rejected',
+    '4': 'Cancelled'
+  },
+  // OA Business Trip Status
+  oa_business_trip_status: {
+    '-1': 'Not Started',
+    '1': 'In Approval',
+    '2': 'Approved',
+    '3': 'Rejected',
+    '4': 'Cancelled'
+  },
+  // OA Loan Status
+  oa_loan_status: {
+    '-1': 'Not Started',
+    '1': 'In Approval',
+    '2': 'Approved',
+    '3': 'Rejected',
+    '4': 'Cancelled',
+    '5': 'Repaid'
+  },
+  // OA Visit Status
+  oa_visit_status: {
+    '-1': 'Not Started',
+    '1': 'Pending Visit',
+    '2': 'Visiting',
+    '3': 'Completed',
+    '4': 'Cancelled'
+  },
+  // OA Request Type
+  oa_request_type: {
+    '1': 'Funding Request',
+    '2': 'Personnel Request',
+    '3': 'Material Request',
+    '4': 'Other Request'
+  },
+  // OA Request Status
+  oa_request_status: {
+    '-1': 'Not Started',
+    '1': 'In Approval',
+    '2': 'Approved',
+    '3': 'Rejected',
+    '4': 'Cancelled'
+  },
   // 流程监听器类型
   bpm_process_listener_type: {
     'execution': 'Execution Listener',
