@@ -27,6 +27,9 @@ public class CrmCustomerCareConfigRespVO {
     @Schema(description = "发送时间", example = "09:00")
     private String sendTime;
 
+    @Schema(description = "测试收件人邮箱", example = "test@example.com")
+    private String testEmail;
+
     @Schema(description = "是否启用短信", example = "true")
     private Boolean smsEnabled;
 

@@ -41,4 +41,12 @@ public class CrmCustomerCareConfigController {
         return success(true);
     }
 
+    @PostMapping("/send-test")
+    @Operation(summary = "发送测试邮件")
+    @PreAuthorize("@ss.hasPermission('crm:customer-care:update')")
+    public CommonResult<Boolean> sendTest(@Valid @RequestBody CrmCustomerCareConfigSaveReqVO saveReqVO) {
+        customerCareConfigService.sendTestEmail(saveReqVO);
+        return success(true);
+    }
+
 }

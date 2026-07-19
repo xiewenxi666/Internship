@@ -6,6 +6,7 @@ export interface CustomerCareConfigVO {
   emailTitle: string
   emailBody: string
   senderEmail: string
+  testEmail: string
   sendTime: string
   smsEnabled: boolean
   emailEnabled: boolean
@@ -20,4 +21,8 @@ export const getConfig = async () => {
 
 export const saveConfig = async (data: CustomerCareConfigVO) => {
   return await request.post({ url: '/crm/customer-care/save', data })
+}
+
+export const sendTestEmail = async (data: CustomerCareConfigVO) => {
+  return await request.post({ url: '/crm/customer-care/send-test', data })
 }

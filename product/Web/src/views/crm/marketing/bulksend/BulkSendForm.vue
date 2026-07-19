@@ -4,8 +4,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="群发类型" prop="type">
-            <el-select v-model="formData.type" class="w-1/1" @change="onTypeChange">
-              <el-option label="短信群发" :value="1" />
+            <el-select v-model="formData.type" class="w-1/1" disabled>
               <el-option label="邮件群发" :value="2" />
             </el-select>
           </el-form-item>
@@ -28,7 +27,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="发送内容" prop="content">
-            <el-input v-model="formData.content" type="textarea" :rows="4" :placeholder="formData.type===1 ? '请输入短信内容（≤65字）' : '请输入邮件正文'" />
+            <el-input v-model="formData.content" type="textarea" :rows="4" placeholder="请输入邮件正文" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -100,7 +99,7 @@ const productOptions = ref<any[]>([])
 const selectedCustomerIds = ref<number[]>([])
 const selectedProductIds = ref<number[]>([])
 const formRef = ref()
-const formData = ref({ id: undefined, title: undefined, campaignId: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 })
+const formData = ref({ id: undefined, title: undefined, campaignId: undefined, type: 2, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 })
 
 const onCustomerChange = (ids: number[]) => {
   formData.value.targetIds = ids.join(',')
@@ -117,8 +116,6 @@ const formRules = reactive({
   targetType: [{ required: true, message: '请选择', trigger: 'change' }],
   ownerUserId: [{ required: true, message: '请选择', trigger: 'change' }]
 })
-
-const onTypeChange = () => {} // 切换类型时清空模板
 
 const open = async (type: string, id?: number) => {
   dialogVisible.value = true; formType.value = type
@@ -146,5 +143,5 @@ const submitForm = async () => {
 }
 
 const emits = defineEmits(['success'])
-const resetForm = () => { formData.value = { id: undefined, title: undefined, campaignId: undefined, productIds: undefined, type: undefined, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 }; selectedCustomerIds.value = []; selectedProductIds.value = [] }
+const resetForm = () => { formData.value = { id: undefined, title: undefined, campaignId: undefined, productIds: undefined, type: 2, templateId: undefined, content: undefined, targetType: undefined, targetIds: undefined, targetCount: 0, ownerUserId: undefined, status: 1 }; selectedCustomerIds.value = []; selectedProductIds.value = [] }
 </script>

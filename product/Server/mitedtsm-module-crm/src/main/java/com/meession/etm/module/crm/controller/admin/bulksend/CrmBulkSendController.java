@@ -117,6 +117,24 @@ public class CrmBulkSendController {
         return success(true);
     }
 
+    @PostMapping("/withdraw/{id}")
+    @Operation(summary = "撤回群发申请")
+    @Parameter(name = "id", description = "编号", required = true)
+    @PreAuthorize("@ss.hasPermission('crm:bulk-send:update')")
+    public CommonResult<Boolean> withdraw(@PathVariable("id") Long id) {
+        bulkSendService.withdraw(id);
+        return success(true);
+    }
+
+    @PostMapping("/confirm/{id}")
+    @Operation(summary = "确认群发")
+    @Parameter(name = "id", description = "编号", required = true)
+    @PreAuthorize("@ss.hasPermission('crm:bulk-send:update')")
+    public CommonResult<Boolean> confirm(@PathVariable("id") Long id) {
+        bulkSendService.confirm(id);
+        return success(true);
+    }
+
     private List<CrmBulkSendRespVO> buildBulkSendDetailList(List<CrmBulkSendDO> list) {
         if (CollUtil.isEmpty(list)) {
             return Collections.emptyList();

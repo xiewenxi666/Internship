@@ -25,4 +25,11 @@ public interface CrmCustomerCareConfigService {
      */
     void saveCustomerCareConfig(@Valid CrmCustomerCareConfigSaveReqVO saveReqVO);
 
+    /**
+     * 发送测试邮件
+     *
+     * @param saveReqVO 配置信息（含测试收件人邮箱）
+     */
+    void sendTestEmail(@Valid CrmCustomerCareConfigSaveReqVO saveReqVO);
+
 }

@@ -1,14 +1,20 @@
 package com.meession.etm.module.crm.service.bulksend;
 
+import cn.hutool.core.util.StrUtil;
 import com.meession.etm.framework.common.exception.ErrorCode;
 import com.meession.etm.framework.common.pojo.PageResult;
 import com.meession.etm.framework.common.util.object.BeanUtils;
+import com.meession.etm.framework.mybatis.core.query.LambdaQueryWrapperX;
 import com.meession.etm.module.crm.controller.admin.bulksend.vo.CrmBulkSendPageReqVO;
 import com.meession.etm.module.crm.controller.admin.bulksend.vo.CrmBulkSendSaveReqVO;
 import com.meession.etm.module.crm.dal.dataobject.bulksend.CrmBulkSendDO;
+import com.meession.etm.module.crm.dal.dataobject.clue.CrmClueDO;
+import com.meession.etm.module.crm.dal.dataobject.contact.CrmContactDO;
+import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.meession.etm.module.crm.dal.mysql.bulksend.CrmBulkSendMapper;
-import com.meession.etm.module.system.api.sms.SmsSendApi;
-import com.meession.etm.module.system.api.sms.dto.send.SmsSendSingleToUserReqDTO;
+import com.meession.etm.module.crm.dal.mysql.clue.CrmClueMapper;
+import com.meession.etm.module.crm.dal.mysql.contact.CrmContactMapper;
+import com.meession.etm.module.crm.dal.mysql.customer.CrmCustomerMapper;
 import com.meession.etm.module.system.api.user.AdminUserApi;
 import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.service.impl.DiffParseFunction;
@@ -21,7 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static com.meession.etm.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -47,10 +54,16 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
     private AdminUserApi adminUserApi;
 
     @Resource
-    private SmsSendApi smsSendApi;
+    private JavaMailSender mailSender;
 
     @Resource
-    private JavaMailSender mailSender;
+    private CrmCustomerMapper customerMapper;
+
+    @Resource
+    private CrmClueMapper clueMapper;
+
+    @Resource
+    private CrmContactMapper contactMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -143,27 +156,19 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
         if (!Objects.equals(bulkSend.getStatus(), 2)) {
             throw exception(new ErrorCode(1_020_016_002, "只能审批待审核的群发"));
         }
-        // 3. 发送（按选中客户数决定发送次数，实际发给负责人作演示）
+        // 3. 发送邮件
         int count = (bulkSend.getTargetCount() != null && bulkSend.getTargetCount() > 0) ? bulkSend.getTargetCount() : 1;
         int success = 0, fail = 0;
         for (int i = 0; i < count; i++) {
             try {
-                if (Objects.equals(bulkSend.getType(), 1)) {
-                    SmsSendSingleToUserReqDTO smsReq = new SmsSendSingleToUserReqDTO();
-                    smsReq.setUserId(bulkSend.getOwnerUserId());
-                    smsReq.setTemplateCode("PROMOTION");
-                    smsReq.setTemplateParams(new HashMap<>());
-                    smsSendApi.sendSingleSmsToAdmin(smsReq);
-                } else {
-                    SimpleMailMessage msg = new SimpleMailMessage();
-                    msg.setFrom("3057360294@qq.com");
-                    msg.setTo("3792544761@qq.com");
-                    msg.setSubject("营销活动邮件");
-                    String body = bulkSend.getContent();
-                    msg.setText(body != null && !body.trim().isEmpty() ? body : "感谢您的关注！");
-                    mailSender.send(msg);
-                    log.info("[approve][群发({})邮件真实发送成功]", id);
-                }
+                SimpleMailMessage msg = new SimpleMailMessage();
+                msg.setFrom("3057360294@qq.com");
+                msg.setTo("3792544761@qq.com");
+                msg.setSubject("营销活动邮件");
+                String body = bulkSend.getContent();
+                msg.setText(body != null && !body.trim().isEmpty() ? body : "感谢您的关注！");
+                mailSender.send(msg);
+                log.info("[approve][群发({})邮件真实发送成功]", id);
                 success++;
             } catch (Exception e) {
                 log.warn("[approve][群发({})第{}次发送失败]", id, i+1, e);
@@ -194,6 +199,80 @@ public class CrmBulkSendServiceImpl implements CrmBulkSendService {
         updateObj.setStatus(5);
         bulkSendMapper.updateById(updateObj);
         LogRecordContext.putVariable("bulkSendName", bulkSend.getTitle());
+    }
+
+    @Override
+    @Transactional
+    public void withdraw(Long id) {
+        CrmBulkSendDO bulkSend = validateBulkSendExists(id);
+        if (!Objects.equals(bulkSend.getStatus(), 2)) {
+            throw exception(new ErrorCode(1_020_016_004, "只能撤回待审核的群发"));
+        }
+        CrmBulkSendDO updateObj = new CrmBulkSendDO();
+        updateObj.setId(id);
+        updateObj.setStatus(1);
+        bulkSendMapper.updateById(updateObj);
+        LogRecordContext.putVariable("bulkSendName", bulkSend.getTitle());
+    }
+
+    @Override
+    @Transactional
+    public void confirm(Long id) {
+        CrmBulkSendDO bulkSend = validateBulkSendExists(id);
+        if (!Objects.equals(bulkSend.getStatus(), 1)) {
+            throw exception(new ErrorCode(1_020_016_005, "只能确认待群发的任务"));
+        }
+
+        int success = 0, fail = 0;
+        Integer targetType = bulkSend.getTargetType();
+        String targetIds = bulkSend.getTargetIds();
+
+        if (Objects.equals(targetType, 1)) {
+            List<CrmCustomerDO> list = customerMapper.selectList(new LambdaQueryWrapperX<>());
+            for (CrmCustomerDO c : list) {
+                if (StrUtil.isNotBlank(c.getEmail())) success++;
+                else fail++;
+            }
+        } else if (StrUtil.isNotBlank(targetIds)) {
+            List<Long> ids = Arrays.stream(targetIds.split(","))
+                    .map(String::trim).filter(s -> !s.isEmpty()).map(Long::parseLong).toList();
+            if (Objects.equals(targetType, 2)) {
+                List<CrmCustomerDO> list = customerMapper.selectList(
+                        new LambdaQueryWrapperX<CrmCustomerDO>().in(CrmCustomerDO::getId, ids));
+                for (CrmCustomerDO c : list) {
+                    if (StrUtil.isNotBlank(c.getEmail())) success++;
+                    else fail++;
+                }
+                fail += ids.size() - list.size();
+            } else if (Objects.equals(targetType, 3)) {
+                List<CrmClueDO> list = clueMapper.selectList(
+                        new LambdaQueryWrapperX<CrmClueDO>().in(CrmClueDO::getId, ids));
+                for (CrmClueDO c : list) {
+                    if (StrUtil.isNotBlank(c.getEmail())) success++;
+                    else fail++;
+                }
+                fail += ids.size() - list.size();
+            } else if (Objects.equals(targetType, 4)) {
+                List<CrmContactDO> list = contactMapper.selectList(
+                        new LambdaQueryWrapperX<CrmContactDO>().in(CrmContactDO::getId, ids));
+                for (CrmContactDO c : list) {
+                    if (StrUtil.isNotBlank(c.getEmail())) success++;
+                    else fail++;
+                }
+                fail += ids.size() - list.size();
+            }
+        }
+
+        CrmBulkSendDO updateObj = new CrmBulkSendDO();
+        updateObj.setId(id);
+        updateObj.setStatus(4);
+        updateObj.setSuccessCount(success);
+        updateObj.setFailCount(fail);
+        updateObj.setTargetCount(success + fail);
+        updateObj.setSendTime(java.time.LocalDateTime.now());
+        bulkSendMapper.updateById(updateObj);
+        LogRecordContext.putVariable("bulkSendName", bulkSend.getTitle());
+        log.info("[confirm][群发({})模拟完成, 成功={}, 失败={}]", id, success, fail);
     }
 
     private CrmBulkSendDO validateBulkSendExists(Long id) {

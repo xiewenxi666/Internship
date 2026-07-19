@@ -8,21 +8,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="类型" prop="type">
-            <el-select v-model="queryParams.type" class="!w-240px" clearable>
-              <el-option label="短信群发" :value="1" />
-              <el-option label="邮件群发" :value="2" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" class="!w-240px" clearable>
-              <el-option label="未提交" :value="1" />
-              <el-option label="待审核" :value="2" />
-              <el-option label="待发送" :value="3" />
-              <el-option label="已发送" :value="4" />
-              <el-option label="已驳回" :value="5" />
+              <el-option label="待确认" :value="1" />
+              <el-option label="已群发" :value="4" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -45,8 +34,8 @@
     <el-table v-loading="loading" :data="list" :stripe="true">
       <el-table-column label="任务标题" align="center" prop="title" min-width="160" />
       <el-table-column label="类型" align="center" min-width="100">
-        <template #default="scope">
-          <el-tag :type="scope.row.type === 1 ? '' : 'warning'">{{ scope.row.type === 1 ? '短信' : '邮件' }}</el-tag>
+        <template #default>
+          <el-tag type="warning">邮件</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="目标数量" align="center" prop="targetCount" min-width="90" />
@@ -62,9 +51,7 @@
       <el-table-column label="操作" align="center" min-width="200" fixed="right">
         <template #default="scope">
           <el-button v-if="scope.row.status === 1" link type="primary" @click="openForm('update', scope.row.id)">编辑</el-button>
-          <el-button v-if="scope.row.status === 1" link type="success" @click="handleSubmit(scope.row.id)">提交审核</el-button>
-          <el-button v-if="scope.row.status === 2" link type="success" @click="handleApprove(scope.row.id)">通过</el-button>
-          <el-button v-if="scope.row.status === 2" link type="warning" @click="handleReject(scope.row.id)">驳回</el-button>
+          <el-button v-if="scope.row.status === 1" link type="success" @click="handleConfirm(scope.row.id)">确认</el-button>
           <el-button link type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -102,21 +89,13 @@ const resetQuery = () => { Object.assign(queryParams, { pageNo:1, pageSize:10, t
 const formRef = ref()
 const openForm = (type: string, id?: number) => { formRef.value?.open(type, id) }
 
-const handleSubmit = async (id: number) => {
+const handleConfirm = async (id: number) => {
   try {
-    await message.confirm('确认提交审核？')
-    await BulkSendApi.submitForApproval(id)
-    message.success('提交成功')
+    await message.confirm('确认群发？确认后将立即发送')
+    await BulkSendApi.confirm(id)
+    message.success('群发成功')
     await getList()
   } catch {}
-}
-
-const handleApprove = async (id: number) => {
-  try { await message.confirm('确认审批通过？'); await BulkSendApi.approve(id); message.success('已通过'); await getList() } catch {}
-}
-
-const handleReject = async (id: number) => {
-  try { await message.confirm('确认驳回？'); await BulkSendApi.reject(id); message.success('已驳回'); await getList() } catch {}
 }
 
 const handleDelete = async (id: number) => {
@@ -128,8 +107,8 @@ const handleDelete = async (id: number) => {
   } catch {}
 }
 
-const statusTagType = (s: number) => s === 1 ? 'info' : s === 2 ? 'warning' : s === 3 ? '' : s === 4 ? 'success' : 'danger'
-const statusLabel = (s: number) => ['', '未提交', '待审核', '待发送', '已发送', '已驳回'][s] || ''
+const statusTagType = (s: number) => s === 1 ? 'info' : 'success'
+const statusLabel = (s: number) => ({ 1: '待确认', 2: '待确认', 4: '已群发', 5: '待确认' }[s] || '')
 
 onMounted(() => { getList() })
 </script>

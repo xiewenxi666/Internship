@@ -70,10 +70,6 @@
         <ContentWrap title="本月概览" class="no-padding">
           <div class="overview-cards">
             <div class="overview-item">
-              <span class="overview-label">短信群发</span>
-              <span class="overview-value">{{ stats.smsCount || 0 }} 条</span>
-            </div>
-            <div class="overview-item">
               <span class="overview-label">邮件群发</span>
               <span class="overview-value">{{ stats.emailCount || 0 }} 条</span>
             </div>

@@ -61,4 +61,8 @@ public interface CrmBulkSendService {
     void approve(Long id);
 
     void reject(Long id);
+
+    void withdraw(Long id);
+
+    void confirm(Long id);
 }

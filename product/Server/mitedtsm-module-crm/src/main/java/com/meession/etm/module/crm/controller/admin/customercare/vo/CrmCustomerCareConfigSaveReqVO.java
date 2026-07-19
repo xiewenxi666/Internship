@@ -9,8 +9,7 @@ import lombok.Data;
 @Data
 public class CrmCustomerCareConfigSaveReqVO {
 
-    @Schema(description = "短信内容", requiredMode = Schema.RequiredMode.REQUIRED, example = "尊敬的客户，祝您生日快乐！")
-    @NotEmpty(message = "短信内容不能为空")
+    @Schema(description = "短信内容", example = "尊敬的客户，祝您生日快乐！")
     @DiffLogField(name = "短信内容")
     private String smsContent;
 
@@ -31,6 +30,10 @@ public class CrmCustomerCareConfigSaveReqVO {
     @Schema(description = "发送时间", example = "09:00")
     @DiffLogField(name = "发送时间")
     private String sendTime;
+
+    @Schema(description = "测试收件人邮箱", example = "test@example.com")
+    @DiffLogField(name = "测试收件人邮箱")
+    private String testEmail;
 
     @Schema(description = "是否启用短信", example = "true")
     @DiffLogField(name = "是否启用短信")

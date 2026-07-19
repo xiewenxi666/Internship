@@ -55,3 +55,11 @@ export const approve = async (id: number) => {
 export const reject = async (id: number) => {
   return await request.post({ url: '/crm/bulk-send/reject/' + id })
 }
+
+export const withdraw = async (id: number) => {
+  return await request.post({ url: '/crm/bulk-send/withdraw/' + id })
+}
+
+export const confirm = async (id: number) => {
+  return await request.post({ url: '/crm/bulk-send/confirm/' + id })
+}

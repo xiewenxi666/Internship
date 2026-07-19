@@ -43,6 +43,11 @@ public class CrmCustomerCareConfigDO extends BaseDO {
     private String sendTime;
 
     /**
+     * 测试收件人邮箱
+     */
+    private String testEmail;
+
+    /**
      * 是否启用短信
      */
     @TableField(updateStrategy = FieldStrategy.ALWAYS)
