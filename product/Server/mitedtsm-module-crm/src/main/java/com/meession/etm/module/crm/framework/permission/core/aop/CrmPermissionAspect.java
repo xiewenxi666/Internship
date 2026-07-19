@@ -8,7 +8,13 @@ import com.meession.etm.framework.web.core.util.WebFrameworkUtils;
 import com.meession.etm.module.bpm.api.task.BpmProcessInstanceApi;
 import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.dal.dataobject.permission.CrmPermissionDO;
+import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
+import com.meession.etm.module.crm.dal.dataobject.refund.CrmRefundDO;
+import com.meession.etm.module.crm.dal.dataobject.reimbursement.CrmReimbursementDO;
 import com.meession.etm.module.crm.dal.mysql.order.CrmOrderMapper;
+import com.meession.etm.module.crm.dal.mysql.receivable.CrmReceivableMapper;
+import com.meession.etm.module.crm.dal.mysql.refund.CrmRefundMapper;
+import com.meession.etm.module.crm.dal.mysql.reimbursement.CrmReimbursementMapper;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
 import com.meession.etm.module.crm.framework.permission.core.annotations.CrmPermission;
@@ -52,6 +58,15 @@ public class CrmPermissionAspect {
     @Resource
     private CrmOrderMapper orderMapper;
 
+    @Resource
+    private CrmReceivableMapper receivableMapper;
+
+    @Resource
+    private CrmReimbursementMapper reimbursementMapper;
+
+    @Resource
+    private CrmRefundMapper refundMapper;
+
     /** CRM 业务类型 → BPM 流程定义标识映射 */
     private static final Map<Integer, String> BIZ_TYPE_PROCESS_KEY_MAP = new HashMap<>();
 
@@ -59,6 +74,8 @@ public class CrmPermissionAspect {
         BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_ORDER.getType(), "crm-order-audit");
         BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_CONTRACT.getType(), "crm-contract-audit");
         BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_RECEIVABLE.getType(), "crm-receivable-audit");
+        BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_REIMBURSEMENT.getType(), "crm-reimbursement-audit");
+        BIZ_TYPE_PROCESS_KEY_MAP.put(CrmBizTypeEnum.CRM_REFUND.getType(), "crm-refund-audit");
     }
 
     @Before("@annotation(crmPermission)")
@@ -209,6 +226,24 @@ public class CrmPermissionAspect {
             CrmOrderDO order = orderMapper.selectById(bizId);
             if (order != null) {
                 return order.getProcessInstanceId();
+            }
+        }
+        if (CrmBizTypeEnum.CRM_RECEIVABLE.getType().equals(bizType)) {
+            CrmReceivableDO receivable = receivableMapper.selectById(bizId);
+            if (receivable != null) {
+                return receivable.getProcessInstanceId();
+            }
+        }
+        if (CrmBizTypeEnum.CRM_REIMBURSEMENT.getType().equals(bizType)) {
+            CrmReimbursementDO reimbursement = reimbursementMapper.selectById(bizId);
+            if (reimbursement != null) {
+                return reimbursement.getProcessInstanceId();
+            }
+        }
+        if (CrmBizTypeEnum.CRM_REFUND.getType().equals(bizType)) {
+            CrmRefundDO refund = refundMapper.selectById(bizId);
+            if (refund != null) {
+                return refund.getProcessInstanceId();
             }
         }
         return null;

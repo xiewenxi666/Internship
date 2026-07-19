@@ -8,14 +8,19 @@ import com.meession.etm.framework.common.pojo.PageResult;
 import com.meession.etm.framework.common.util.number.NumberUtils;
 import com.meession.etm.framework.common.util.object.BeanUtils;
 import com.meession.etm.framework.excel.core.util.ExcelUtils;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanBatchCreateReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanPageReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanRespVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSaveReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSummaryReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSummaryRespVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanReportReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableRespVO;
 import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
+import com.meession.etm.module.crm.enums.receivable.CrmReceivablePlanStatusEnum;
 import com.meession.etm.module.crm.service.contract.CrmContractService;
 import com.meession.etm.module.crm.service.customer.CrmCustomerService;
 import com.meession.etm.module.crm.service.receivable.CrmReceivablePlanService;
@@ -34,6 +39,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +58,6 @@ import static com.meession.etm.framework.security.core.util.SecurityFrameworkUti
 @RestController
 @RequestMapping("/crm/receivable-plan")
 @Validated
-/**
- * CRM 回款计划 Controller (Admin)
- */
 public class CrmReceivablePlanController {
 
     @Resource
@@ -67,11 +72,6 @@ public class CrmReceivablePlanController {
     @Resource
     private AdminUserApi adminUserApi;
 
-    // ==================== 回款计划 CRUD ====================
-
-    /**
-     * 创建回款计划
-     */
     @PostMapping("/create")
     @Operation(summary = "创建回款计划")
     @PreAuthorize("@ss.hasPermission('crm:receivable-plan:create')")
@@ -79,9 +79,6 @@ public class CrmReceivablePlanController {
         return success(receivablePlanService.createReceivablePlan(createReqVO));
     }
 
-    /**
-     * 更新回款计划
-     */
     @PutMapping("/update")
     @Operation(summary = "更新回款计划")
     @PreAuthorize("@ss.hasPermission('crm:receivable-plan:update')")
@@ -90,9 +87,6 @@ public class CrmReceivablePlanController {
         return success(true);
     }
 
-    /**
-     * 删除回款计划
-     */
     @DeleteMapping("/delete")
     @Operation(summary = "删除回款计划")
     @Parameter(name = "id", description = "编号", required = true)
@@ -102,9 +96,6 @@ public class CrmReceivablePlanController {
         return success(true);
     }
 
-    /**
-     * 获得回款计划
-     */
     @GetMapping("/get")
     @Operation(summary = "获得回款计划")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
@@ -121,9 +112,6 @@ public class CrmReceivablePlanController {
         return buildReceivableDetailList(Collections.singletonList(receivablePlan)).get(0);
     }
 
-    /**
-     * 获得回款计划分页
-     */
     @GetMapping("/page")
     @Operation(summary = "获得回款计划分页")
     @PreAuthorize("@ss.hasPermission('crm:receivable-plan:query')")
@@ -132,9 +120,6 @@ public class CrmReceivablePlanController {
         return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    /**
-     * 获得回款计划分页，基于指定客户
-     */
     @GetMapping("/page-by-customer")
     @Operation(summary = "获得回款计划分页，基于指定客户")
     public CommonResult<PageResult<CrmReceivablePlanRespVO>> getReceivablePlanPageByCustomer(@Valid CrmReceivablePlanPageReqVO pageReqVO) {
@@ -143,11 +128,6 @@ public class CrmReceivablePlanController {
         return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    // ==================== 回款计划导出 ====================
-
-    /**
-     * 导出回款计划 Excel
-     */
     @GetMapping("/export-excel")
     @Operation(summary = "导出回款计划 Excel")
     @PreAuthorize("@ss.hasPermission('crm:receivable-plan:export')")
@@ -188,14 +168,25 @@ public class CrmReceivablePlanController {
             findAndThen(contractMap, receivablePlanVO.getContractId(), contract -> receivablePlanVO.setContractNo(contract.getNo()));
             // 2.4 拼接回款信息
             receivablePlanVO.setReceivable(BeanUtils.toBean(receivableMap.get(receivablePlanVO.getReceivableId()), CrmReceivableRespVO.class));
+            // 2.5 计算状态、逾期天数
+            calcPlanStatus(receivablePlanVO);
         });
     }
 
-    // ==================== 回款计划查询 ====================
+    private void calcPlanStatus(CrmReceivablePlanRespVO vo) {
+        if (vo.getReceivableId() != null) {
+            vo.setStatus(CrmReceivablePlanStatusEnum.COMPLETED.getStatus());
+            vo.setStatusName(CrmReceivablePlanStatusEnum.COMPLETED.getName());
+        } else if (vo.getReturnTime() != null && vo.getReturnTime().toLocalDate().isBefore(LocalDate.now())) {
+            vo.setStatus(CrmReceivablePlanStatusEnum.OVERDUE.getStatus());
+            vo.setStatusName(CrmReceivablePlanStatusEnum.OVERDUE.getName());
+            vo.setOverdueDays(ChronoUnit.DAYS.between(vo.getReturnTime().toLocalDate(), LocalDate.now()));
+        } else {
+            vo.setStatus(CrmReceivablePlanStatusEnum.UNCOMPLETED.getStatus());
+            vo.setStatusName(CrmReceivablePlanStatusEnum.UNCOMPLETED.getName());
+        }
+    }
 
-    /**
-     * 获得回款计划精简列表，主要用于前端的下拉选项
-     */
     @GetMapping("/simple-list")
     @Operation(summary = "获得回款计划精简列表", description = "获得回款计划精简列表，主要用于前端的下拉选项")
     @Parameters({
@@ -213,14 +204,33 @@ public class CrmReceivablePlanController {
                 .setPrice(receivablePlan.getPrice()).setReturnType(receivablePlan.getReturnType())));
     }
 
-    /**
-     * 获得待回款提醒数量
-     */
     @GetMapping("/remind-count")
     @Operation(summary = "获得待回款提醒数量")
     @PreAuthorize("@ss.hasPermission('crm:receivable-plan:query')")
     public CommonResult<Long> getReceivablePlanRemindCount() {
         return success(receivablePlanService.getReceivablePlanRemindCount(getLoginUserId()));
+    }
+
+    @PostMapping("/batch-create")
+    @Operation(summary = "批量创建多期回款计划")
+    @PreAuthorize("@ss.hasPermission('crm:receivable-plan:create')")
+    public CommonResult<List<Long>> batchCreateReceivablePlan(@Valid @RequestBody CrmReceivablePlanBatchCreateReqVO createReqVO) {
+        return success(receivablePlanService.batchCreateReceivablePlan(createReqVO));
+    }
+
+    @GetMapping("/summary")
+    @Operation(summary = "获得回款计划汇总统计")
+    @PreAuthorize("@ss.hasPermission('crm:receivable-plan:query')")
+    public CommonResult<List<CrmReceivablePlanSummaryRespVO>> getReceivablePlanSummary(@Valid CrmReceivablePlanSummaryReqVO reqVO) {
+        return success(receivablePlanService.getReceivablePlanSummary(reqVO));
+    }
+
+    @GetMapping("/report")
+    @Operation(summary = "获得回款计划报表")
+    @PreAuthorize("@ss.hasPermission('crm:receivable-plan:query')")
+    public CommonResult<PageResult<CrmReceivablePlanRespVO>> getReceivablePlanReport(@Valid CrmReceivablePlanReportReqVO reqVO) {
+        PageResult<CrmReceivablePlanDO> pageResult = receivablePlanService.getReceivablePlanReport(reqVO);
+        return success(new PageResult<>(buildReceivableDetailList(pageResult.getList()), pageResult.getTotal()));
     }
 
 }

@@ -16,14 +16,27 @@ export interface ReceivablePlanVO {
   ownerUserId: number
   ownerUserName?: string
   remark: string
-  creator: string // 创建人
-  creatorName?: string // 创建人名称
-  createTime: Date // 创建时间
-  updateTime: Date // 更新时间
+  creator: string
+  creatorName?: string
+  createTime: Date
+  updateTime: Date
+  status: number
+  statusName?: string
+  overdueDays?: number
+  percent?: number
   receivable?: {
     price: number
     returnTime: Date
   }
+}
+
+export interface ReceivablePlanSummaryVO {
+  month: string
+  targetPrice: number
+  completedPrice: number
+  completionRate: number
+  uncompletedPrice: number
+  invoicedPrice: number
 }
 
 // 查询回款计划列表
@@ -71,4 +84,19 @@ export const exportReceivablePlan = async (params) => {
 // 获得待回款提醒数量
 export const getReceivablePlanRemindCount = async () => {
   return await request.get({ url: '/crm/receivable-plan/remind-count' })
+}
+
+// 批量创建多期回款计划
+export const batchCreateReceivablePlan = async (data) => {
+  return await request.post({ url: '/crm/receivable-plan/batch-create', data })
+}
+
+// 获得回款计划汇总统计
+export const getReceivablePlanSummary = async (params) => {
+  return await request.get({ url: '/crm/receivable-plan/summary', params })
+}
+
+// 获得回款计划报表
+export const getReceivablePlanReport = async (params) => {
+  return await request.get({ url: '/crm/receivable-plan/report', params })
 }

@@ -34,4 +34,12 @@ public interface CrmBizNoPrefix {
     String TASK = "RW";
     /** 工作报告 */
     String REPORT = "BG";
+    /** 订单 */
+    String ORDER = "DD";
+    /** 费用 */
+    String EXPENSE = "FY";
+    /** 下载二维码 */
+    String DOWNLOAD_CODE = "EWM";
+    /** 其他 */
+    String OTHER = "QT";
 }

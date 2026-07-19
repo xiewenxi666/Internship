@@ -5,6 +5,7 @@ import com.meession.etm.framework.common.pojo.PageResult;
 import com.meession.etm.framework.mybatis.core.mapper.BaseMapperX;
 import com.meession.etm.framework.mybatis.core.query.LambdaQueryWrapperX;
 import com.meession.etm.framework.mybatis.core.query.MPJLambdaWrapperX;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivableApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.receivable.CrmReceivablePageReqVO;
 import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivableDO;
@@ -92,6 +93,29 @@ public interface CrmReceivableMapper extends BaseMapperX<CrmReceivableDO> {
 
     default Long selectCountByContractId(Long contractId) {
         return selectCount(CrmReceivableDO::getContractId, contractId);
+    }
+
+    default List<CrmReceivableDO> selectListForReport(Integer year, Long ownerUserId) {
+        LambdaQueryWrapperX<CrmReceivableDO> query = new LambdaQueryWrapperX<CrmReceivableDO>()
+                .orderByDesc(CrmReceivableDO::getId);
+        if (ownerUserId != null) {
+            query.eq(CrmReceivableDO::getOwnerUserId, ownerUserId);
+        }
+        if (year != null) {
+            query.apply("YEAR(return_time) = {0}", year);
+        }
+        return selectList(query);
+    }
+
+    default PageResult<CrmReceivableDO> selectPageForApproval(CrmReceivableApprovalPageReqVO pageReqVO, Long userId) {
+        MPJLambdaWrapperX<CrmReceivableDO> query = new MPJLambdaWrapperX<>();
+        CrmPermissionUtils.appendPermissionCondition(query, CrmBizTypeEnum.CRM_RECEIVABLE.getType(),
+                CrmReceivableDO::getId, userId, pageReqVO.getSceneType());
+        query.selectAll(CrmReceivableDO.class)
+                .eqIfPresent(CrmReceivableDO::getNo, pageReqVO.getNo())
+                .eqIfPresent(CrmReceivableDO::getAuditStatus, pageReqVO.getAuditStatus())
+                .orderByDesc(CrmReceivableDO::getId);
+        return selectJoinPage(pageReqVO, CrmReceivableDO.class, query);
     }
 
 }

@@ -1,7 +1,12 @@
 <template>
   <ReceivableDetailsHeader v-loading="loading" :receivable="receivable">
-    <el-button v-if="permissionListRef?.validateWrite" @click="openForm('update', receivable.id)">
-      {{ t('common.edit') }}
+    <el-button
+      v-if="receivable.auditStatus === 0 || receivable.auditStatus === 30 || receivable.auditStatus === 40 || receivable.auditStatus === 50"
+      v-hasPermi="['crm:receivable:update']"
+      type="primary"
+      @click="openForm('update', receivable.id)"
+    >
+      编辑
     </el-button>
   </ReceivableDetailsHeader>
   <el-col>
@@ -24,40 +29,49 @@
     </el-tabs>
   </el-col>
 
-  <!-- 表单弹窗：添加/修改 -->
-  <ReceivableForm ref="formRef" @success="getReceivable(receivable.id)" />
+  <ReceivableForm ref="formRef" @success="onFormSuccess" />
 </template>
 <script lang="ts" setup>
 import { useTagsViewStore } from '@/store/modules/tagsView'
 import * as ReceivableApi from '@/api/crm/receivable'
 import ReceivableDetailsHeader from './ReceivableDetailsHeader.vue'
 import ReceivableDetailsInfo from './ReceivableDetailsInfo.vue'
-import PermissionList from '@/views/crm/permission/components/PermissionList.vue' // 团队成员列表（权限）
+import PermissionList from '@/views/crm/permission/components/PermissionList.vue'
 import { BizTypeEnum } from '@/api/crm/permission'
 import { OperateLogVO } from '@/api/system/operatelog'
 import { getOperateLogPage } from '@/api/crm/operateLog'
 import ReceivableForm from '@/views/crm/receivable/ReceivableForm.vue'
 
-defineOptions({ name: 'CrmReceivablePlanDetail' })
-const props = defineProps<{ id?: number }>()
+defineOptions({ name: 'CrmReceivableDetail' })
+const props = defineProps<{ id?: number | string }>()
 
-const { t } = useI18n('crm') // 国际化
+const { t } = useI18n('crm')
 const route = useRoute()
 const message = useMessage()
-const receivableId = ref(0) // 回款编号
-const loading = ref(true) // 加载中
-const receivable = ref<ReceivableApi.ReceivableVO>({} as ReceivableApi.ReceivableVO) // 回款详情
-const permissionListRef = ref<InstanceType<typeof PermissionList>>() // 团队成员列表 Ref
+const receivableId = ref(0)
+const loading = ref(true)
+const receivable = ref<ReceivableApi.ReceivableVO>({} as ReceivableApi.ReceivableVO)
+const permissionListRef = ref<InstanceType<typeof PermissionList>>()
 
 /** 获取详情 */
 const getReceivable = async (id: number) => {
   loading.value = true
   try {
     receivable.value = await ReceivableApi.getReceivable(id)
+    if (receivable.value.no) {
+      updateTagTitle(receivable.value.no)
+    }
     await getOperateLog(id)
   } finally {
     loading.value = false
   }
+}
+
+/** 更新标签页标题为回款编号 */
+const { currentRoute } = useRouter()
+const tagsViewStore = useTagsViewStore()
+const updateTagTitle = (title: string) => {
+  tagsViewStore.updateVisitedView({ ...unref(currentRoute), title })
 }
 
 /** 编辑 */
@@ -66,8 +80,13 @@ const openForm = (type: string, id?: number) => {
   formRef.value.open(type, id)
 }
 
+/** 表单保存成功后回调 */
+const onFormSuccess = () => {
+  getReceivable(receivableId.value)
+}
+
 /** 获取操作日志 */
-const logList = ref<OperateLogVO[]>([]) // 操作日志列表
+const logList = ref<OperateLogVO[]>([])
 const getOperateLog = async (receivableId: number) => {
   if (!receivableId) {
     return
@@ -80,8 +99,7 @@ const getOperateLog = async (receivableId: number) => {
 }
 
 /** 关闭窗口 */
-const { delView } = useTagsViewStore() // 视图操作
-const { currentRoute } = useRouter() // 路由
+const { delView } = useTagsViewStore()
 const close = () => {
   delView(unref(currentRoute))
 }
@@ -89,7 +107,7 @@ const close = () => {
 /** 初始化 */
 const { params } = useRoute()
 onMounted(async () => {
-  const id = props.id || route.params.id
+  const id = Number(props.id || route.params.id)
   if (!id) {
     message.warning(t('receivable.paramError'))
     close()

@@ -70,6 +70,15 @@
               <Icon class="mr-5px" icon="ep:download" />
               {{ t('common.export') }}
             </el-button>
+            <el-button
+              v-hasPermi="['crm:receivable:query']"
+              plain
+              type="info"
+              @click="goToReport"
+            >
+              <Icon class="mr-5px" icon="ep:document" />
+              回款记录报表
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -162,35 +171,45 @@
           <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
         </template>
       </el-table-column>
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="180">
+      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="220">
         <template #default="scope">
           <el-button
+            v-hasPermi="['crm:receivable:query']"
+            link
+            type="primary"
+            @click="openDetail(scope.row.id)"
+          >
+            {{ t('common.detail') }}
+          </el-button>
+          <el-button
+            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
             v-hasPermi="['crm:receivable:update']"
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
           >
-            {{ t('common.edit') }}
+            编辑
           </el-button>
           <el-button
-            v-if="scope.row.auditStatus === 0"
+            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
             v-hasPermi="['crm:receivable:update']"
             link
-            type="primary"
-            @click="handleSubmit(scope.row)"
+            type="success"
+            @click="handleSubmit(scope.row.id)"
           >
-            {{ t('contract.submitAudit') }}
+            提交审核
           </el-button>
           <el-button
-            v-else
+            v-if="scope.row.auditStatus === 10"
             v-hasPermi="['crm:receivable:update']"
             link
-            type="primary"
-            @click="handleProcessDetail(scope.row)"
+            type="danger"
+            @click="handleCancel(scope.row.id)"
           >
-            {{ t('contract.viewApproval') }}
+            撤销审批
           </el-button>
           <el-button
+            v-if="scope.row.auditStatus !== 10 && scope.row.auditStatus !== 20"
             v-hasPermi="['crm:receivable:delete']"
             link
             type="danger"
@@ -281,27 +300,36 @@ const openForm = (type: string, id?: number) => {
 /** 删除按钮操作 */
 const handleDelete = async (id: number) => {
   try {
-    // 删除的二次确认
     await message.delConfirm()
-    // 发起删除
     await ReceivableApi.deleteReceivable(id)
     message.success(t('common.delSuccess'))
-    // 刷新列表
     await getList()
   } catch {}
 }
 
-/** 提交审核 **/
-const handleSubmit = async (row: ReceivableApi.ReceivableVO) => {
-  await message.confirm(t('receivable.submitAuditConfirm', { no: row.no }))
-  await ReceivableApi.submitReceivable(row.id)
-  message.success(t('receivable.submitAuditSuccess'))
-  await getList()
+/** 提交审核 */
+const handleSubmit = async (id: number) => {
+  try {
+    await message.confirm('确定提交该回款审核吗？')
+    await ReceivableApi.submitReceivable(id)
+    message.success('提交审核成功')
+    await getList()
+  } catch {}
 }
 
-/** 查看审批 */
-const handleProcessDetail = (row: ReceivableApi.ReceivableVO) => {
-  push({ name: 'BpmProcessInstanceDetail', query: { id: row.processInstanceId } })
+/** 撤销审批 */
+const handleCancel = async (id: number) => {
+  try {
+    const { value: reason } = await ElMessageBox.prompt('请输入撤销原因（可不填）：', '撤销审批', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPlaceholder: '请输入原因',
+      inputType: 'textarea'
+    })
+    await ReceivableApi.cancelReceivable(id, reason || undefined)
+    message.success('撤销审批成功')
+    await getList()
+  } catch {}
 }
 
 /** 打开回款详情 */
@@ -333,6 +361,11 @@ const handleExport = async () => {
   } finally {
     exportLoading.value = false
   }
+}
+
+/** 查看回款记录报表 */
+const goToReport = () => {
+  push({ name: 'CrmReceivableReport' })
 }
 
 /** 初始化 **/

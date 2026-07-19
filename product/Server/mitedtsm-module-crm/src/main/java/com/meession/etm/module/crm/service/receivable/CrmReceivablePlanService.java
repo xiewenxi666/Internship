@@ -1,8 +1,12 @@
 package com.meession.etm.module.crm.service.receivable;
 
 import com.meession.etm.framework.common.pojo.PageResult;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanBatchCreateReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanPageReqVO;
 import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSaveReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSummaryReqVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSummaryRespVO;
+import com.meession.etm.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanReportReqVO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.meession.etm.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
 import jakarta.validation.Valid;
@@ -91,5 +95,29 @@ public interface CrmReceivablePlanService {
      * @return 提醒数量
      */
     Long getReceivablePlanRemindCount(Long userId);
+
+    /**
+     * 批量创建多期回款计划
+     *
+     * @param createReqVO 批量创建信息
+     * @return 编号列表
+     */
+    List<Long> batchCreateReceivablePlan(@Valid CrmReceivablePlanBatchCreateReqVO createReqVO);
+
+    /**
+     * 获得回款计划汇总统计
+     *
+     * @param reqVO 查询条件
+     * @return 汇总统计列表
+     */
+    List<CrmReceivablePlanSummaryRespVO> getReceivablePlanSummary(CrmReceivablePlanSummaryReqVO reqVO);
+
+    /**
+     * 获得回款计划报表分页
+     *
+     * @param reqVO 查询条件
+     * @return 回款计划分页
+     */
+    PageResult<CrmReceivablePlanDO> getReceivablePlanReport(CrmReceivablePlanReportReqVO reqVO);
 
 }

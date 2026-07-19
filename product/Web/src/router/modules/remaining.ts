@@ -699,6 +699,193 @@ const remainingRouter: AppRouteRecordRaw[] = [
           activeMenu: '/crm/product'
         },
         component: () => import('@/views/crm/product/detail/index.vue')
+      },
+      {
+        path: 'receivable-plan/summary',
+        name: 'CrmReceivablePlanSummary',
+        meta: {
+          title: t('router.crmReceivablePlanSummary'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable-plan'
+        },
+        component: () => import('@/views/crm/receivable/plan/summary/index.vue')
+      },
+      {
+        path: 'receivable-plan/report',
+        name: 'CrmReceivablePlanReport',
+        meta: {
+          title: t('router.crmReceivablePlanReport'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable-plan'
+        },
+        component: () => import('@/views/crm/receivable/plan/report/index.vue')
+      },
+      {
+        path: 'receivable/report',
+        name: 'CrmReceivableReport',
+        meta: {
+          title: t('router.crmReceivableReport'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable'
+        },
+        component: () => import('@/views/crm/receivable/report/index.vue')
+      },
+      {
+        path: 'receivable/approval',
+        name: 'CrmReceivableApproval',
+        meta: {
+          title: t('router.crmReceivableApproval'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable/approval'
+        },
+        component: () => import('@/views/crm/receivable/approval/index.vue')
+      },
+      {
+        path: 'receivable/approval/detail/:id',
+        name: 'CrmReceivableApprovalDetail',
+        meta: {
+          title: t('router.crmReceivableApprovalDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/receivable/approval'
+        },
+        component: () => import('@/views/crm/receivable/approval/detail/index.vue')
+      },
+      {
+        path: 'invoice/detail/:id',
+        name: 'CrmInvoiceDetail',
+        meta: {
+          title: t('router.crmInvoiceDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/invoice'
+        },
+        component: () => import('@/views/crm/invoice/detail/index.vue')
+      },
+      {
+        path: 'invoice/record',
+        name: 'CrmInvoiceRecord',
+        meta: {
+          title: t('router.crmInvoiceRecord'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/invoice/record'
+        },
+        component: () => import('@/views/crm/invoice/record/index.vue')
+      },
+      {
+        path: 'invoice/report',
+        name: 'CrmInvoiceReport',
+        meta: {
+          title: t('router.crmInvoiceReport'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/invoice/record'
+        },
+        component: () => import('@/views/crm/invoice/report/index.vue')
+      },
+      {
+        path: 'reimbursement/detail/:id',
+        name: 'CrmReimbursementDetail',
+        meta: {
+          title: t('router.crmReimbursementDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/reimbursement'
+        },
+        component: () => import('@/views/crm/reimbursement/detail/index.vue')
+      },
+      {
+        path: 'reimbursement/approval',
+        name: 'CrmReimbursementApproval',
+        meta: {
+          title: t('router.crmReimbursementApproval'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/reimbursement/approval'
+        },
+        component: () => import('@/views/crm/reimbursement/approval/index.vue')
+      },
+      {
+        path: 'reimbursement/approval/detail/:id',
+        name: 'CrmReimbursementApprovalDetail',
+        meta: {
+          title: t('router.crmReimbursementApprovalDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/reimbursement/approval'
+        },
+        component: () => import('@/views/crm/reimbursement/approval/detail/index.vue')
+      },
+      {
+        path: 'refund/detail/:id',
+        name: 'CrmRefundDetail',
+        meta: {
+          title: t('router.crmRefundDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund'
+        },
+        component: () => import('@/views/crm/refund/detail/index.vue')
+      },
+      {
+        path: 'refund/approval',
+        name: 'CrmRefundApproval',
+        meta: {
+          title: t('router.crmRefundApproval'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund/approval'
+        },
+        component: () => import('@/views/crm/refund/approval/index.vue')
+      },
+      {
+        path: 'refund/approval/detail/:id',
+        name: 'CrmRefundApprovalDetail',
+        meta: {
+          title: t('router.crmRefundApprovalDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund/approval'
+        },
+        component: () => import('@/views/crm/refund/approval/detail/index.vue')
+      },
+      {
+        path: 'refund/record',
+        name: 'CrmRefundRecord',
+        meta: {
+          title: t('router.crmRefundRecord'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/refund/record'
+        },
+        component: () => import('@/views/crm/refund/record/index.vue')
+      },
+      {
+        path: 'expense/detail/:id',
+        name: 'CrmExpenseDetail',
+        meta: {
+          title: t('router.crmExpenseDetail'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/expense'
+        },
+        component: () => import('@/views/crm/expense/detail/index.vue')
+      },
+      {
+        path: 'expense/record',
+        name: 'CrmExpenseRecord',
+        meta: {
+          title: t('router.crmExpenseRecord'),
+          noCache: true,
+          hidden: true,
+          activeMenu: '/crm/expense/record'
+        },
+        component: () => import('@/views/crm/expense/record/index.vue')
       }
     ]
   },
