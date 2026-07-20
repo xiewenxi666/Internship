@@ -1,8 +1,8 @@
 package com.meession.etm.module.crm.dal.dataobject.refund;
 
 import com.meession.etm.framework.mybatis.core.dataobject.BaseDO;
-import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.system.api.user.dto.AdminUserRespDTO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -44,11 +44,11 @@ public class CrmRefundDO extends BaseDO {
      */
     private Long customerId;
     /**
-     * 合同编号
+     * 关联订单编号
      *
-     * 关联 {@link CrmContractDO#getId()}
+     * 关联 {@link CrmOrderDO#getId()}
      */
-    private Long contractId;
+    private Long orderId;
     /**
      * 负责人编号，关联 {@link AdminUserRespDTO#getId()}
      */

@@ -14,16 +14,17 @@ import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundAp
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundPageReqVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundReportReqVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundSaveReqVO;
-import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
+import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.dal.dataobject.refund.CrmRefundDO;
 import com.meession.etm.module.crm.dal.mysql.refund.CrmRefundMapper;
 import com.meession.etm.module.crm.dal.redis.no.CrmBizNoPrefix;
 import com.meession.etm.module.crm.dal.redis.no.CrmNoRedisDAO;
 import com.meession.etm.module.crm.enums.common.CrmAuditStatusEnum;
 import com.meession.etm.module.crm.enums.common.CrmBizTypeEnum;
+import com.meession.etm.module.crm.enums.order.CrmOrderStatusEnum;
 import com.meession.etm.module.crm.enums.permission.CrmPermissionLevelEnum;
 import com.meession.etm.module.crm.framework.permission.core.annotations.CrmPermission;
-import com.meession.etm.module.crm.service.contract.CrmContractService;
+import com.meession.etm.module.crm.service.order.CrmOrderService;
 import com.meession.etm.module.crm.service.permission.CrmPermissionService;
 import com.meession.etm.module.crm.service.permission.bo.CrmPermissionCreateReqBO;
 import com.meession.etm.module.system.api.user.AdminUserApi;
@@ -66,7 +67,7 @@ public class CrmRefundServiceImpl implements CrmRefundService {
     private CrmNoRedisDAO noRedisDAO;
 
     @Resource
-    private CrmContractService contractService;
+    private CrmOrderService orderService;
     @Resource
     private CrmPermissionService permissionService;
 
@@ -107,12 +108,12 @@ public class CrmRefundServiceImpl implements CrmRefundService {
         if (reqVO.getOwnerUserId() != null) {
             adminUserApi.validateUser(reqVO.getOwnerUserId());
         }
-        if (reqVO.getContractId() != null) {
-            CrmContractDO contract = contractService.validateContract(reqVO.getContractId());
-            if (ObjectUtil.notEqual(contract.getAuditStatus(), CrmAuditStatusEnum.APPROVE.getStatus())) {
+        if (reqVO.getOrderId() != null) {
+            CrmOrderDO order = orderService.validateOrder(reqVO.getOrderId());
+            if (ObjUtil.notEqual(order.getStatus(), CrmOrderStatusEnum.APPROVED.getStatus())) {
                 throw exception(REFUND_CREATE_FAIL_CONTRACT_NOT_APPROVE);
             }
-            reqVO.setCustomerId(contract.getCustomerId());
+            reqVO.setCustomerId(order.getCustomerId());
         }
     }
 
@@ -123,11 +124,11 @@ public class CrmRefundServiceImpl implements CrmRefundService {
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_REFUND, bizId = "#updateReqVO.id", level = CrmPermissionLevelEnum.WRITE)
     public void updateRefund(CrmRefundSaveReqVO updateReqVO) {
         Assert.notNull(updateReqVO.getId(), "退款编号不能为空");
-        updateReqVO.setOwnerUserId(null).setCustomerId(null).setContractId(null);
+        updateReqVO.setOwnerUserId(null).setCustomerId(null).setOrderId(null);
         // 1.1 校验存在
         CrmRefundDO oldRefund = validateRefundExists(updateReqVO.getId());
         updateReqVO.setOwnerUserId(oldRefund.getOwnerUserId()).setCustomerId(oldRefund.getCustomerId())
-                .setContractId(oldRefund.getContractId());
+                .setOrderId(oldRefund.getOrderId());
 
         // 1.2 只有草稿、被驳回、被否决、已撤销，可以编辑
         if (!ObjectUtils.equalsAny(oldRefund.getAuditStatus(), CrmAuditStatusEnum.DRAFT.getStatus(),

@@ -3,13 +3,9 @@ import request from '@/config/axios'
 export interface InvoiceVO {
   id: number
   no: string
+  orderId?: number
   orderNo?: string
-  contractId?: number
-  contract?: {
-    id?: number
-    name?: string
-    no: string
-  }
+  orderName?: string
   customerId?: number
   customerName?: string
   invoiceDate: Date

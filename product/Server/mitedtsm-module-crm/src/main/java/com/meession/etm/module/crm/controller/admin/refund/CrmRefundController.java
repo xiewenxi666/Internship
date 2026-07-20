@@ -9,16 +9,16 @@ import com.meession.etm.framework.common.util.collection.MapUtils;
 import com.meession.etm.framework.common.util.number.NumberUtils;
 import com.meession.etm.framework.common.util.object.BeanUtils;
 import com.meession.etm.framework.excel.core.util.ExcelUtils;
-import com.meession.etm.module.crm.controller.admin.contract.vo.contract.CrmContractRespVO;
+import com.meession.etm.module.crm.controller.admin.order.vo.order.CrmOrderRespVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundApprovalPageReqVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundPageReqVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundReportReqVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundRespVO;
 import com.meession.etm.module.crm.controller.admin.refund.vo.refund.CrmRefundSaveReqVO;
-import com.meession.etm.module.crm.dal.dataobject.contract.CrmContractDO;
 import com.meession.etm.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import com.meession.etm.module.crm.dal.dataobject.order.CrmOrderDO;
 import com.meession.etm.module.crm.dal.dataobject.refund.CrmRefundDO;
-import com.meession.etm.module.crm.service.contract.CrmContractService;
+import com.meession.etm.module.crm.service.order.CrmOrderService;
 import com.meession.etm.module.crm.service.customer.CrmCustomerService;
 import com.meession.etm.module.crm.service.refund.CrmRefundService;
 import com.meession.etm.module.system.api.dept.DeptApi;
@@ -58,7 +58,7 @@ public class CrmRefundController {
     @Resource
     private CrmRefundService refundService;
     @Resource
-    private CrmContractService contractService;
+    private CrmOrderService orderService;
     @Resource
     private CrmCustomerService customerService;
 
@@ -146,12 +146,11 @@ public class CrmRefundController {
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(convertListByFlatMap(refundList,
                 contact -> Stream.of(NumberUtils.parseLong(contact.getCreator()), contact.getOwnerUserId())));
         Map<Long, DeptRespDTO> deptMap = deptApi.getDeptMap(convertSet(userMap.values(), AdminUserRespDTO::getDeptId));
-        // 1.3 获得合同列表
-        Map<Long, CrmContractDO> contractMap = contractService.getContractMap(
-                convertSet(refundList, CrmRefundDO::getContractId));
-        // 2. 拼接结果
+        // get order list
+        Map<Long, CrmOrderDO> orderMap = orderService.getOrderMap(
+                convertSet(refundList, CrmRefundDO::getOrderId));
+        // build result
         return BeanUtils.toBean(refundList, CrmRefundRespVO.class, (refundVO) -> {
-            // 2.1 拼接客户名称
             findAndThen(customerMap, refundVO.getCustomerId(), customer -> refundVO.setCustomerName(customer.getName()));
             // 2.2 拼接负责人、创建人名称
             MapUtils.findAndThen(userMap, NumberUtils.parseLong(refundVO.getCreator()),
@@ -160,9 +159,9 @@ public class CrmRefundController {
                 refundVO.setOwnerUserName(user.getNickname());
                 MapUtils.findAndThen(deptMap, user.getDeptId(), dept -> refundVO.setOwnerUserDeptName(dept.getName()));
             });
-            // 2.3 拼接合同信息
-            findAndThen(contractMap, refundVO.getContractId(), contract ->
-                    refundVO.setContract(BeanUtils.toBean(contract, CrmContractRespVO.class)));
+            // 拼接订单信息
+            findAndThen(orderMap, refundVO.getOrderId(), order ->
+                    refundVO.setOrder(BeanUtils.toBean(order, CrmOrderRespVO.class)));
         });
     }
 

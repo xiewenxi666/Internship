@@ -31,7 +31,7 @@ public interface CrmRefundMapper extends BaseMapperX<CrmRefundDO> {
         return selectPage(reqVO, new LambdaQueryWrapperX<CrmRefundDO>()
                 .eq(CrmRefundDO::getCustomerId, reqVO.getCustomerId())
                 .eqIfPresent(CrmRefundDO::getNo, reqVO.getNo())
-                .eqIfPresent(CrmRefundDO::getContractId, reqVO.getContractId())
+                .eqIfPresent(CrmRefundDO::getOrderId, reqVO.getOrderId())
                 .orderByDesc(CrmRefundDO::getId));
     }
 
@@ -41,7 +41,7 @@ public interface CrmRefundMapper extends BaseMapperX<CrmRefundDO> {
                 CrmRefundDO::getId, userId, pageReqVO.getSceneType());
         query.selectAll(CrmRefundDO.class)
                 .eqIfPresent(CrmRefundDO::getNo, pageReqVO.getNo())
-                .eqIfPresent(CrmRefundDO::getContractId, pageReqVO.getContractId())
+                .eqIfPresent(CrmRefundDO::getOrderId, pageReqVO.getOrderId())
                 .eqIfPresent(CrmRefundDO::getAuditStatus, pageReqVO.getAuditStatus())
                 .orderByDesc(CrmRefundDO::getId);
         return selectJoinPage(pageReqVO, CrmRefundDO.class, query);

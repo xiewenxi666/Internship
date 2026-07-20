@@ -85,7 +85,7 @@ public class BpmProcessDefinitionServiceImpl implements BpmProcessDefinitionServ
     public ProcessDefinition getActiveProcessDefinition(String key) {
         return repositoryService.createProcessDefinitionQuery()
                 .processDefinitionTenantId(FlowableUtils.getTenantId())
-                .processDefinitionKey(key).active().singleResult();
+                .processDefinitionKey(key).active().latestVersion().singleResult();
     }
 
     @Override

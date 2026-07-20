@@ -21,8 +21,8 @@ public class CrmRefundPageReqVO extends PageParam {
     @Schema(description = "客户编号", example = "4963")
     private Long customerId;
 
-    @Schema(description = "合同编号", example = "4963")
-    private Long contractId;
+    @Schema(description = "关联订单编号", example = "4963")
+    private Long orderId;
 
     @Schema(description = "场景类型", example = "1")
     @InEnum(CrmSceneTypeEnum.class)

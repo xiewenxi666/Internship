@@ -91,7 +91,7 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[], parentPath?: st
     // 强制隐藏指定路由（回款计划、审批中心下的发起流程）
     const forceHiddenComponents = ['bpm/processInstance/create/index', 'crm/receivable/plan/index']
     if (route.component && forceHiddenComponents.includes(route.component)) {
-      meta.hidden = true
+      meta.hidden = false
     }
     // 特殊逻辑：如果后端配置的 MenuDO.component 包含 ?，则表示需要传递参数
     // 此时，我们需要解析参数，并且将参数放到 meta.query 中

@@ -25,10 +25,10 @@ public class CrmRefundSaveReqVO {
     @DiffLogField(name = "客户", function = CrmCustomerParseFunction.NAME)
     private Long customerId;
 
-    @Schema(description = "合同编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @DiffLogField(name = "合同", function = CrmContractParseFunction.NAME)
-    @NotNull(message = "合同编号不能为空")
-    private Long contractId;
+    @Schema(description = "关联订单编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @DiffLogField(name = "关联订单", function = CrmOrderParseFunction.NAME)
+    @NotNull(message = "关联订单不能为空")
+    private Long orderId;
 
     @Schema(description = "退款内容/原因", requiredMode = Schema.RequiredMode.REQUIRED, example = "产品缺陷退款")
     @DiffLogField(name = "退款内容")

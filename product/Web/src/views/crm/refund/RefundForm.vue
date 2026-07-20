@@ -51,18 +51,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="关联订单" prop="contractId">
+          <el-form-item label="关联订单" prop="orderId">
             <el-select
-              v-model="formData.contractId"
+              v-model="formData.orderId"
               :disabled="formType !== 'create' || !formData.customerId"
               class="w-1/1"
               filterable
               placeholder="请选择订单"
             >
               <el-option
-                v-for="data in contractList"
+                v-for="data in orderList"
                 :key="data.id"
-                :disabled="data.auditStatus !== 20"
+                :disabled="data.status !== 20"
                 :label="data.name"
                 :value="data.id!"
               />
@@ -135,7 +135,7 @@ import * as RefundApi from '@/api/crm/refund'
 import { RefundVO } from '@/api/crm/refund'
 import * as UserApi from '@/api/system/user'
 import * as CustomerApi from '@/api/crm/customer'
-import * as ContractApi from '@/api/crm/contract'
+import * as OrderApi from '@/api/crm/order'
 import { useUserStore } from '@/store/modules/user'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
@@ -149,13 +149,13 @@ const formType = ref('')
 const formData = ref<RefundApi.RefundVO>({} as RefundApi.RefundVO)
 const formRules = reactive({
   customerId: [{ required: true, message: '请选择客户', trigger: 'blur' }],
-  contractId: [{ required: true, message: '请选择订单', trigger: 'blur' }],
+  orderId: [{ required: true, message: '请选择订单', trigger: 'blur' }],
   refundDate: [{ required: true, message: '请选择退款日期', trigger: 'blur' }],
   price: [{ required: true, message: '请输入退款金额', trigger: 'blur' }]
 })
 const formRef = ref()
 const customerList = ref<CustomerApi.CustomerVO[]>([])
-const contractList = ref<ContractApi.ContractVO[]>([])
+const orderList = ref<OrderApi.OrderVO[]>([])
 
 const open = async (type: string, id?: number) => {
   dialogVisible.value = true
@@ -168,7 +168,7 @@ const open = async (type: string, id?: number) => {
       const data = (await RefundApi.getRefund(id)) as RefundVO
       formData.value = data
       await handleCustomerChange(data.customerId!)
-      formData.value.contractId = data?.contract?.id
+      formData.value.orderId = data?.order?.id
     } finally {
       formLoading.value = false
     }
@@ -209,10 +209,10 @@ const resetForm = () => {
 }
 
 const handleCustomerChange = async (customerId: number) => {
-  formData.value.contractId = undefined
+  formData.value.orderId = undefined
   if (customerId) {
-    contractList.value = []
-    contractList.value = await ContractApi.getContractSimpleList(customerId)
+    orderList.value = []
+    orderList.value = await OrderApi.getOrderSimpleList(customerId)
   }
 }
 </script>

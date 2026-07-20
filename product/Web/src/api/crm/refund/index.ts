@@ -5,8 +5,8 @@ export interface RefundVO {
   no: string
   customerId?: number
   customerName?: string
-  contractId?: number
-  contract?: {
+  orderId?: number
+  order?: {
     id?: number
     name?: string
     no: string

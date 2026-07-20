@@ -1,6 +1,23 @@
 server:
   port: 8080
 
+--- #################### 邮件相关配置（营销模块需要） ####################
+spring:
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 3057360294@qq.com
+    password: sjsnvdsiozfyddgb
+    default-encoding: utf-8
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
 --- #################### 数据库相关配置 ####################
 spring:
   autoconfigure:
@@ -65,9 +82,9 @@ spring:
           #          password: Mitedtsm@2024 # OpenGauss 连接的示例
         slave: # 模拟从库，可根据自己需要修改
           lazy: true # 开启懒加载，保证启动速度
-          url: jdbc:mysql://127.0.0.1:3306/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true&useUnicode=true&characterEncoding=UTF-8
+          url: jdbc:mysql://mysql:3306/mitedtsm_database?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true&useUnicode=true&characterEncoding=UTF-8
           username: root
-          password: 123456
+          password: 1234
         tdengine: # IoT 数据库（需要 IoT 物联网再开启噢！）
           lazy: true # 开启懒加载，保证启动速度
           url: jdbc:TAOS-WS://tdengine:6041/mitedtsm_database?varcharAsString=true

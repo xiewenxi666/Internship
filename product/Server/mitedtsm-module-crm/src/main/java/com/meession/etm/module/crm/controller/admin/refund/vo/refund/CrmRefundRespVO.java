@@ -2,7 +2,7 @@ package com.meession.etm.module.crm.controller.admin.refund.vo.refund;
 
 import com.meession.etm.framework.excel.core.annotations.DictFormat;
 import com.meession.etm.framework.excel.core.convert.DictConvert;
-import com.meession.etm.module.crm.controller.admin.contract.vo.contract.CrmContractRespVO;
+import com.meession.etm.module.crm.controller.admin.order.vo.order.CrmOrderRespVO;
 import com.meession.etm.module.crm.enums.DictTypeConstants;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
@@ -48,11 +48,11 @@ public class CrmRefundRespVO {
     @ExcelProperty("客户名字")
     private String customerName;
 
-    @Schema(description = "合同编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @ExcelProperty("合同编号")
-    private Long contractId;
-    @Schema(description = "合同信息")
-    private CrmContractRespVO contract;
+    @Schema(description = "关联订单编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @ExcelProperty("关联订单编号")
+    private Long orderId;
+    @Schema(description = "订单信息")
+    private CrmOrderRespVO order;
 
     @Schema(description = "负责人的用户编号", example = "25682")
     private Long ownerUserId;

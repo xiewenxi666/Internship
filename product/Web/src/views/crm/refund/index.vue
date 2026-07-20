@@ -99,14 +99,14 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="关联订单" prop="contractNo" min-width="180">
+      <el-table-column align="center" label="关联订单" prop="orderNo" min-width="180">
         <template #default="scope">
           <el-link
             :underline="false"
             type="primary"
-            @click="openContractDetail(scope.row.contractId)"
+            @click="openOrderDetail(scope.row.orderId)"
           >
-            {{ scope.row.contract?.no }}
+            {{ scope.row.order?.no }}
           </el-link>
         </template>
       </el-table-column>
@@ -304,8 +304,8 @@ const openCustomerDetail = (id: number) => {
   push({ name: 'CrmCustomerDetail', params: { id } })
 }
 
-const openContractDetail = (id: number) => {
-  push({ name: 'CrmContractDetail', params: { id } })
+const openOrderDetail = (id: number) => {
+  push({ name: 'CrmOrderDetail', params: { id } })
 }
 
 const handleExport = async () => {

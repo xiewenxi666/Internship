@@ -28,16 +28,17 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="关联订单" prop="contractId">
+          <el-form-item label="关联订单" prop="orderId">
             <el-select
-              v-model="formData.contractId"
+              v-model="formData.orderId"
               :disabled="formType !== 'create'"
               class="w-1/1"
               filterable
               placeholder="请选择订单"
+              @change="onOrderChange"
             >
               <el-option
-                v-for="data in contractList"
+                v-for="data in orderList"
                 :key="data.id"
                 :label="data.name"
                 :value="data.id!"
@@ -124,7 +125,7 @@
 import * as InvoiceApi from '@/api/crm/invoice'
 import { InvoiceVO } from '@/api/crm/invoice'
 import * as UserApi from '@/api/system/user'
-import * as ContractApi from '@/api/crm/contract'
+import * as OrderApi from '@/api/crm/order'
 import { useUserStore } from '@/store/modules/user'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
@@ -138,7 +139,7 @@ const formLoading = ref(false)
 const formType = ref('')
 const formData = ref<InvoiceApi.InvoiceVO>({} as InvoiceApi.InvoiceVO)
 const formRules = reactive({
-  contractId: [{ required: true, message: '关联订单不能为空', trigger: 'blur' }],
+  orderId: [{ required: true, message: '关联订单不能为空', trigger: 'blur' }],
   type: [{ required: true, message: '票据类型不能为空', trigger: 'blur' }],
   invoiceDate: [{ required: true, message: '开票日期不能为空', trigger: 'blur' }],
   price: [{ required: true, message: '开票金额不能为空', trigger: 'blur' }],
@@ -146,7 +147,7 @@ const formRules = reactive({
   ownerUserId: [{ required: true, message: '订单所属人员不能为空', trigger: 'blur' }]
 })
 const formRef = ref()
-const contractList = ref<ContractApi.ContractVO[]>([])
+const orderList = ref<OrderApi.OrderVO[]>([])
 
 const open = async (
   type: string,
@@ -166,7 +167,8 @@ const open = async (
     }
   }
   userOptions.value = await UserApi.getSimpleUserList()
-  contractList.value = await ContractApi.getContractSimpleList()
+  const { list } = await OrderApi.getOrderPage({ pageSize: 200 })
+  orderList.value = list || []
   if (formType.value === 'create') {
     formData.value.ownerUserId = useUserStore().getUser.id
     formData.value.handlerUserId = useUserStore().getUser.id
@@ -199,5 +201,13 @@ const submitForm = async () => {
 const resetForm = () => {
   formData.value = {} as InvoiceApi.InvoiceVO
   formRef.value?.resetFields()
+}
+
+const onOrderChange = (orderId: number) => {
+  const order = orderList.value.find((item) => item.id === orderId)
+  if (order) {
+    formData.value.orderNo = order.no
+    formData.value.orderName = order.name
+  }
 }
 </script>
