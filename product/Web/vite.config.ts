@@ -35,6 +35,10 @@ export default ({command, mode}: ConfigEnv): UserConfig => {
                 ws: false,
                 changeOrigin: true,
               },
+              ['/jmreport']: {
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+              },
             },
         },
         // 项目使用的vite插件。 单独提取到build/vite/plugin中管理
