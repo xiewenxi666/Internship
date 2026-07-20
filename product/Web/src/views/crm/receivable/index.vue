@@ -92,7 +92,7 @@
       <el-tab-pane :label="t('customer.myInvolved')" name="2" />
       <el-tab-pane :label="t('customer.subordinateResponsible')" name="3" />
     </el-tabs>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true" :table-layout="'auto'">
+    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
       <el-table-column align="center" fixed="left" :label="t('receivable.no')" prop="no" min-width="180">
         <template #default="scope">
           <el-link :underline="false" type="primary" @click="openDetail(scope.row.id)">
@@ -171,52 +171,59 @@
           <dict-tag :type="DICT_TYPE.CRM_AUDIT_STATUS" :value="scope.row.auditStatus" />
         </template>
       </el-table-column>
-      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="220">
+      <el-table-column align="center" fixed="right" :label="t('common.action')" min-width="320">
         <template #default="scope">
-          <el-button
-            v-hasPermi="['crm:receivable:query']"
-            link
-            type="primary"
-            @click="openDetail(scope.row.id)"
-          >
-            {{ t('common.detail') }}
-          </el-button>
-          <el-button
-            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
-            v-hasPermi="['crm:receivable:update']"
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-          >
-            编辑
-          </el-button>
-          <el-button
-            v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
-            v-hasPermi="['crm:receivable:update']"
-            link
-            type="success"
-            @click="handleSubmit(scope.row.id)"
-          >
-            提交审核
-          </el-button>
-          <el-button
-            v-if="scope.row.auditStatus === 10"
-            v-hasPermi="['crm:receivable:update']"
-            link
-            type="danger"
-            @click="handleCancel(scope.row.id)"
-          >
-            撤销审批
-          </el-button>
-          <el-button
-            v-if="scope.row.auditStatus !== 10 && scope.row.auditStatus !== 20"
-            v-hasPermi="['crm:receivable:delete']"
-            link
-            type="danger"
-            @click="handleDelete(scope.row.id)"
-          >
-            {{ t('common.delete') }}
-          </el-button>
+          <div style="display: flex; flex-wrap: nowrap; gap: 6px; align-items: center; justify-content: center;">
+            <el-button
+              v-hasPermi="['crm:receivable:query']"
+              link
+              type="primary"
+              size="small"
+              @click="openDetail(scope.row.id)"
+            >
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button
+              v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
+              v-hasPermi="['crm:receivable:update']"
+              link
+              type="primary"
+              size="small"
+              @click="openForm('update', scope.row.id)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              v-if="scope.row.auditStatus === 0 || scope.row.auditStatus === 30 || scope.row.auditStatus === 40 || scope.row.auditStatus === 50"
+              v-hasPermi="['crm:receivable:update']"
+              link
+              type="success"
+              size="small"
+              @click="handleSubmit(scope.row.id)"
+            >
+              提交审核
+            </el-button>
+            <el-button
+              v-if="scope.row.auditStatus === 10"
+              v-hasPermi="['crm:receivable:update']"
+              link
+              type="danger"
+              size="small"
+              @click="handleCancel(scope.row.id)"
+            >
+              撤销审批
+            </el-button>
+            <el-button
+              v-if="scope.row.auditStatus !== 10 && scope.row.auditStatus !== 20"
+              v-hasPermi="['crm:receivable:delete']"
+              link
+              type="danger"
+              size="small"
+              @click="handleDelete(scope.row.id)"
+            >
+              {{ t('common.delete') }}
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>

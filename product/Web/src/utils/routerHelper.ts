@@ -88,6 +88,11 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[], parentPath?: st
         route.children.length > 0 &&
         (route.alwaysShow !== undefined ? route.alwaysShow : true)
     } as any
+    // 强制隐藏指定路由（回款计划、审批中心下的发起流程）
+    const forceHiddenComponents = ['bpm/processInstance/create/index', 'crm/receivable/plan/index']
+    if (route.component && forceHiddenComponents.includes(route.component)) {
+      meta.hidden = true
+    }
     // 特殊逻辑：如果后端配置的 MenuDO.component 包含 ?，则表示需要传递参数
     // 此时，我们需要解析参数，并且将参数放到 meta.query 中
     // 这样，后续在 Vue 文件中，可以通过 const { currentRoute } = useRouter() 中，通过 meta.query 获取到参数
